@@ -1,0 +1,24 @@
+{
+    "application_credentials": {
+        "description": "Go to the [HomeLINK Dashboard]({integrations_url}) as a Landlord Admin to setup Client ID and Secret, then enter below."
+    },
+    "config": {
+        "abort": {
+            "cannot_connect": "Failed to connect",
+            "oauth_error": "Authentication credentials invalid. If needed, go to HA application credentials, delete and retry.",
+            "single_instance_allowed": "Only one instance is allowed",
+            "timeout_connect": "Timeout establishing connection"
+        },
+        "create_entry": {
+            "default": "Successfully authenticated"
+        },
+        "progress": {
+            "exchange": "HomeLINK progress."
+        },
+        "step": {
+            "auth": {
+                "title": "Authenticate to HomeLINK"
+            }
+        }
+    }
+}
