@@ -1,6 +1,6 @@
 """Support for HomeLINK sensors."""
 
-from homeassistant.components.binary_sensor import (  # SensorDeviceClass,; SensorEntityDescription,
+from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
 )
@@ -72,7 +72,6 @@ class HomeLINKPropertyEntity(
         self._key = hl_property
         self._attr_unique_id = f"{self._key}"
         self._property = coordinator.data["properties"][self._key]
-        # self.entity_description = description
 
     @property
     def name(self) -> str:

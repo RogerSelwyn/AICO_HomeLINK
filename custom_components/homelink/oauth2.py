@@ -37,7 +37,6 @@ class HomeLINKOAuth2Implementation(AuthImplementation):
 
     async def async_resolve_external_data(self, external_data: Any) -> dict:
         """Resolve HomeLINK API Credentials object to Home Assistant token."""
-        # creds: Credentials = external_data[DEVICE_AUTH_CREDS]
         return await self._async_token_refresh()
 
     async def _async_refresh_token(self, token: dict) -> dict:

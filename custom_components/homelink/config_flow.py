@@ -30,7 +30,6 @@ class OAuth2FlowHandler(
         """Set up instance."""
         super().__init__()
         self._reauth_config_entry: config_entries.ConfigEntry | None = None
-        # self._device_flow: DeviceFlow | None = None
 
     @property
     def logger(self) -> logging.Logger:
@@ -63,7 +62,6 @@ class OAuth2FlowHandler(
         except aiohttp.client_exceptions.ClientConnectorError as err:
             return self.async_abort(reason="cannot_connect")
 
-        # Force int for non-compliant oauth2 providers
         try:
             token["expires_in"] = int(token["expires_in"])
         except ValueError as err:
