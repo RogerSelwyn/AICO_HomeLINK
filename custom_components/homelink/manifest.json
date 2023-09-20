@@ -14,7 +14,7 @@
   "issue_tracker": "https://github.com/RogerSelwyn/HomeLINK/issues",
   "quality_scale": "silver",
   "requirements": [
-    "pyhomelink==0.1.0"
+    "pyhomelink==0.1.1"
   ],
   "version": "v0.0.1"
 }
