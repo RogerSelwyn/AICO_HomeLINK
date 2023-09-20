@@ -82,9 +82,10 @@ class HomeLINKPropertyEntity(
     def is_on(self) -> str:
         """Return the state of the sensor."""
         status = "GOOD"
-        for alert in self._property["alerts"]:
-            if alert.status.operationalstatus != "GOOD":
-                status = alert.status.operationalstatus
+        for devicekey in self._property["devices"]:
+            device = self._property["devices"][devicekey]
+            if device.status.operationalstatus != "GOOD":
+                status = device.status.operationalstatus
         return status != "GOOD"
 
     @property
@@ -143,7 +144,10 @@ class HomeLINKDeviceEntity(HomeLINKEntity, BinarySensorEntity):
     @property
     def is_on(self) -> str:
         """Return the state of the sensor."""
-        return self._device.status.operationalstatus != "GOOD"
+        if self._device.status.operationalstatus == "GOOD":
+            return False
+
+        return bool(self._get_alerts())
 
     @property
     def device_class(self) -> BinarySensorDeviceClass:
@@ -160,7 +164,7 @@ class HomeLINKDeviceEntity(HomeLINKEntity, BinarySensorEntity):
     @property
     def extra_state_attributes(self):
         """Return entity specific state attributes."""
-        return {
+        attributes = {
             "installationdate": self._device.installationdate,
             "installedby": self._device.installedby,
             "replacedate": self._device.replacedate,
@@ -170,3 +174,34 @@ class HomeLINKDeviceEntity(HomeLINKEntity, BinarySensorEntity):
             "lasttesteddate": self._device.status.lasttesteddate,
             "datacollectionstatus": self._device.status.datacollectionstatus,
         }
+        if alerts := self._get_alerts():
+            alert_attribute = [
+                {
+                    "eventtype": alert.eventtype,
+                    "severity": alert.severity,
+                    "category": alert.category,
+                    "type": alert.hl_type,
+                    "description": alert.description,
+                }
+                for alert in alerts
+            ]
+            attributes["alerts"] = alert_attribute
+
+        return attributes
+
+    def _get_alerts(self):
+        alerts = []
+        for alert in self.coordinator.data["properties"][self._parent_key]["alerts"]:
+            if self._device.rel.self == alert.rel.device:
+                if not self._sub_type:
+                    alerts.append(alert)
+                    continue
+
+                if (
+                    (self._sub_type == "FIREALARM" and alert.eventtype == "FIRE_ALARM")
+                    or (self._sub_type == "COALARM" and alert.eventtype == "CO_ALARM")
+                    or alert.eventtype not in ["FIRE_ALARM", "CO_ALARM"]
+                ):
+                    alerts.append(alert)
+
+        return alerts
