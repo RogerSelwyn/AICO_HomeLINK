@@ -1,9 +1,14 @@
 """Support for HomeLINK sensors."""
+import json
+import logging
 
+from dateutil import parser
+from homeassistant.components import mqtt
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
 )
+from homeassistant.components.mqtt import DOMAIN as MQTT_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_CONFIGURATION_URL,
@@ -12,13 +17,17 @@ from homeassistant.const import (
     ATTR_MODEL,
     ATTR_NAME,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.setup import async_when_setup
+from homeassistant.util import dt
 
-from .const import ATTRIBUTION, DOMAIN
+from .const import ATTRIBUTION, DOMAIN, EVENT_EVENT
 from .coordinator import HomeLINKDataCoordinator
 from .entity import HomeLINKEntity
+
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -28,7 +37,7 @@ async def async_setup_entry(
     hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
     hl_entities = []
     for hl_property in hl_coordinator.data["properties"]:
-        hl_entities.append(HomeLINKPropertyEntity(hl_coordinator, hl_property))
+        hl_entities.append(HomeLINKPropertyEntity(hass, hl_coordinator, hl_property))
         for device in hl_coordinator.data["properties"][hl_property]["devices"]:
             if (
                 hl_coordinator.data["properties"][hl_property]["devices"][
@@ -63,6 +72,7 @@ class HomeLINKPropertyEntity(
 
     def __init__(
         self,
+        hass: HomeAssistant,
         coordinator: HomeLINKDataCoordinator,
         hl_property,
     ) -> None:
@@ -72,6 +82,8 @@ class HomeLINKPropertyEntity(
         self._key = hl_property
         self._attr_unique_id = f"{self._key}"
         self._property = coordinator.data["properties"][self._key]
+        self._startup = dt.utcnow()
+        async_when_setup(hass, MQTT_DOMAIN, self._async_subscribe)
 
     @property
     def name(self) -> str:
@@ -115,6 +127,27 @@ class HomeLINKPropertyEntity(
             ATTR_MODEL: "Property",
             ATTR_CONFIGURATION_URL: "https://dashboard.live.homelync.io/#/pages/portfolio/one-view",
         }
+
+    async def _async_subscribe(
+        self, hass: HomeAssistant, component  # pylint: disable=unused-argument
+    ):
+        topic = f"homelink/+/event/{self._key.lower()}/#"
+        await mqtt.async_subscribe(hass, topic, self._async_message_received)
+
+    @callback
+    async def _async_message_received(self, msg):
+        payload = json.loads(msg.payload)
+        msgdate = parser.parse(payload["raisedDate"])
+        if msgdate >= self._startup:
+            payload = json.loads(msg.payload)
+            self._raise_event(EVENT_EVENT, payload)
+
+    def _raise_event(self, event_type, payload):
+        self.hass.bus.fire(
+            f"{DOMAIN}_{event_type}",
+            payload,
+        )
+        _LOGGER.debug("%s - %s", event_type, payload)
 
 
 class HomeLINKDeviceEntity(HomeLINKEntity, BinarySensorEntity):
