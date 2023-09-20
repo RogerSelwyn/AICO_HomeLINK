@@ -58,4 +58,4 @@ class HomeLINKLastTestSensorEntity(HomeLINKEntity, SensorEntity):
     @property
     def device_class(self) -> SensorDeviceClass:
         """Return the device_class."""
-        return SensorDeviceClass.DATE
+        return SensorDeviceClass.TIMESTAMP
