@@ -18,6 +18,7 @@ from homeassistant.const import (
     ATTR_NAME,
 )
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import device_registry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.setup import async_when_setup
@@ -34,6 +35,7 @@ from .const import (
 )
 from .coordinator import HomeLINKDataCoordinator
 from .entity import HomeLINKEntity
+from .utils import build_device_identifiers
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -92,6 +94,7 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         self._root_topic = ""
         if self._config_options.get(CONF_MQTT_ENABLE):
             async_when_setup(hass, MQTT_DOMAIN, self._async_subscribe)
+            self._dev_reg = device_registry.async_get(hass)
 
     @property
     def name(self) -> str:
@@ -146,8 +149,8 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         self, hass: HomeAssistant, component  # pylint: disable=unused-argument
     ):
         self._set_root_topic()
-        await self._async_subscribe_topic(hass, "+/event/")
-        await self._async_subscribe_topic(hass, "+/alert/+/")
+        await self._async_subscribe_topic(hass, "+/+/")
+        await self._async_subscribe_topic(hass, "+/+/+/")
 
     async def _async_subscribe_topic(self, hass, topic):
         sub_topic = f"{self._root_topic}{topic}{self._key.lower()}/#"
@@ -161,18 +164,28 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         if msgdate >= self._startup:
             payload = json.loads(msg.payload)
             if f"/{EVENT_ALERT}/" in msg.topic:
-                self._raise_event(EVENT_ALERT, payload)
+                device = self._find_device(msg, 5)
+                self._raise_event(EVENT_ALERT, payload, device)
             elif f"/{EVENT_EVENT}/" in msg.topic:
-                self._raise_event(EVENT_EVENT, payload)
+                device = self._find_device(msg, 4)
+                self._raise_event(EVENT_EVENT, payload, device)
             else:
                 self._raise_event(EVENT_UNKNOWN, payload)
 
-    def _raise_event(self, event_type, payload):
+    def _raise_event(self, event_type, payload, device=None):
+        device_info = None
+        if device:
+            device_info = {"id": device.id, "model": device.model, "name": device.name}
         self.hass.bus.fire(
-            f"{DOMAIN}_{event_type}",
-            payload,
+            f"{DOMAIN}_{event_type}", {"device_info": device_info, "payload": payload}
         )
         _LOGGER.debug("%s_%s - %s", DOMAIN, event_type, payload)
+
+    def _find_device(self, msg, position):
+        device_id = msg.topic.split("/")[position]
+        return self._dev_reg.async_get_device(
+            identifiers=build_device_identifiers(device_id)
+        )
 
     def _set_root_topic(self):
         if CONF_MQTT_TOPIC in self._config_options:

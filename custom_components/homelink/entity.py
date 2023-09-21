@@ -12,6 +12,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import ATTRIBUTION, DOMAIN
 from .coordinator import HomeLINKDataCoordinator
+from .utils import build_device_identifiers
 
 
 class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
@@ -37,7 +38,7 @@ class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
             self._key
         ]
         return {
-            ATTR_IDENTIFIERS: {(DOMAIN, "device", self._key)},
+            ATTR_IDENTIFIERS: build_device_identifiers(self._key),
             ATTR_NAME: f"{self._parent_key} {self._device.location} {self._device.modeltype}",
             ATTR_VIA_DEVICE: (DOMAIN, "property", self._parent_key),
             ATTR_MANUFACTURER: device.manufacturer,
