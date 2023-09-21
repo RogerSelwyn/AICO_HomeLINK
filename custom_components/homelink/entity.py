@@ -7,6 +7,7 @@ from homeassistant.const import (
     ATTR_NAME,
     ATTR_VIA_DEVICE,
 )
+from homeassistant.core import callback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import ATTRIBUTION, DOMAIN
@@ -42,3 +43,11 @@ class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
             ATTR_MANUFACTURER: device.manufacturer,
             ATTR_MODEL: f"{device.model} ({device.modeltype})",
         }
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle data update."""
+        self._device = self.coordinator.data["properties"][self._parent_key]["devices"][
+            self._key
+        ]
+        self.async_write_ha_state()

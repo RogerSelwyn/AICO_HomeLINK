@@ -37,7 +37,7 @@ async def async_setup_entry(
     hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
     hl_entities = []
     for hl_property in hl_coordinator.data["properties"]:
-        hl_entities.append(HomeLINKPropertyEntity(hass, hl_coordinator, hl_property))
+        hl_entities.append(HomeLINKProperty(hass, hl_coordinator, hl_property))
         for device in hl_coordinator.data["properties"][hl_property]["devices"]:
             if (
                 hl_coordinator.data["properties"][hl_property]["devices"][
@@ -47,24 +47,18 @@ async def async_setup_entry(
             ):
                 hl_entities.extend(
                     (
-                        HomeLINKDeviceEntity(
+                        HomeLINKDevice(
                             hl_coordinator, hl_property, device, "FIREALARM"
                         ),
-                        HomeLINKDeviceEntity(
-                            hl_coordinator, hl_property, device, "COALARM"
-                        ),
+                        HomeLINKDevice(hl_coordinator, hl_property, device, "COALARM"),
                     )
                 )
             else:
-                hl_entities.append(
-                    HomeLINKDeviceEntity(hl_coordinator, hl_property, device)
-                )
+                hl_entities.append(HomeLINKDevice(hl_coordinator, hl_property, device))
     async_add_entities(hl_entities)
 
 
-class HomeLINKPropertyEntity(
-    CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorEntity
-):
+class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorEntity):
     """Property entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True
@@ -128,6 +122,12 @@ class HomeLINKPropertyEntity(
             ATTR_CONFIGURATION_URL: "https://dashboard.live.homelync.io/#/pages/portfolio/one-view",
         }
 
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle data update."""
+        self._property = self.coordinator.data["properties"][self._key]
+        self.async_write_ha_state()
+
     async def _async_subscribe(
         self, hass: HomeAssistant, component  # pylint: disable=unused-argument
     ):
@@ -150,7 +150,7 @@ class HomeLINKPropertyEntity(
         _LOGGER.debug("%s - %s", event_type, payload)
 
 
-class HomeLINKDeviceEntity(HomeLINKEntity, BinarySensorEntity):
+class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     """Device entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True
