@@ -77,11 +77,11 @@ async def async_setup_entry(
                     for description in SENSOR_TYPES
                 )
 
-    async_add_entities(hl_entities, False)
+    async_add_entities(hl_entities)
 
 
 class HomeLINKSensor(HomeLINKEntity, SensorEntity):
-    """Device entity object for HomeLINK sensor."""
+    """Sensor entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True
     entity_description: HomeLINKEntityDescription
