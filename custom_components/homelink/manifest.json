@@ -6,7 +6,8 @@
   ],
   "config_flow": true,
   "dependencies": [
-    "application_credentials", "mqtt"
+    "application_credentials",
+    "mqtt"
   ],
   "documentation": "https://github.com/RogerSelwyn/HomeLINK",
   "integration_type": "hub",
