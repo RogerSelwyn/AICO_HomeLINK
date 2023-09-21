@@ -9,16 +9,23 @@
             "single_instance_allowed": "Only one instance is allowed",
             "timeout_connect": "Timeout establishing connection"
         },
-        "create_entry": {
-            "default": "Successfully authenticated"
-        },
-        "progress": {
-            "exchange": "HomeLINK progress."
-        },
         "step": {
             "auth": {
                 "title": "Authenticate to HomeLINK"
             }
         }
+    },
+    "options": {
+        "step": {
+          "init": {
+            "data": {
+                "mqtt_enable": "Enable MQTT updates",
+                "mqtt_topic": "Leave empty for no broker rewrite "
+            },
+            "data_description": {
+                "mqtt_topic": "MQTT Root Topic"
+            }
+          }
+        }
+      }
     }
-}
