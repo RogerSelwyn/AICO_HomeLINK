@@ -54,7 +54,7 @@ class HomeLINKOAuth2Implementation(AuthImplementation):
             {
                 "access_token": token["accessToken"],
                 "refresh_token": None,
-                "scope": None,
+                "scope": "standard",
                 "token_type": "Bearer",
                 "expires_in": 20 * 60 * 60,
             }

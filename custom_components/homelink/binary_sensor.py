@@ -23,7 +23,15 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.setup import async_when_setup
 from homeassistant.util import dt
 
-from .const import ATTRIBUTION, CONF_MQTT_ENABLE, CONF_MQTT_TOPIC, DOMAIN, EVENT_EVENT
+from .const import (
+    ATTRIBUTION,
+    CONF_MQTT_ENABLE,
+    CONF_MQTT_TOPIC,
+    DOMAIN,
+    EVENT_ALERT,
+    EVENT_EVENT,
+    EVENT_UNKNOWN,
+)
 from .coordinator import HomeLINKDataCoordinator
 from .entity import HomeLINKEntity
 
@@ -152,14 +160,19 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         msgdate = parser.parse(payload["raisedDate"])
         if msgdate >= self._startup:
             payload = json.loads(msg.payload)
-            self._raise_event(EVENT_EVENT, payload)
+            if f"/{EVENT_ALERT}/" in msg.topic:
+                self._raise_event(EVENT_ALERT, payload)
+            elif f"/{EVENT_EVENT}/" in msg.topic:
+                self._raise_event(EVENT_EVENT, payload)
+            else:
+                self._raise_event(EVENT_UNKNOWN, payload)
 
     def _raise_event(self, event_type, payload):
         self.hass.bus.fire(
             f"{DOMAIN}_{event_type}",
             payload,
         )
-        _LOGGER.debug("%s - %s", event_type, payload)
+        _LOGGER.debug("%s_%s - %s", DOMAIN, event_type, payload)
 
     def _set_root_topic(self):
         if CONF_MQTT_TOPIC in self._config_options:
