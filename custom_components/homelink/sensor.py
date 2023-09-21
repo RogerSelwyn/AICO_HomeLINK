@@ -44,16 +44,16 @@ class HomeLINKEntityDescription(
 
 SENSOR_TYPES: tuple[HomeLINKEntityDescription, ...] = (
     HomeLINKEntityDescription(
-        key="lasttesteddate",
-        name="Last Tested Date",
-        device_class=SensorDeviceClass.TIMESTAMP,
-        value_fn=lambda data: _parse_timestamp(data.status.lasttesteddate),
-    ),
-    HomeLINKEntityDescription(
         key="replacedate",
         name="Replace By Date",
         device_class=SensorDeviceClass.DATE,
         value_fn=lambda data: _parse_date(data.replacedate),
+    ),
+    HomeLINKEntityDescription(
+        key="lasttesteddate",
+        name="Last Tested Date",
+        device_class=SensorDeviceClass.TIMESTAMP,
+        value_fn=lambda data: _parse_timestamp(data.status.lasttesteddate),
     ),
 )
 
@@ -75,6 +75,10 @@ async def async_setup_entry(
                 hl_entities.extend(
                     HomeLINKSensor(hl_coordinator, hl_property, device, description)
                     for description in SENSOR_TYPES
+                )
+            else:
+                hl_entities.append(
+                    HomeLINKSensor(hl_coordinator, hl_property, device, SENSOR_TYPES[0])
                 )
 
     async_add_entities(hl_entities)
