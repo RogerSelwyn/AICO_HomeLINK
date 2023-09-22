@@ -13,6 +13,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_CONFIGURATION_URL,
     ATTR_IDENTIFIERS,
+    ATTR_LATITUDE,
+    ATTR_LONGITUDE,
     ATTR_MANUFACTURER,
     ATTR_MODEL,
     ATTR_NAME,
@@ -24,10 +26,52 @@ from homeassistant.setup import async_when_setup
 from homeassistant.util import dt
 
 from .const import (
+    ATTR_ADDRESS,
+    ATTR_CATEGORY,
+    ATTR_CONNECTIVITYTYPE,
+    ATTR_DATACOLLECTIONSTATUS,
+    ATTR_DESCRIPTION,
+    ATTR_DEVICE,
+    ATTR_DEVICE_INFO,
+    ATTR_EVENTTYPE,
+    ATTR_HOMELINK,
+    ATTR_INSTALLATIONDATE,
+    ATTR_INSTALLEDBY,
+    ATTR_LASTSEENDATE,
+    ATTR_LASTTESTDATE,
+    ATTR_PAYLOAD,
+    ATTR_PROPERTY,
+    ATTR_RAISEDDATE,
+    ATTR_REFERENCE,
+    ATTR_REPLACEDATE,
+    ATTR_SEVERITY,
+    ATTR_SIGNALSTRENGTH,
+    ATTR_SUB_TYPE,
+    ATTR_TAGS,
+    ATTR_TYPE,
     ATTRIBUTION,
     CONF_MQTT_ENABLE,
     CONF_MQTT_TOPIC,
+    COORD_ALERTS,
+    COORD_DEVICES,
+    COORD_PROPERTIES,
+    COORD_PROPERTY,
+    DASHBOARD_URL,
     DOMAIN,
+    EVENTTYPE_CO_ALARM,
+    EVENTTYPE_FIRE_ALARM,
+    EVENTTYPE_FIRECO_ALARMS,
+    MODELTYPE_COALARM,
+    MODELTYPE_FIREALARM,
+    MODELTYPE_FIRECOALARM,
+    MODELTYPE_PROBLEMS,
+    STATUS_GOOD,
+    SUBSCRIBE_DEVICE_EVENT_TOPIC,
+    SUBSCRIBE_DEVICE_FULL_TOPIC,
+    SUBSCRIBE_DEVICE_OTHER_TOPIC,
+    SUBSCRIBE_PROPERTY_DEVICE_TOPIC,
+    SUBSCRIBE_PROPERTY_FULL_TOPIC,
+    SUBSCRIBE_PROPERTY_PROPERTY_TOPIC,
     HomeLINKMessageType,
 )
 from .coordinator import HomeLINKDataCoordinator
@@ -42,16 +86,16 @@ async def async_setup_entry(
     """HomeLINK Sensor Setup."""
     hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
     hl_entities = []
-    for hl_property in hl_coordinator.data["properties"]:
+    for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
         hl_entities.append(
             HomeLINKProperty(hass, entry.options, hl_coordinator, hl_property)
         )
-        for device in hl_coordinator.data["properties"][hl_property]["devices"]:
+        for device in hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES]:
             if (
-                hl_coordinator.data["properties"][hl_property]["devices"][
+                hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES][
                     device
                 ].modeltype
-                == "FIRECOALARM"
+                == MODELTYPE_FIRECOALARM
             ):
                 hl_entities.extend(
                     (
@@ -61,7 +105,7 @@ async def async_setup_entry(
                             hl_coordinator,
                             hl_property,
                             device,
-                            "FIREALARM",
+                            MODELTYPE_FIREALARM,
                         ),
                         HomeLINKDevice(
                             hass,
@@ -69,7 +113,7 @@ async def async_setup_entry(
                             hl_coordinator,
                             hl_property,
                             device,
-                            "COALARM",
+                            MODELTYPE_COALARM,
                         ),
                     )
                 )
@@ -100,7 +144,7 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
 
         self._key = hl_property
         self._attr_unique_id = f"{self._key}"
-        self._property = coordinator.data["properties"][self._key]
+        self._property = coordinator.data[COORD_PROPERTIES][self._key]
         self._startup = dt.utcnow()
         self._config_options = config_options
         self._root_topic = _set_root_topic(config_options)
@@ -115,12 +159,12 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
     @property
     def is_on(self) -> str:
         """Return the state of the sensor."""
-        status = "GOOD"
-        for devicekey in self._property["devices"]:
-            device = self._property["devices"][devicekey]
-            if device.status.operationalstatus != "GOOD":
+        status = STATUS_GOOD
+        for devicekey in self._property[COORD_DEVICES]:
+            device = self._property[COORD_DEVICES][devicekey]
+            if device.status.operationalstatus != STATUS_GOOD:
                 status = device.status.operationalstatus
-        return status != "GOOD"
+        return status != STATUS_GOOD
 
     @property
     def device_class(self) -> BinarySensorDeviceClass:
@@ -130,47 +174,48 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
     @property
     def extra_state_attributes(self):
         """Return entity specific state attributes."""
-        hl_property = self._property["property"]
+        hl_property = self._property[COORD_PROPERTY]
         return {
-            "reference": hl_property.reference,
-            "address": hl_property.address,
-            "latitide": hl_property.latitude,
-            "longitude": hl_property.longitude,
-            "tags": hl_property.tags,
+            ATTR_REFERENCE: hl_property.reference,
+            ATTR_ADDRESS: hl_property.address,
+            ATTR_LATITUDE: hl_property.latitude,
+            ATTR_LONGITUDE: hl_property.longitude,
+            ATTR_TAGS: hl_property.tags,
         }
 
     @property
     def device_info(self):
         """Entity device information."""
         return {
-            ATTR_IDENTIFIERS: {(DOMAIN, "property", self._key)},
+            ATTR_IDENTIFIERS: {(DOMAIN, ATTR_PROPERTY, self._key)},
             ATTR_NAME: self._key,
-            ATTR_MANUFACTURER: "HomeLINK",
-            ATTR_MODEL: "Property",
-            ATTR_CONFIGURATION_URL: "https://dashboard.live.homelync.io/#/pages/portfolio/one-view",
+            ATTR_MANUFACTURER: ATTR_HOMELINK,
+            ATTR_MODEL: ATTR_PROPERTY.capitalize(),
+            ATTR_CONFIGURATION_URL: DASHBOARD_URL,
         }
 
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle data update."""
-        self._property = self.coordinator.data["properties"][self._key]
+        self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
         self.async_write_ha_state()
 
     async def _async_subscribe(
         self, hass: HomeAssistant, component  # pylint: disable=unused-argument
     ):
-        await self._async_subscribe_topic(hass, "+/property/")
-        await self._async_subscribe_topic(hass, "+/device/")
+        await self._async_subscribe_topic(hass, SUBSCRIBE_PROPERTY_PROPERTY_TOPIC)
+        await self._async_subscribe_topic(hass, SUBSCRIBE_PROPERTY_DEVICE_TOPIC)
 
     async def _async_subscribe_topic(self, hass, topic):
-        sub_topic = f"{self._root_topic}{topic}{self._key.lower()}/#"
-        _LOGGER.debug("Subscribing to: %s", sub_topic)
+        sub_topic = SUBSCRIBE_PROPERTY_FULL_TOPIC.format(
+            root_topic=self._root_topic, topic=topic, key=self._key.lower()
+        )
         await mqtt.async_subscribe(hass, sub_topic, self._async_message_received)
 
     @callback
     async def _async_message_received(self, msg):
         payload = json.loads(msg.payload)
-        msgdate = parser.parse(payload["raisedDate"])
+        msgdate = parser.parse(payload[ATTR_RAISEDDATE])
         if msgdate >= self._startup:
             payload = json.loads(msg.payload)
             eventtype = _extract_event_type(self._root_topic, msg.topic)
@@ -178,7 +223,8 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
 
     def _raise_event(self, event_type, payload):
         self.hass.bus.fire(
-            f"{DOMAIN}_{event_type}", {"sub_type": "property", "payload": payload}
+            f"{DOMAIN}_{event_type}",
+            {ATTR_SUB_TYPE: ATTR_PROPERTY, ATTR_PAYLOAD: payload},
         )
         _LOGGER.debug("%s_%s - %s", DOMAIN, event_type, payload)
 
@@ -217,7 +263,7 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     @property
     def is_on(self) -> str:
         """Return the state of the sensor."""
-        if self._device.status.operationalstatus == "GOOD":
+        if self._device.status.operationalstatus == STATUS_GOOD:
             return False
 
         return bool(self._get_alerts())
@@ -226,11 +272,11 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     def device_class(self) -> BinarySensorDeviceClass:
         """Return the device_class."""
         modeltype = self._sub_type or self._device.modeltype
-        if modeltype == "FIREALARM":
+        if modeltype == MODELTYPE_FIREALARM:
             return BinarySensorDeviceClass.SMOKE
-        elif modeltype == "COALARM":
+        elif modeltype == MODELTYPE_COALARM:
             return BinarySensorDeviceClass.CO
-        elif modeltype in ["EIACCESSORY", "GATEWAY"]:
+        elif modeltype in MODELTYPE_PROBLEMS:
             return BinarySensorDeviceClass.PROBLEM
         return None
 
@@ -238,42 +284,50 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     def extra_state_attributes(self):
         """Return entity specific state attributes."""
         attributes = {
-            "installationdate": self._device.installationdate,
-            "installedby": self._device.installedby,
-            "replacedate": self._device.replacedate,
-            "signalstrength": self._device.metadata.signalstrength,
-            "lastseendate": self._device.metadata.lastseendate,
-            "connectivitytype": self._device.metadata.connectivitytype,
-            "lasttesteddate": self._device.status.lasttesteddate,
-            "datacollectionstatus": self._device.status.datacollectionstatus,
+            ATTR_INSTALLATIONDATE: self._device.installationdate,
+            ATTR_INSTALLEDBY: self._device.installedby,
+            ATTR_REPLACEDATE: self._device.replacedate,
+            ATTR_SIGNALSTRENGTH: self._device.metadata.signalstrength,
+            ATTR_LASTSEENDATE: self._device.metadata.lastseendate,
+            ATTR_CONNECTIVITYTYPE: self._device.metadata.connectivitytype,
+            ATTR_LASTTESTDATE: self._device.status.lasttesteddate,
+            ATTR_DATACOLLECTIONSTATUS: self._device.status.datacollectionstatus,
         }
         if alerts := self._get_alerts():
             alert_attribute = [
                 {
-                    "eventtype": alert.eventtype,
-                    "severity": alert.severity,
-                    "category": alert.category,
-                    "type": alert.hl_type,
-                    "description": alert.description,
+                    ATTR_EVENTTYPE: alert.eventtype,
+                    ATTR_SEVERITY: alert.severity,
+                    ATTR_CATEGORY: alert.category,
+                    ATTR_TYPE: alert.hl_type,
+                    ATTR_DESCRIPTION: alert.description,
                 }
                 for alert in alerts
             ]
-            attributes["alerts"] = alert_attribute
+            attributes[COORD_ALERTS] = alert_attribute
 
         return attributes
 
     def _get_alerts(self):
         alerts = []
-        for alert in self.coordinator.data["properties"][self._parent_key]["alerts"]:
+        for alert in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+            COORD_ALERTS
+        ]:
             if self._device.rel.self == alert.rel.device:
                 if not self._sub_type:
                     alerts.append(alert)
                     continue
 
                 if (
-                    (self._sub_type == "FIREALARM" and alert.eventtype == "FIRE_ALARM")
-                    or (self._sub_type == "COALARM" and alert.eventtype == "CO_ALARM")
-                    or alert.eventtype not in ["FIRE_ALARM", "CO_ALARM"]
+                    (
+                        self._sub_type == MODELTYPE_FIRECOALARM
+                        and alert.eventtype == EVENTTYPE_FIRE_ALARM
+                    )
+                    or (
+                        self._sub_type == MODELTYPE_COALARM
+                        and alert.eventtype == EVENTTYPE_CO_ALARM
+                    )
+                    or alert.eventtype not in EVENTTYPE_FIRECO_ALARMS
                 ):
                     alerts.append(alert)
 
@@ -282,20 +336,23 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     async def _async_subscribe(
         self, hass: HomeAssistant, component  # pylint: disable=unused-argument
     ):
-        await self._async_subscribe_topic(hass, "+/+/")
-        await self._async_subscribe_topic(hass, "+/+/+/")
+        await self._async_subscribe_topic(hass, SUBSCRIBE_DEVICE_EVENT_TOPIC)
+        await self._async_subscribe_topic(hass, SUBSCRIBE_DEVICE_OTHER_TOPIC)
 
     async def _async_subscribe_topic(self, hass, topic):
-        sub_topic = (
-            f"{self._root_topic}{topic}{self._parent_key.lower()}/{self._key.lower()}/#"
+        sub_topic = SUBSCRIBE_DEVICE_FULL_TOPIC.format(
+            root_topic=self._root_topic,
+            topic=topic,
+            parent_key=self._parent_key.lower(),
+            key=self._key.lower(),
         )
-        _LOGGER.debug("Subscribing to: %s", sub_topic)
+
         await mqtt.async_subscribe(hass, sub_topic, self._async_message_received)
 
     @callback
     async def _async_message_received(self, msg):
         payload = json.loads(msg.payload)
-        msgdate = parser.parse(payload["raisedDate"])
+        msgdate = parser.parse(payload[ATTR_RAISEDDATE])
         if msgdate >= self._startup:
             payload = json.loads(msg.payload)
             eventtype = _extract_event_type(self._root_topic, msg.topic)
@@ -304,7 +361,11 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     def _raise_event(self, event_type, payload):
         self.hass.bus.fire(
             f"{DOMAIN}_{event_type}",
-            {"sub_type": "device", "device_info": self.device_info, "payload": payload},
+            {
+                ATTR_SUB_TYPE: ATTR_DEVICE,
+                ATTR_DEVICE_INFO: self.device_info,
+                ATTR_PAYLOAD: payload,
+            },
         )
         _LOGGER.debug("%s_%s - %s - %s", DOMAIN, event_type, self.device_info, payload)
 

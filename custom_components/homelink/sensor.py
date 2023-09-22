@@ -14,7 +14,16 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
-from .const import DOMAIN
+from .const import (
+    ATTR_LASTTESTDATE,
+    ATTR_REPLACEDATE,
+    COORD_DEVICES,
+    COORD_PROPERTIES,
+    DOMAIN,
+    ENTITY_NAME_LASTTESTDATE,
+    ENTITY_NAME_REPLACEDATE,
+    MODELTYPE_GATEWAY,
+)
 from .coordinator import HomeLINKDataCoordinator
 from .entity import HomeLINKEntity
 
@@ -32,7 +41,6 @@ class HomeLINKEntityDescriptionMixin:
     """Mixin for required keys."""
 
     value_fn: Callable[[Any], StateType]
-    # extra_state_attributes_fn: Callable[[Any], dict[str, str]] | None
 
 
 @dataclass
@@ -44,14 +52,14 @@ class HomeLINKEntityDescription(
 
 SENSOR_TYPES: tuple[HomeLINKEntityDescription, ...] = (
     HomeLINKEntityDescription(
-        key="replacedate",
-        name="Replace By Date",
+        key=ATTR_REPLACEDATE,
+        name=ENTITY_NAME_REPLACEDATE,
         device_class=SensorDeviceClass.DATE,
         value_fn=lambda data: _parse_date(data.replacedate),
     ),
     HomeLINKEntityDescription(
-        key="lasttesteddate",
-        name="Last Tested Date",
+        key=ATTR_LASTTESTDATE,
+        name=ATTR_LASTTESTDATE,
         device_class=SensorDeviceClass.TIMESTAMP,
         value_fn=lambda data: _parse_timestamp(data.status.lasttesteddate),
     ),
@@ -64,13 +72,13 @@ async def async_setup_entry(
     """HomeLINK Sensor Setup."""
     hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
     hl_entities = []
-    for hl_property in hl_coordinator.data["properties"]:
-        for device in hl_coordinator.data["properties"][hl_property]["devices"]:
+    for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
+        for device in hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES]:
             if (
-                hl_coordinator.data["properties"][hl_property]["devices"][
+                hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES][
                     device
                 ].modeltype
-                != "GATEWAY"
+                != MODELTYPE_GATEWAY
             ):
                 hl_entities.extend(
                     HomeLINKSensor(hl_coordinator, hl_property, device, description)
