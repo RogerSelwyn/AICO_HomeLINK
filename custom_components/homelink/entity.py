@@ -12,7 +12,6 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import ATTRIBUTION, DOMAIN
 from .coordinator import HomeLINKDataCoordinator
-from .utils import build_device_identifiers
 
 
 class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
@@ -52,3 +51,8 @@ class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
             self._key
         ]
         self.async_write_ha_state()
+
+
+def build_device_identifiers(device_id):
+    """Build device identifiers"""
+    return {(DOMAIN, "device", device_id.upper())}

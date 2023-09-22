@@ -49,4 +49,3 @@ remote_clientid joe_bloggs_obscure
 
 Once you have the data available to Home Assistant on your MQTT broker, you can configure the options for the HomeLINK integration to enable MQTT. If you have rewritten the topic to an alternative root, then you can specify the new root. For instance `joe_bloggs/#` has been written to `homelink/joe_bloggs/#`, then enter `homelink` into the text box. Currently, the integration assumes that the `landlord reference` (i.e. `joe_bloggs`) will always be present.
 
-At this time MQTT only raise a Home Assistant event `homelink_event` with the contents of the HomeLINK MQTT message. Plus it outputs a debug entry. This will be improved as I receive details of what the MQTT messages look like, which is not currenty available to me.
