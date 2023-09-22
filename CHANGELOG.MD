@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.0.4 (2023/09/22)
+### ✨ Enhancements
+- [Add replace by date for gateway](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a53e657f051147d9fbe31bee536d39f3f593ddda) - @RogerSelwyn
+- [Add more details to mqtt events](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/08b8b8185cebf709e2252090a1550b74d9836402) - @RogerSelwyn
+- [Increase number of message types handled from MQTT](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7a33b806064e49217a681c5885bd451084d76e6d) - @RogerSelwyn
+
+### 📚 Documentation
+- [Bump to v0.0.4](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c76b46abb6b2cad7f6dd024bce3585d619f8fe26) - @RogerSelwyn
+
 ## v0.0.3 (2023/09/21)
 ### ✨ Enhancements
 - [Added MQTT for events - output to event](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8fc5abbc81b407b0477cb087be90023ff15a9d34) - @RogerSelwyn
