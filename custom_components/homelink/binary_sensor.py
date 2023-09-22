@@ -217,9 +217,9 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         payload = json.loads(msg.payload)
         msgdate = parser.parse(payload[ATTR_RAISEDDATE])
         if msgdate >= self._startup:
+            messagetype = _extract_event_type(self._root_topic, msg.topic)
             payload = json.loads(msg.payload)
-            eventtype = _extract_event_type(self._root_topic, msg.topic)
-            self._raise_event(eventtype, payload)
+            self._raise_event(messagetype, payload)
 
     def _raise_event(self, event_type, payload):
         self.hass.bus.fire(
@@ -354,9 +354,11 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
         payload = json.loads(msg.payload)
         msgdate = parser.parse(payload[ATTR_RAISEDDATE])
         if msgdate >= self._startup:
+            messagetype = _extract_event_type(self._root_topic, msg.topic)
+            if messagetype == HomeLINKMessageType.MESSAGE_ALERT:
+                await self.coordinator.async_refresh()
             payload = json.loads(msg.payload)
-            eventtype = _extract_event_type(self._root_topic, msg.topic)
-            self._raise_event(eventtype, payload)
+            self._raise_event(messagetype, payload)
 
     def _raise_event(self, event_type, payload):
         self.hass.bus.fire(
@@ -386,4 +388,4 @@ def _extract_event_type(root_topic, topic):
     if messagetype in messagetypes:
         return messagetype
 
-    return HomeLINKMessageType.EVENT_UNKNOWN
+    return HomeLINKMessageType.MESSAGE_UNKNOWN
