@@ -59,7 +59,7 @@ SENSOR_TYPES: tuple[HomeLINKEntityDescription, ...] = (
     ),
     HomeLINKEntityDescription(
         key=ATTR_LASTTESTDATE,
-        name=ATTR_LASTTESTDATE,
+        name=ENTITY_NAME_LASTTESTDATE,
         device_class=SensorDeviceClass.TIMESTAMP,
         value_fn=lambda data: _parse_timestamp(data.status.lasttesteddate),
     ),
