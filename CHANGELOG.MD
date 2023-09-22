@@ -8,7 +8,7 @@
 - [Correct last test date entity name](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/cf9b54bc05c77a90ec51323b8e7975291d2ce034) - @RogerSelwyn
 
 ### 🔨 Maintenance
-- [Convert lterals to constants for stability](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ab7d17c183ffadbd1273e473121d43ac579e3001) - @RogerSelwyn
+- [Convert literals to constants for stability](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ab7d17c183ffadbd1273e473121d43ac579e3001) - @RogerSelwyn
 - [Bump to 0.0.5](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7e527ab884186dd35bcf64e1afc8722c045b6c8c) - @RogerSelwyn
 
 ### 📚 Documentation
