@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.1.1 (2023/09/23)
+### ✨ Enhancements
+- [Added alarmed devices to propert entity](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a35fb94197a082ce38bed83c24cc2037de54807d) - @RogerSelwyn
+
+### 🐛 Fixes
+- [Fix issue with wrong reporting  of property status](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/58f0cbd4b346a49602221d1787dc9eda3cf47cb2) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Bump to v0.1.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a640afdbe65ef4b6016b00b4b7e09d3fe26115c0) - @RogerSelwyn
+
 ## v0.1.0 (2023/09/23)
 ### ✨ Enhancements
 - [Add support for reauth dialogues](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/12886e5e242d29fdfa22b38651eed272973c17b2) - @RogerSelwyn
