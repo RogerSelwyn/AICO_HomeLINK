@@ -1,9 +1,11 @@
 """Constants for HomeLINK integration."""
 from enum import StrEnum
 
+ALARMS_NONE = "None"
 ATTRIBUTION = "Data provided by AICO HomeLINK"
 
 ATTR_ADDRESS = "address"
+ATTR_ALARMED_DEVICES = "alarmed_devices"
 ATTR_CATEGORY = "category"
 ATTR_CONNECTIVITYTYPE = "connectivitytype"
 ATTR_DATACOLLECTIONSTATUS = "datacollectionstatus"

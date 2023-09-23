@@ -20,13 +20,16 @@ from homeassistant.const import (
     ATTR_NAME,
 )
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import device_registry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.setup import async_when_setup
 from homeassistant.util import dt
 
 from .const import (
+    ALARMS_NONE,
     ATTR_ADDRESS,
+    ATTR_ALARMED_DEVICES,
     ATTR_CATEGORY,
     ATTR_CONNECTIVITYTYPE,
     ATTR_DATACOLLECTIONSTATUS,
@@ -76,6 +79,7 @@ from .const import (
 )
 from .coordinator import HomeLINKDataCoordinator
 from .entity import HomeLINKEntity
+from .utils import build_device_identifiers
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -144,7 +148,11 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
 
         self._key = hl_property
         self._attr_unique_id = f"{self._key}"
-        self._property = coordinator.data[COORD_PROPERTIES][self._key]
+        self._dev_reg = device_registry.async_get(hass)
+        self._property = None
+        self._alarms = []
+        self._status = None
+        self._update_properties()
         self._startup = dt.utcnow()
         self._config_options = config_options
         self._root_topic = _set_root_topic(config_options)
@@ -159,12 +167,7 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
     @property
     def is_on(self) -> str:
         """Return the state of the sensor."""
-        status = STATUS_GOOD
-        for devicekey in self._property[COORD_DEVICES]:
-            device = self._property[COORD_DEVICES][devicekey]
-            if device.status.operationalstatus != STATUS_GOOD:
-                status = device.status.operationalstatus
-        return status != STATUS_GOOD
+        return self._status
 
     @property
     def device_class(self) -> BinarySensorDeviceClass:
@@ -181,6 +184,7 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
             ATTR_LATITUDE: hl_property.latitude,
             ATTR_LONGITUDE: hl_property.longitude,
             ATTR_TAGS: hl_property.tags,
+            ATTR_ALARMED_DEVICES: self._alarms,
         }
 
     @property
@@ -197,8 +201,25 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle data update."""
-        self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
+        self._update_properties()
         self.async_write_ha_state()
+
+    def _update_properties(self):
+        self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
+        self._status, self._alarms = self._set_status()
+
+    def _set_status(self) -> bool:
+        status = STATUS_GOOD
+        alarms = []
+        for devicekey in self._property[COORD_DEVICES]:
+            device = self._property[COORD_DEVICES][devicekey]
+            if device.status.operationalstatus != STATUS_GOOD:
+                status = device.status.operationalstatus
+                devicereg = self._dev_reg.async_get_device(
+                    build_device_identifiers(device.serialnumber)
+                )
+                alarms.append(devicereg.name_by_user or devicereg.name)
+        return status != STATUS_GOOD, alarms or ALARMS_NONE
 
     async def _async_subscribe(
         self, hass: HomeAssistant, component  # pylint: disable=unused-argument
