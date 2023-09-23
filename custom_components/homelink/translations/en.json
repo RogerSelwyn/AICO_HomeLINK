@@ -5,15 +5,21 @@
     "config": {
         "abort": {
             "cannot_connect": "Failed to connect",
-            "oauth_error": "Authentication credentials invalid. If needed, go to HA application credentials, delete and retry.",
+            "oauth_error": "Client ID and Secret are invalid. If you have deleted your HomeLINK Web Api integration you will need to delete and reinstall this HA integration. If you have not yet installed the HA integration, go to [Application Credentials](/config/application_credentials), delete the HomeLINK credentials and then retry installation.",
             "single_instance_allowed": "Only one instance is allowed",
             "timeout_connect": "Timeout establishing connection"
         },
+        "create_entry": {
+            "default": "Successfully authenticated"
+        },
         "step": {
             "auth": {
-                "title": "Authenticate to HomeLINK"
-            }
-        }
+                "title": "Authenticate to AICO HomeLINK"
+            },
+            "reauth_confirm": {
+                "title": "Reauthenticate AICO HomeLINK Integration",
+                "description": "The HomeLINK integration needs to be re-setup for your account"
+              }       }
     },
     "options": {
         "step": {
