@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.0 (2023/09/23)
+### ✨ Enhancements
+- [Add support for reauth dialogues](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/12886e5e242d29fdfa22b38651eed272973c17b2) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Bump to v0.1.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7f8b31c33af44c1e37364a886a0f35d4728cb1a0) - @RogerSelwyn
+
 ## v0.0.5 (2023/09/22)
 ### ✨ Enhancements
 - [Update data immediately when alert received](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/391cfc22c697b1c3c158eeb5cb5c267addc241db) - @RogerSelwyn
