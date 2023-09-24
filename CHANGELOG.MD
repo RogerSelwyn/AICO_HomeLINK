@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.3 (2023/09/24)
+### 🐛 Fixes
+- [Fix error with Attribution](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/09536d62732e5a8e577114197bfd143ee517118a) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Bump to 0.1.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3cf7349d193dfd5565048880d654689310378dba) - @RogerSelwyn
+
 ## v0.1.2 (2023/09/24)
 ### ✨ Enhancements
 - [Added support for HA feature removing static attributes from recorder](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4dd9104fe784613e09aa56a6c512757f196516f2) - @RogerSelwyn
