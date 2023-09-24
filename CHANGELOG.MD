@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.2 (2023/09/24)
+### ✨ Enhancements
+- [Added support for HA feature removing static attributes from recorder](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4dd9104fe784613e09aa56a6c512757f196516f2) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Bump to v0.1.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/21256f68fd90bfbac69e545b88f85d057d6e05e7) - @RogerSelwyn
+
 ## v0.1.1 (2023/09/23)
 ### ✨ Enhancements
 - [Added alarmed devices to propert entity](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a35fb94197a082ce38bed83c24cc2037de54807d) - @RogerSelwyn
