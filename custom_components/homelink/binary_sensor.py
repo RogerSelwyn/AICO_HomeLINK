@@ -135,6 +135,9 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
 
     _attr_has_entity_name = True
     _attr_attribution = ATTRIBUTION
+    _unrecorded_attributes = frozenset(
+        (ATTR_REFERENCE, ATTR_ADDRESS, ATTR_LATITUDE, ATTR_LONGITUDE)
+    )
 
     def __init__(
         self,
@@ -254,6 +257,14 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     """Device entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True
+    _attr_attribution = ATTRIBUTION_unrecorded_attributes = frozenset(
+        (
+            ATTR_INSTALLATIONDATE,
+            ATTR_INSTALLEDBY,
+            ATTR_REPLACEDATE,
+            ATTR_CONNECTIVITYTYPE,
+        )
+    )
 
     def __init__(
         self,
