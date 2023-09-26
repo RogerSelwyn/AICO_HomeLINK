@@ -21,6 +21,7 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.setup import async_when_setup
@@ -64,6 +65,8 @@ from .const import (
     EVENTTYPE_CO_ALARM,
     EVENTTYPE_FIRE_ALARM,
     EVENTTYPE_FIRECO_ALARMS,
+    HOMELINK_ADD_DEVICE,
+    HOMELINK_ADD_PROPERTY,
     MODELTYPE_COALARM,
     MODELTYPE_FIREALARM,
     MODELTYPE_FIRECOALARM,
@@ -89,45 +92,47 @@ async def async_setup_entry(
 ) -> None:
     """HomeLINK Sensor Setup."""
     hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
-    hl_entities = []
-    for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
-        hl_entities.append(
-            HomeLINKProperty(hass, entry.options, hl_coordinator, hl_property)
+
+    @callback
+    def async_add_property(hl_property):
+        async_add_entities(
+            [HomeLINKProperty(hass, entry.options, hl_coordinator, hl_property)]
         )
         for device in hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES]:
-            if (
-                hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES][
-                    device
-                ].modeltype
-                == MODELTYPE_FIRECOALARM
-            ):
-                hl_entities.extend(
-                    (
-                        HomeLINKDevice(
-                            hass,
-                            entry.options,
-                            hl_coordinator,
-                            hl_property,
-                            device,
-                            MODELTYPE_FIREALARM,
-                        ),
-                        HomeLINKDevice(
-                            hass,
-                            entry.options,
-                            hl_coordinator,
-                            hl_property,
-                            device,
-                            MODELTYPE_COALARM,
-                        ),
-                    )
+            async_add_device(hl_property, device)
+
+    @callback
+    def async_add_device(hl_property, device):
+        if (
+            hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES][
+                device
+            ].modeltype
+            == MODELTYPE_FIRECOALARM
+        ):
+            async_add_entity(hl_property, device, MODELTYPE_FIREALARM)
+            async_add_entity(hl_property, device, MODELTYPE_COALARM)
+        else:
+            async_add_entity(hl_property, device)
+
+    @callback
+    def async_add_entity(hl_property, device, sub_type=None):
+        async_add_entities(
+            [
+                HomeLINKDevice(
+                    hass, entry.options, hl_coordinator, hl_property, device, sub_type
                 )
-            else:
-                hl_entities.append(
-                    HomeLINKDevice(
-                        hass, entry.options, hl_coordinator, hl_property, device
-                    )
-                )
-    async_add_entities(hl_entities)
+            ]
+        )
+
+    for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
+        async_add_property(hl_property)
+
+    entry.async_on_unload(
+        async_dispatcher_connect(hass, HOMELINK_ADD_PROPERTY, async_add_property)
+    )
+    entry.async_on_unload(
+        async_dispatcher_connect(hass, HOMELINK_ADD_DEVICE, async_add_device)
+    )
 
 
 class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorEntity):

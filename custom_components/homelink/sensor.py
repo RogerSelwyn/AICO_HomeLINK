@@ -10,7 +10,8 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 
@@ -22,6 +23,8 @@ from .const import (
     DOMAIN,
     ENTITY_NAME_LASTTESTDATE,
     ENTITY_NAME_REPLACEDATE,
+    HOMELINK_ADD_DEVICE,
+    HOMELINK_ADD_PROPERTY,
     MODELTYPE_GATEWAY,
 )
 from .coordinator import HomeLINKDataCoordinator
@@ -71,25 +74,41 @@ async def async_setup_entry(
 ) -> None:
     """HomeLINK Sensor Setup."""
     hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
-    hl_entities = []
-    for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
+
+    @callback
+    def async_add_sensor_property(hl_property):
         for device in hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES]:
-            if (
-                hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES][
-                    device
-                ].modeltype
-                != MODELTYPE_GATEWAY
-            ):
-                hl_entities.extend(
+            async_add_sensor_device(hl_property, device)
+
+    @callback
+    def async_add_sensor_device(hl_property, device):
+        if (
+            hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES][
+                device
+            ].modeltype
+            != MODELTYPE_GATEWAY
+        ):
+            async_add_entities(
+                [
                     HomeLINKSensor(hl_coordinator, hl_property, device, description)
                     for description in SENSOR_TYPES
-                )
-            else:
-                hl_entities.append(
-                    HomeLINKSensor(hl_coordinator, hl_property, device, SENSOR_TYPES[0])
-                )
+                ]
+            )
+        else:
+            async_add_entities(
+                [HomeLINKSensor(hl_coordinator, hl_property, device, SENSOR_TYPES[0])]
+            )
 
-    async_add_entities(hl_entities)
+    for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
+        async_add_sensor_property(hl_property)
+
+    entry.async_on_unload(
+        async_dispatcher_connect(hass, HOMELINK_ADD_PROPERTY, async_add_sensor_property)
+    )
+
+    entry.async_on_unload(
+        async_dispatcher_connect(hass, HOMELINK_ADD_DEVICE, async_add_sensor_device)
+    )
 
 
 class HomeLINKSensor(HomeLINKEntity, SensorEntity):

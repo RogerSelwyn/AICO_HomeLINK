@@ -37,7 +37,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         AsyncConfigEntryAuth(aiohttp_client.async_get_clientsession(hass), session)
     )
 
-    hl_coordinator = HomeLINKDataCoordinator(hass, hl_api)
+    hl_coordinator = HomeLINKDataCoordinator(hass, hl_api, entry)
     await hl_coordinator.async_config_entry_first_refresh()
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = hl_coordinator
 
