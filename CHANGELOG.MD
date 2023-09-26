@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.4 (2023/09/26)
+### ✨ Enhancements
+- [Add dynamic add/delete of properties and devices](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/82b380fe1aa99bf8562d65f0949be3746d7d5bba) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Bump to v0.1.4](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/18f6d2022a7f4d4c0d2caa2b672248ed3def9f80) - @RogerSelwyn
+
 ## v0.1.3 (2023/09/24)
 ### 🐛 Fixes
 - [Fix error with Attribution](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/09536d62732e5a8e577114197bfd143ee517118a) - @RogerSelwyn
