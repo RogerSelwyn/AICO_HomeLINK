@@ -12,7 +12,9 @@ There is currently support for the following device types within Home Assistant:
 - Binary Sensor
   - Property status
   - Device status
-- Sensor - Device last tested date
+- Sensor 
+  - Device last tested date
+  - Device replace by date
 
 # Installation
 
