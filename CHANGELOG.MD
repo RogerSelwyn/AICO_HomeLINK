@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.5 (2023/09/27)
+### ✨ Enhancements
+- [Add MQTT handling for alert/device/notification/property](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/fe3cc4414e8be60c7a6d13a2d520bca0eef9df82) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Bump to v0.1.5](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4f171945ef779bbef3d62647790a1b566f777ade) - @RogerSelwyn
+
 ## v0.1.4 (2023/09/26)
 ### ✨ Enhancements
 - [Add dynamic add/delete of properties and devices](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/82b380fe1aa99bf8562d65f0949be3746d7d5bba) - @RogerSelwyn
