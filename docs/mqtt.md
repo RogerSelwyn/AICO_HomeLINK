@@ -5,8 +5,64 @@ nav_order: 5
 
 # MQTT Processing
 
-The AICO HomeLINK integration raises Home Assistant events based on incoming [MQTT messages](https://help.live.homelync.io/hc/en-us/articles/7278758696465-MQTT-Topic-Structure). It will raise the event as `homelink_{message_type}` or `homelink_unknown` based on the message type received in the MQTT topic structure. Plus it outputs a debug entry.
+The AICO HomeLINK integration raises Home Assistant events based on incoming [MQTT messages](https://help.live.homelync.io/hc/en-us/articles/7278758696465-MQTT-Topic-Structure). It will raise the event as `homelink_{message_type}` or `homelink_unknown` based on the message type received in the MQTT topic structure. Plus it outputs a debug entry. The event will be similar to the below:
 
-In addition, if the message type is `alert` it will trigger an update to all entities to ensure they reflect current state.
+```
+event_type: homelink_alert
+data:
+  sub_type: device
+  device_info:
+    identifiers:
+      - - homelink
+        - device
+        - D6FCD4F0
+    name: JOE_BLOGGS_Home UTILITY FIRECOALARM
+    via_device:
+      - homelink
+      - property
+      - JOE_BLOGGS_Home
+    manufacturer: Ei
+    model: Ei3028 (FIRECOALARM)
+  payload:
+    category: DEVICE
+    eventId: 12323588-534c-4e82-bfe5-345fed4505be
+    resolvedDate: null
+    resolvingEventId: null
+    resolvingEventTypeDescription: null
+    resolvingEventTypeId: null
+    resolvingEventTypeName: null
+    statusId: ACTIVE
+    description: "D6FCD4F0 in location Hallway 1: Fire Alarm Activated"
+    deviceId: ""
+    devicePhySerialNumber: D6FCD4F0
+    deviceSerialNumber: D6FCD4F0
+    eventTypeId: CO_ALARM
+    eventTypeName: Fire alarm activated
+    landlordReference: ""
+    location: HALLWAY1
+    locationNickname: Back Door
+    manufacturerReference: EI
+    propertyDisplayReference: ""
+    propertyId: ""
+    propertyReference: ""
+    raisedDate: "2023-12-31T15:27:33Z"
+    room: Hallway 1
+    severity: HIGH
+    sourceId: EI
+    sourceModel: EI3016
+    sourceModelType: COALARM
+    title: Fire Alarm Activated
+    __IDENTITY: ""
+    action: ADD
+    actionTimestamp: "2023-12-31T15:27:33.000Z"
+origin: LOCAL
+time_fired: "2023-09-27T08:25:24.155962+00:00"
+context:
+  id: 01HBAVWADVWNKN23XXA4WDXFZR
+  parent_id: null
+  user_id: null
+```
 
-At this time no further processing is done on MQTT messages. This will be improved as I receive details of what the MQTT messages look like, which is not currently available to me.
+In addition, if the message type is `alert`, `device` or `property` it will trigger an update to all entities to ensure they reflect current state.
+
+Also, it will set an `alertstatus` on the alert listed against a device showing what state it is in. This will show for example `FIRE_ALARM` in the initial state and `CANCEL` when the alarm has been silenced.
