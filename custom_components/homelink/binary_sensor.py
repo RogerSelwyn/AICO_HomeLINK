@@ -27,7 +27,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.setup import async_when_setup
 from homeassistant.util import dt
 
-from .const import (
+from .const import (  # EVENTTYPE_CO_ALARM,; EVENTTYPE_FIRE_ALARM,; EVENTTYPE_FIRECO_ALARMS,
     ALARMS_NONE,
     ATTR_ADDRESS,
     ATTR_ALARMED_DEVICES,
@@ -46,6 +46,7 @@ from .const import (
     ATTR_LASTSEENDATE,
     ATTR_LASTTESTDATE,
     ATTR_PROPERTY,
+    ATTR_RAISEDDATE,
     ATTR_REFERENCE,
     ATTR_REPLACEDATE,
     ATTR_SERIALNUMBER,
@@ -63,9 +64,6 @@ from .const import (
     COORD_PROPERTY,
     DASHBOARD_URL,
     DOMAIN,
-    EVENTTYPE_CO_ALARM,
-    EVENTTYPE_FIRE_ALARM,
-    EVENTTYPE_FIRECO_ALARMS,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
     HOMELINK_MQTT_DEVICE,
@@ -111,21 +109,21 @@ async def async_setup_entry(
 
     @callback
     def async_add_device(hl_property, device):
-        if (
-            hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES][
-                device
-            ].modeltype
-            == MODELTYPE_FIRECOALARM
-        ):
-            async_add_entity(hl_property, device, MODELTYPE_FIREALARM)
-            async_add_entity(hl_property, device, MODELTYPE_COALARM)
-        else:
-            async_add_entity(hl_property, device)
+        # if (
+        #     hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES][
+        #         device
+        #     ].modeltype
+        #     == MODELTYPE_FIRECOALARM
+        # ):
+        #     async_add_entity(hl_property, device, MODELTYPE_FIREALARM)
+        #     async_add_entity(hl_property, device, MODELTYPE_COALARM)
+        # else:
+        async_add_entity(hl_property, device)
 
     @callback
-    def async_add_entity(hl_property, device, sub_type=None):
+    def async_add_entity(hl_property, device):
         async_add_entities(
-            [HomeLINKDevice(hass, entry, hl_coordinator, hl_property, device, sub_type)]
+            [HomeLINKDevice(hass, entry, hl_coordinator, hl_property, device)]
         )
 
     for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
@@ -251,6 +249,7 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
                 ATTR_ALERTSTATUS: self._alert_status.get(alert.alertid, UNKNOWN),
                 ATTR_EVENTTYPE: alert.eventtype,
                 ATTR_SEVERITY: alert.severity,
+                ATTR_RAISEDDATE: alert.raiseddate,
                 ATTR_CATEGORY: alert.category,
                 ATTR_TYPE: alert.hl_type,
                 ATTR_DESCRIPTION: alert.description,
@@ -339,16 +338,14 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
         coordinator: HomeLINKDataCoordinator,
         hl_property_key,
         device_key,
-        sub_type=None,
     ) -> None:
         """Device entity object for HomeLINKi sensor."""
         super().__init__(coordinator, hl_property_key, device_key)
         self._alert_status = {}
         self._alerts = None
-        self._sub_type = sub_type
         self._update_properties()
 
-        self._attr_unique_id = f"{self._parent_key}_{self._key} {sub_type}".rstrip()
+        self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
         self._config_options = entry.options
         self._startup = dt.utcnow()
         self._root_topic = _set_root_topic(self._config_options)
@@ -359,7 +356,7 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     def name(self) -> str:
         """Return the name of the sensor."""
 
-        return self._sub_type or None
+        return None
 
     @property
     def is_on(self) -> str:
@@ -369,8 +366,8 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     @property
     def device_class(self) -> BinarySensorDeviceClass:
         """Return the device_class."""
-        modeltype = self._sub_type or self._device.modeltype
-        if modeltype == MODELTYPE_FIREALARM:
+        modeltype = self._device.modeltype
+        if modeltype in [MODELTYPE_FIRECOALARM, MODELTYPE_FIREALARM]:
             return BinarySensorDeviceClass.SMOKE
         elif modeltype == MODELTYPE_COALARM:
             return BinarySensorDeviceClass.CO
@@ -427,6 +424,7 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
                 ATTR_ALERTSTATUS: self._alert_status.get(alert.alertid, UNKNOWN),
                 ATTR_EVENTTYPE: alert.eventtype,
                 ATTR_SEVERITY: alert.severity,
+                ATTR_RAISEDDATE: alert.raiseddate,
                 ATTR_CATEGORY: alert.category,
                 ATTR_TYPE: alert.hl_type,
                 ATTR_DESCRIPTION: alert.description,
@@ -435,32 +433,16 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
         ]
 
     def _get_alerts(self):
-        alerts = []
-        for alert in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-            COORD_ALERTS
-        ]:
+        return [
+            alert
+            for alert in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+                COORD_ALERTS
+            ]
             if (
                 hasattr(alert.rel, ATTR_DEVICE)
                 and self._device.rel.self == alert.rel.device
-            ):
-                if not self._sub_type:
-                    alerts.append(alert)
-                    continue
-
-                if (
-                    (
-                        self._sub_type == MODELTYPE_FIREALARM
-                        and alert.eventtype == EVENTTYPE_FIRE_ALARM
-                    )
-                    or (
-                        self._sub_type == MODELTYPE_COALARM
-                        and alert.eventtype == EVENTTYPE_CO_ALARM
-                    )
-                    or alert.eventtype not in EVENTTYPE_FIRECO_ALARMS
-                ):
-                    alerts.append(alert)
-
-        return alerts
+            )
+        ]
 
     def _register_mqtt_handler(self, hass, entry):
         if self._device.modeltype == MODELTYPE_GATEWAY:
@@ -477,11 +459,7 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     async def _async_mqtt_handle(self, msg, messagetype):
         payload = json.loads(msg.payload)
 
-        if not (
-            self._sub_type == MODELTYPE_COALARM
-            and self._device.modeltype == MODELTYPE_FIRECOALARM
-        ):
-            raise_device_event(self.hass, self.device_info, messagetype, payload)
+        raise_device_event(self.hass, self.device_info, messagetype, payload)
         if messagetype in [
             HomeLINKMessageType.MESSAGE_ALERT,
         ]:

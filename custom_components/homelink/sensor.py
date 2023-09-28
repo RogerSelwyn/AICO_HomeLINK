@@ -3,7 +3,6 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from dateutil import parser
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -32,14 +31,6 @@ from .coordinator import HomeLINKDataCoordinator
 from .entity import HomeLINKEntity
 
 
-def _parse_timestamp(passeddate):
-    return parser.parse(passeddate) if passeddate else None
-
-
-def _parse_date(passeddate):
-    return _parse_timestamp(passeddate).date() if passeddate else None
-
-
 @dataclass
 class HomeLINKEntityDescriptionMixin:
     """Mixin for required keys."""
@@ -59,13 +50,13 @@ SENSOR_TYPES: tuple[HomeLINKEntityDescription, ...] = (
         key=ATTR_REPLACEDATE,
         name=ENTITY_NAME_REPLACEDATE,
         device_class=SensorDeviceClass.DATE,
-        value_fn=lambda data: _parse_date(data.replacedate),
+        value_fn=lambda data: data.replacedate.date() or None,
     ),
     HomeLINKEntityDescription(
         key=ATTR_LASTTESTDATE,
         name=ENTITY_NAME_LASTTESTDATE,
         device_class=SensorDeviceClass.TIMESTAMP,
-        value_fn=lambda data: _parse_timestamp(data.status.lasttesteddate),
+        value_fn=lambda data: data.status.lasttesteddate,
     ),
 )
 
