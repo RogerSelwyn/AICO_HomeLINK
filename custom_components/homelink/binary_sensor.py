@@ -27,7 +27,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.setup import async_when_setup
 from homeassistant.util import dt
 
-from .const import (  # EVENTTYPE_CO_ALARM,; EVENTTYPE_FIRE_ALARM,; EVENTTYPE_FIRECO_ALARMS,
+from .const import (
     ALARMS_NONE,
     ATTR_ADDRESS,
     ATTR_ALARMED_DEVICES,
@@ -79,9 +79,6 @@ from .const import (  # EVENTTYPE_CO_ALARM,; EVENTTYPE_FIRE_ALARM,; EVENTTYPE_FI
     MQTT_EVENTTYPEID,
     STATUS_GOOD,
     STATUS_NOT_GOOD,
-    SUBSCRIBE_NOTIFICATION,
-    SUBSCRIBE_PROPERTY_1_LAYER,
-    SUBSCRIBE_PROPERTY_2_LAYER,
     UNKNOWN,
     HomeLINKMessageType,
 )
@@ -154,9 +151,8 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         self._alert_status = {}
         self._update_attributes()
         self._startup = dt.utcnow()
-        self._config_options = config_options
-        self._root_topic = _set_root_topic(config_options)
-        if self._config_options.get(CONF_MQTT_ENABLE):
+        self._root_topic = config_options.get(CONF_MQTT_TOPIC)
+        if config_options.get(CONF_MQTT_ENABLE):
             async_when_setup(hass, MQTT_DOMAIN, self._async_subscribe)
 
     @property
@@ -256,13 +252,10 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
     async def _async_subscribe(
         self, hass: HomeAssistant, component  # pylint: disable=unused-argument
     ):
-        await self._async_subscribe_topic(hass, SUBSCRIBE_PROPERTY_1_LAYER)
-        await self._async_subscribe_topic(hass, SUBSCRIBE_PROPERTY_2_LAYER)
-        await self._async_subscribe_topic(hass, SUBSCRIBE_NOTIFICATION)
+        await self._async_subscribe_topic(hass)
 
-    async def _async_subscribe_topic(self, hass, topic):
-        sub_topic = topic.format(root_topic=self._root_topic, key=self._key.lower())
-        await mqtt.async_subscribe(hass, sub_topic, self._async_message_received)
+    async def _async_subscribe_topic(self, hass):
+        await mqtt.async_subscribe(hass, self._root_topic, self._async_message_received)
 
     @callback
     async def _async_message_received(self, msg):
@@ -332,11 +325,9 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
         super().__init__(coordinator, hl_property_key, device_key)
 
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
-        self._config_options = entry.options
         self._startup = dt.utcnow()
-        self._root_topic = _set_root_topic(self._config_options)
-
-        if self._config_options.get(CONF_MQTT_ENABLE):
+        self._root_topic = entry.options.get(CONF_MQTT_TOPIC)
+        if entry.options.get(CONF_MQTT_ENABLE):
             self._register_mqtt_handler(hass, entry)
 
     @property
@@ -454,16 +445,6 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
             self._alert_status[eventid] = payload[MQTT_EVENTTYPEID]
         else:
             self._alert_status.pop(eventid)
-
-
-def _set_root_topic(config_options):
-    root_topic = None
-    if CONF_MQTT_TOPIC in config_options:
-        root_topic = config_options.get(CONF_MQTT_TOPIC)
-        if not root_topic.endswith("/"):
-            root_topic = f"{root_topic}/"
-
-    return root_topic
 
 
 def _extract_message_type(root_topic, topic):

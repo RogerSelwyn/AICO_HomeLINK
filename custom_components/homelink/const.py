@@ -72,10 +72,6 @@ MQTT_RAISEDDATE = "raisedDate"
 STATUS_GOOD = "GOOD"
 STATUS_NOT_GOOD = "NOT_GOOD"
 
-SUBSCRIBE_NOTIFICATION = "{root_topic}+/notification/#"
-SUBSCRIBE_PROPERTY_1_LAYER = "{root_topic}+/+/{key}/#"
-SUBSCRIBE_PROPERTY_2_LAYER = "{root_topic}+/+/+/{key}/#"
-
 UNKNOWN = "RESOLVED/UNKNOWN"
 
 
