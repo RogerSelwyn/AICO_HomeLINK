@@ -7,12 +7,11 @@ from homeassistant.const import (
     ATTR_NAME,
     ATTR_VIA_DEVICE,
 )
-from homeassistant.core import callback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import ATTR_PROPERTY, ATTRIBUTION, COORD_DEVICES, COORD_PROPERTIES, DOMAIN
 from .coordinator import HomeLINKDataCoordinator
-from .utils import build_device_identifiers
+from .helpers.utils import build_device_identifiers
 
 
 class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
@@ -27,8 +26,8 @@ class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         super().__init__(coordinator)
         self._parent_key = hl_property_key
         self._key = device_key
+        self._gateway_key = None
         self._device = None
-        self._update_properties()
 
     @property
     def device_info(self):
@@ -43,14 +42,3 @@ class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
             ATTR_MANUFACTURER: device.manufacturer,
             ATTR_MODEL: f"{device.model} ({device.modeltype})",
         }
-
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle data update."""
-        self._update_properties()
-        self.async_write_ha_state()
-
-    def _update_properties(self):
-        self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-            COORD_DEVICES
-        ][self._key]

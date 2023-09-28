@@ -38,6 +38,7 @@ CONF_MQTT_ENABLE = "mqtt_enable"
 CONF_MQTT_TOPIC = "mqtt_topic"
 COORD_ALERTS = "alerts"
 COORD_DEVICES = "devices"
+COORD_GATEWAY_KEY = "gateway_key"
 COORD_PROPERTIES = "properties"
 COORD_PROPERTY = "property"
 DASHBOARD_URL = "https://dashboard.live.homelync.io/#/pages/portfolio/one-view"
@@ -52,6 +53,7 @@ EVENTTYPE_FIRECO_ALARMS = [EVENTTYPE_CO_ALARM, EVENTTYPE_FIRE_ALARM]
 
 HOMELINK_ADD_DEVICE = f"{DOMAIN}_add_device"
 HOMELINK_ADD_PROPERTY = f"{DOMAIN}_add_property"
+HOMELINK_MQTT_DEVICE = "{domain}_mqtt_{key}"
 INTEGRATIONS_URL = "https://dashboard.live.homelync.io/#/pages/admin/integrations"
 
 KNOWN_DEVICES_ID = "id"
@@ -63,20 +65,20 @@ MODELTYPE_FIRECOALARM = "FIRECOALARM"
 MODELTYPE_GATEWAY = "GATEWAY"
 MODELTYPE_PROBLEMS = [MODELTYPE_EIACCESSORY, MODELTYPE_GATEWAY]
 
-MQTT_ACTION_TIMESTAMP = "actionTimestamp"
+MQTT_ACTIONTIMESTAMP = "actionTimestamp"
 MQTT_CLASSIFIER_ACTIVE = "active"
+MQTT_DEVICESERIALNUMBER = "deviceSerialNumber"
 MQTT_EVENTID = "eventId"
 MQTT_EVENTTYPEID = "eventTypeId"
 MQTT_RAISEDDATE = "raisedDate"
 
 STATUS_GOOD = "GOOD"
+STATUS_NOT_GOOD = "NOT_GOOD"
 
-SUBSCRIBE_DEVICE_EVENT_TOPIC = "+/event/"
-SUBSCRIBE_DEVICE_FULL_TOPIC = "{root_topic}{topic}{parent_key}/{key}/#"
-SUBSCRIBE_DEVICE_OTHER_TOPIC = "+/+/+/"
-SUBSCRIBE_PROPERTY_DEVICE_TOPIC = "+/device/"
-SUBSCRIBE_PROPERTY_FULL_TOPIC = "{root_topic}{topic}{key}/#"
-SUBSCRIBE_PROPERTY_PROPERTY_TOPIC = "+/property/"
+SUBSCRIBE_NOTIFICATION = "{root_topic}+/notification/#"
+SUBSCRIBE_PROPERTY_1_LAYER = "{root_topic}+/+/{key}/#"
+SUBSCRIBE_PROPERTY_2_LAYER = "{root_topic}+/+/+/{key}/#"
+
 UNKNOWN = "RESOLVED/UNKNOWN"
 
 
@@ -86,6 +88,7 @@ class HomeLINKMessageType(StrEnum):
     MESSAGE_ALERT = "alert"
     MESSAGE_DEVICE = "device"
     MESSAGE_EVENT = "event"
+    MESSAGE_INSIGHT = "insight"
     MESSAGE_NOTIFICATION = "notification"
     MESSAGE_PROPERTY = "property"
     MESSAGE_READING = "reading"

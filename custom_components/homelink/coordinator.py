@@ -18,12 +18,14 @@ from .const import COORD_DEVICES  # DOMAIN,
 from .const import (
     ATTR_PROPERTY,
     COORD_ALERTS,
+    COORD_GATEWAY_KEY,
     COORD_PROPERTIES,
     COORD_PROPERTY,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
     KNOWN_DEVICES_CHILDREN,
     KNOWN_DEVICES_ID,
+    MODELTYPE_GATEWAY,
 )
 
 # from .testdata.test_data import get_test_data
@@ -67,7 +69,16 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                         for device in devices
                         if device.rel.hl_property == hl_property.rel.self
                     ]
+                    gateway_key = next(
+                        (
+                            device.serialnumber
+                            for device in devices
+                            if device.modeltype == MODELTYPE_GATEWAY
+                        ),
+                        None,
+                    )
                     coord_properties[hl_property.reference] = {
+                        COORD_GATEWAY_KEY: gateway_key,
                         COORD_PROPERTY: hl_property,
                         COORD_DEVICES: {
                             device.serialnumber: device for device in coord_devices
