@@ -109,19 +109,6 @@ async def async_setup_entry(
 
     @callback
     def async_add_device(hl_property, device):
-        # if (
-        #     hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES][
-        #         device
-        #     ].modeltype
-        #     == MODELTYPE_FIRECOALARM
-        # ):
-        #     async_add_entity(hl_property, device, MODELTYPE_FIREALARM)
-        #     async_add_entity(hl_property, device, MODELTYPE_COALARM)
-        # else:
-        async_add_entity(hl_property, device)
-
-    @callback
-    def async_add_entity(hl_property, device):
         async_add_entities(
             [HomeLINKDevice(hass, entry, hl_coordinator, hl_property, device)]
         )
@@ -165,7 +152,7 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         self._status = None
         self._alerts = None
         self._alert_status = {}
-        self._update_properties()
+        self._update_attributes()
         self._startup = dt.utcnow()
         self._config_options = config_options
         self._root_topic = _set_root_topic(config_options)
@@ -218,10 +205,10 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle data update."""
-        self._update_properties()
+        self._update_attributes()
         self.async_write_ha_state()
 
-    def _update_properties(self):
+    def _update_attributes(self):
         self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
         self._gateway_key = self._property[COORD_GATEWAY_KEY]
         self._alerts = self._set_alerts()
@@ -339,18 +326,18 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
         hl_property_key,
         device_key,
     ) -> None:
-        """Device entity object for HomeLINKi sensor."""
-        super().__init__(coordinator, hl_property_key, device_key)
+        """Device entity object for HomeLINK sensor."""
         self._alert_status = {}
         self._alerts = None
-        self._update_properties()
+        super().__init__(coordinator, hl_property_key, device_key)
 
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
         self._config_options = entry.options
         self._startup = dt.utcnow()
         self._root_topic = _set_root_topic(self._config_options)
 
-        self._register_mqtt_handler(hass, entry)
+        if self._config_options.get(CONF_MQTT_ENABLE):
+            self._register_mqtt_handler(hass, entry)
 
     @property
     def name(self) -> str:
@@ -394,13 +381,7 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
 
         return attributes
 
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle data update."""
-        self._update_properties()
-        self.async_write_ha_state()
-
-    def _update_properties(self):
+    def _update_attributes(self):
         self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
             COORD_DEVICES
         ][self._key]

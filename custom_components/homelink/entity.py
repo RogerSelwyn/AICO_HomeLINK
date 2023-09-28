@@ -7,6 +7,7 @@ from homeassistant.const import (
     ATTR_NAME,
     ATTR_VIA_DEVICE,
 )
+from homeassistant.core import callback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import ATTR_PROPERTY, ATTRIBUTION, COORD_DEVICES, COORD_PROPERTIES, DOMAIN
@@ -28,6 +29,7 @@ class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         self._key = device_key
         self._gateway_key = None
         self._device = None
+        self._update_attributes()
 
     @property
     def device_info(self):
@@ -42,3 +44,12 @@ class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
             ATTR_MANUFACTURER: device.manufacturer,
             ATTR_MODEL: f"{device.model} ({device.modeltype})",
         }
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle data update."""
+        self._update_attributes()
+        self.async_write_ha_state()
+
+    def _update_attributes(self):
+        """Overloaded in sub entities."""

@@ -120,19 +120,12 @@ class HomeLINKSensor(HomeLINKEntity, SensorEntity):
         super().__init__(coordinator, hl_property_key, device_key)
         self._attr_unique_id = f"{self._parent_key}_{self._key} {description.key}"
         self.entity_description = description
-        self._update_properties()
 
     @property
     def native_value(self) -> Any:
         return self.entity_description.value_fn(self._device)
 
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle data update."""
-        self._update_properties()
-        self.async_write_ha_state()
-
-    def _update_properties(self):
+    def _update_attributes(self):
         self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
             COORD_DEVICES
         ][self._key]
