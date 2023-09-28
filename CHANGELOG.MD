@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.1.6 (2023/09/28)
+### ✨ Enhancements
+- [Substantially re-write and improve MQTT handling](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/900b573d4b286bf03c09eb515b8307f8a6ea5df7) - @RogerSelwyn
+- [Remove sub_typing of FIRECOALARM to remove complexity](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d194250999225b681c1088612e7bc88ddc42cb17) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Bump to v0.1.6](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2839737cb61d378ebc934af9696d805176914794) - @RogerSelwyn
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/150d14acfe7edfe04ddead1120313a2c24afb11f) - @actions-user
+
+### 📚 Documentation
+- [Add more mqtt detail](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c5ce4cbf7b50c4647007cc164f8a70a3e1012a0b) - @RogerSelwyn
+- [Update sensor list](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/29ce753f33a2cc59171f798752380a35605ef77c) - @RogerSelwyn
+
 ## v0.1.5 (2023/09/27)
 ### ✨ Enhancements
 - [Add MQTT handling for alert/device/notification/property](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/fe3cc4414e8be60c7a6d13a2d520bca0eef9df82) - @RogerSelwyn
