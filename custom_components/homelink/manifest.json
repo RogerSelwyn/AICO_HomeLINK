@@ -18,5 +18,5 @@
     "pyhomelink==0.1.2",
     "paho-mqtt==1.6.1"
   ],
-  "version": "v0.1.6"
+  "version": "v0.2.0"
 }
