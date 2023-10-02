@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.2.1 (2023/10/01)
+### 🐛 Fixes
+- [Fix events not being raised as correct type](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/83ae10e95c5d1231a804e524796ebb4144a10ec0) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Minor code changes](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/80078e19e8555d2e5c80c224184f2a90a481425a) - @RogerSelwyn
+- [Bump to v0.2.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6e64701bd4923f39038747672059b3a5c3d7728e) - @RogerSelwyn
+
+### 📚 Documentation
+- [Add supported AICO devices types](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/cc5a070604a9fab1ec50f2f1743c88c637ae9204) - @RogerSelwyn
+- [Docs correction](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/844c4433cd338749e840b69e879a0afbd78fa23c) - @RogerSelwyn
+
 ## v0.2.0 (2023/10/01)
 ### ✨ Enhancements
 - [Added support for using HomeLINK MQTT](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b899a969221313a1463fcd2b7cac7d9b86f47511) - @RogerSelwyn
