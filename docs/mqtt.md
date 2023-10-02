@@ -62,6 +62,14 @@ The AICO HomeLINK integration raises Home Assistant events based on incoming [MQ
 event_type: homelink_alert
 data:
   sub_type: device
+  topic_tree:
+    - homelink
+    - joe_bloggs
+    - alert
+    - active
+    - joe_bloggs_home
+    - c3cec7fb-d6fcd4f0
+    - co-alarm
   device_info:
     identifiers:
       - - homelink

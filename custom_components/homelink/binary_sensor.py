@@ -273,7 +273,7 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
             dispatcher_send(self.hass, event, msg, messagetype)
             return
 
-        raise_property_event(self.hass, messagetype, payload)
+        raise_property_event(self.hass, messagetype, msg.topic, payload)
         if messagetype in [
             HomeLINKMessageType.MESSAGE_DEVICE,
             HomeLINKMessageType.MESSAGE_PROPERTY,
@@ -348,9 +348,9 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
         modeltype = self._device.modeltype
         if modeltype in [MODELTYPE_FIRECOALARM, MODELTYPE_FIREALARM]:
             return BinarySensorDeviceClass.SMOKE
-        elif modeltype == MODELTYPE_COALARM:
+        if modeltype == MODELTYPE_COALARM:
             return BinarySensorDeviceClass.CO
-        elif modeltype in MODELTYPE_PROBLEMS:
+        if modeltype in MODELTYPE_PROBLEMS:
             return BinarySensorDeviceClass.PROBLEM
         return None
 
@@ -437,7 +437,7 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     async def _async_mqtt_handle(self, msg, messagetype):
         payload = json.loads(msg.payload)
 
-        raise_device_event(self.hass, self.device_info, messagetype, payload)
+        raise_device_event(self.hass, self.device_info, messagetype, msg.topic, payload)
         if messagetype in [
             HomeLINKMessageType.MESSAGE_ALERT,
         ]:
@@ -454,7 +454,7 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
 
 
 def _extract_message_type(root_topic, topic):
-    messagetype = topic.removeprefix(root_topic).split("/")[0]
+    messagetype = topic.removeprefix(f"{root_topic}/").split("/")[0]
     messagetypes = [item.value for item in HomeLINKMessageType]
     if messagetype in messagetypes:
         return messagetype
@@ -463,7 +463,7 @@ def _extract_message_type(root_topic, topic):
 
 
 def _extract_classifier(root_topic, topic):
-    return topic.removeprefix(root_topic).split("/")[1]
+    return topic.removeprefix(f"{root_topic}/").split("/")[1]
 
 
 def _get_message_date(payload):

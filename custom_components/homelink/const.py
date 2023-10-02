@@ -32,6 +32,7 @@ ATTR_SEVERITY = "severity"
 ATTR_SIGNALSTRENGTH = "signalstrength"
 ATTR_SUB_TYPE = "sub_type"
 ATTR_TAGS = "tags"
+ATTR_TOPIC = "topic_tree"
 ATTR_TYPE = "type"
 
 CONF_ERROR_CREDENTIALS = "invalid_credentials"
@@ -68,6 +69,7 @@ INTEGRATIONS_URL = "https://dashboard.live.homelync.io/#/pages/admin/integration
 
 KNOWN_DEVICES_ID = "id"
 KNOWN_DEVICES_CHILDREN = "children"
+
 MODELTYPE_COALARM = "COALARM"
 MODELTYPE_EIACCESSORY = "EIACCESSORY"
 MODELTYPE_FIREALARM = "FIREALARM"
