@@ -31,7 +31,7 @@
           "user": {
             "data": {
                 "mqtt_enable": "Enable MQTT updates",
-                "mqtt_homelink": "Use HomeLINK MQTT broker."
+                "mqtt_homelink": "Use HomeLINK MQTT broker"
             },
             "data_description": {
             }

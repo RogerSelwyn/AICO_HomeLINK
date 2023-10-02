@@ -186,7 +186,7 @@ class HAMQTT:
     async def _async_subscribe(
         self, hass: HomeAssistant, component  # pylint: disable=unused-argument
     ):
-        _LOGGER.debug("HA MQTT subscribed: %s", self._root_topic)
+        _LOGGER.debug("HA MQTT subscribed: %s", self._mqtt_root_topic)
         await mqtt.async_subscribe(
             self._hass, self._mqtt_root_topic, self._async_message_received, qos=2
         )
