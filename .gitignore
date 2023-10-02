@@ -163,3 +163,4 @@ cython_debug/
 # Added
 .DS_Store
 .vscode/ltex.dictionary.en-GB.txt
+.vscode/ltex.disabledRules.en-GB.txt

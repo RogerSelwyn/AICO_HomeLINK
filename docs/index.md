@@ -18,8 +18,6 @@ There is currently support for the following device types within Home Assistant:
 
 # Installation
 
-# Installation
-
 You can either use HACS or install the component manually:
 
 - **HACS** - Add this GitHub as a custom repository in HACS, then search for and install AICO HomelINK
@@ -36,6 +34,6 @@ You will need to create a set of credentials by going to the `Access Keys` tab o
 **Note:-** Only one instance of the integration can be installed to Home Assistant. However, all properties and devices you have access to will be exposed.
 
 ### MQTT
-If you wish to receive alerts via MQTT (the base integration will update every 30 seconds) to give you quicker notification of alerts, then please follow the instructions here [MQTT](#mqtt)
+If you wish to receive alerts via MQTT (the base integration will update every 30 seconds) to give you quicker notification of alerts, then please follow the instructions here - [MQTT Setup](mqtt.md#setup-and-configuration).
 
 
