@@ -17,10 +17,12 @@ You may feed the MQTT messages into the integration by two methods:
 All the information you need is in the MQTTX file that you should download. In the configuration:-
 * Turn on `Enable MQTT updates`
 * Turn on `Use HomeLINK MQTT broker`
-* Client ID - Use clientId
-* Username - Use username
-* Password - Use password
-* Topic - The file provides 5 topics. Please just use the first level (your landlord reference) with `/#` on the end. e.g. `joe_bloggs/reading/#` should be entered as `joe_bloggs/#`
+* Press `Next` and configure HomeLINK MQTT settings:-
+  * Client ID - Use clientId
+  * Username - Use username
+  * Password - Use password
+  * Topic - The file provides 5 topics. Please just use the first level (your landlord reference) with `/#` on the end. e.g. `joe_bloggs/reading/#` should be entered as `joe_bloggs/#`
+* Press `Submit`
 
 ### HA MQTT
 
@@ -47,7 +49,10 @@ remote_clientid joe_bloggs_obscure
 Once you have the data available to Home Assistant on your MQTT broker, you can configure the options for the HomeLINK integration to enable MQTT. In the configuration:-
 * Turn on `Enable MQTT updates`
 * Turn off `Use HomeLINK MQTT broker`
-* Topic - Enter the same topic as above. If you have rewritten the topic to an alternative root, then please make sure you include this in the root field. For instance if `joe_bloggs/#` has been written to `homelink/joe_bloggs/#`, then enter the same value into the text box.
+* Press `Next` and configure HA MQTT settings:-
+  * Topic - Enter the same topic as above. If you have rewritten the topic to an alternative root, then please make sure you include this in the root field. For instance if `joe_bloggs/#` has been written to `homelink/joe_bloggs/#`, then enter the same value into the text box
+* Press `Submit`
+
 
 ## Processing
 
