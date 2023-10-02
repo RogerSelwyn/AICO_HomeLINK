@@ -22,13 +22,39 @@
               }       }
     },
     "options": {
+        "error": {
+            "invalid_credentials": "Client ID, Username and Password combination is invalid",
+            "invalid_topic": "Topic invalid for given credentials",
+            "server_unavailable": "HomeLINK server unavailable"
+          },
         "step": {
-          "init": {
+          "user": {
             "data": {
                 "mqtt_enable": "Enable MQTT updates",
-                "mqtt_topic": "Leave empty for no broker rewrite "
+                "mqtt_homelink": "Use HomeLINK MQTT broker."
             },
             "data_description": {
+            }
+          },
+          "ha_mqtt": {
+            "data": {
+                "mqtt_topic": "The base subscription for your account"
+            },
+            "data_description": {
+                "mqtt_topic": "MQTT Root Topic"
+            }
+          },
+          "homelink_mqtt": {
+            "data": {
+                "mqtt_client_id": "HomeLINK Client ID",
+                "username": "HomeLINK Username",
+                "password": "HomeLINK Password",
+                "mqtt_topic": "The base subscription for youe account"
+            },
+            "data_description": {
+                "mqtt_client_id": "The client_id provide by HomeLINK",
+                "username": "The username provide by HomeLINK",
+                "password": "The password provide by HomeLINK",
                 "mqtt_topic": "MQTT Root Topic"
             }
           }

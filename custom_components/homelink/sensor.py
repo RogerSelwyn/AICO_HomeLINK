@@ -126,9 +126,14 @@ class HomeLINKSensor(HomeLINKEntity, SensorEntity):
         return self.entity_description.value_fn(self._device)
 
     def _update_attributes(self):
-        self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-            COORD_DEVICES
-        ][self._key]
-        self._gateway_key = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-            COORD_GATEWAY_KEY
-        ]
+        if (
+            self._parent_key in self.coordinator.data[COORD_PROPERTIES]
+            and self._key
+            in self.coordinator.data[COORD_PROPERTIES][self._parent_key][COORD_DEVICES]
+        ):
+            self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+                COORD_DEVICES
+            ][self._key]
+            self._gateway_key = self.coordinator.data[COORD_PROPERTIES][
+                self._parent_key
+            ][COORD_GATEWAY_KEY]

@@ -1,4 +1,6 @@
 """Initialise the HomeLINK integration."""
+import logging
+
 import aiohttp
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -9,9 +11,11 @@ from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
 from pyhomelink.api import HomeLINKApi
 
 from .api import AsyncConfigEntryAuth
-from .const import DOMAIN
+from .const import CONF_MQTT_ENABLE, CONF_MQTT_HOMELINK, COORD_PROPERTIES, DOMAIN
 from .coordinator import HomeLINKDataCoordinator
+from .helpers.mqtt import HAMQTT, HomeLINKMQTT
 
+_LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR]
 
 
@@ -41,6 +45,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await hl_coordinator.async_config_entry_first_refresh()
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = hl_coordinator
 
+    if entry.options.get(CONF_MQTT_ENABLE):
+        await _async_start_mqtt(hass, entry, hl_coordinator)
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
@@ -58,3 +65,27 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_reload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
     """Handle options update."""
     await hass.config_entries.async_reload(config_entry.entry_id)
+
+
+async def _async_start_mqtt(hass: HomeAssistant, entry: ConfigEntry, hl_coordinator):
+    if entry.options.get(CONF_MQTT_HOMELINK):
+        hl_mqtt = HomeLINKMQTT(
+            hass,
+            entry.options,
+            hl_coordinator.data[COORD_PROPERTIES],
+        )
+    else:
+        hl_mqtt = HAMQTT(
+            hass,
+            entry.options,
+            hl_coordinator.data[COORD_PROPERTIES],
+        )
+
+    try:
+        ret = await hl_mqtt.async_start()
+        if ret:
+            raise ConfigEntryNotReady(
+                "HomeLink MQTT credentials/topic are invalid. Please reconfigure"
+            )
+    except ConnectionRefusedError as err:
+        raise ConfigEntryNotReady("HomeLink MQTT server not available") from err

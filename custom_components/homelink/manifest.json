@@ -15,7 +15,8 @@
   "issue_tracker": "https://github.com/RogerSelwyn/HomeLINK/issues",
   "quality_scale": "silver",
   "requirements": [
-    "pyhomelink==0.1.2"
+    "pyhomelink==0.1.2",
+    "paho-mqtt==1.6.1"
   ],
   "version": "v0.1.6"
 }

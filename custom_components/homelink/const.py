@@ -34,9 +34,15 @@ ATTR_SUB_TYPE = "sub_type"
 ATTR_TAGS = "tags"
 ATTR_TYPE = "type"
 
+CONF_ERROR_CREDENTIALS = "invalid_credentials"
+CONF_ERROR_TOPIC = "invalid_topic"
+CONF_ERROR_UNAVAILABLE = "server_unavailable"
 
+CONF_MQTT_CLIENT_ID = "mqtt_client_id"
 CONF_MQTT_ENABLE = "mqtt_enable"
+CONF_MQTT_HOMELINK = "mqtt_homelink"
 CONF_MQTT_TOPIC = "mqtt_topic"
+
 COORD_ALERTS = "alerts"
 COORD_DEVICES = "devices"
 COORD_GATEWAY_KEY = "gateway_key"
@@ -50,7 +56,14 @@ ENTITY_NAME_REPLACEDATE = "Replace By Date"
 
 HOMELINK_ADD_DEVICE = f"{DOMAIN}_add_device"
 HOMELINK_ADD_PROPERTY = f"{DOMAIN}_add_property"
-HOMELINK_MQTT_DEVICE = "{domain}_mqtt_{key}"
+HOMELINK_MQTT_MESSAGE = "{domain}_mqtt_{key}"
+
+HOMELINK_MQTT_PROTOCOL = "tcp"
+HOMELINK_MQTT_KEEPALIVE = 60
+HOMELINK_MQTT_PORT = 8883
+HOMELINK_MQTT_SERVER = "conduit.live.homelync.io"
+
+
 INTEGRATIONS_URL = "https://dashboard.live.homelync.io/#/pages/admin/integrations"
 
 KNOWN_DEVICES_ID = "id"

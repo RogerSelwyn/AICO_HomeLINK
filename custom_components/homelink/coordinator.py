@@ -100,7 +100,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             ) from api_err
 
     async def _async_check_for_changes(self, coord_properties):
-        # for hl_property in coord_properties:
         if not self._known_properties:
             self._build_known_properties()
 
@@ -177,4 +176,3 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         for entity in entities:
             self._ent_reg.async_remove(entity.entity_id)
         self._dev_reg.async_remove_device(device)
-        # self._known_properties[]
