@@ -6,7 +6,8 @@ nav_order: 1
 # AICO HomeLINK integration for Home Assistant
 
 The `homelink` platform allows you to view the status of your AICO alarm system. This table provides a list of AICO devices and there support status:
-| **Model No** | ** Sensor Type** |**Model Type**    |**Supported** | **Notes**                   |
+
+| **Model No** | **Sensor Type** |**Model Type**    |**Supported** | **Notes**                   |
 |:-------------|:-----------------|:-----------------|:------------:|:----------------------------|
 | Ei1000G      | Gateway          | GATEWAY          | True         | Required                    |
 | Ei1020       | Condensation, Damp, Mould |         | False        | No support                  |
