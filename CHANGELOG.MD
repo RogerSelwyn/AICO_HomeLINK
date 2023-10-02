@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.2.0 (2023/10/01)
+### ✨ Enhancements
+- [Added support for using HomeLINK MQTT](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b899a969221313a1463fcd2b7cac7d9b86f47511) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Minor code tweaks](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/44aa3dda79a462b4c5cbce47f37add881881fd76) - @RogerSelwyn
+- [Use provided root topic in configuration settings](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/749e9a9a69656f5a0b4ef1a216f950eaf6b3686f) - @RogerSelwyn
+- [Bump to v0.2.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1caae03f6a4fb7bb803c0f54cafd8471dc0ba024) - @RogerSelwyn
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ac65dac630bbcf5f3c58c194b4a45d018d1dc9ad) - @actions-user
+
+### 📚 Documentation
+- [Update Read Me](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1749b7bd5e6e75086e842e01cd01e32998621e85) - @RogerSelwyn
+- [Update docs for new HomeLINK MQTT capability](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/54fce760dc762ba3f3f51868ec1c5315b34e8f2b) - @RogerSelwyn
+
 ## v0.1.6 (2023/09/28)
 ### ✨ Enhancements
 - [Substantially re-write and improve MQTT handling](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/900b573d4b286bf03c09eb515b8307f8a6ea5df7) - @RogerSelwyn
