@@ -5,9 +5,21 @@ nav_order: 1
 
 # AICO HomeLINK integration for Home Assistant
 
-The `homelink` platform allows you to view the status of your AICO alarm system.
+The `homelink` platform allows you to view the status of your AICO alarm system. This table provides a list of AICO devices and there support status:
+| **Model No** | ** Sensor Type** |**Model Type**    |**Supported** | **Notes**                   |
+|:-------------|:-----------------|:-----------------|:------------:|:----------------------------|
+| Ei1000G      | Gateway          | GATEWAY          | True         | Required                    |
+| Ei1020       | Condensation, Damp, Mould |         | False        | No support                  |
+| Ei1025       | Condensation, Damp, Mould, Air |    | False        | No support                  |
+| Ei3014       | Heat             | FIREALARM        | True         |                             |
+| Ei3016       | Smoke            | FIREALARM        | True         |                             |
+| Ei3018       | CO               |                  | False        | It may work, but untested   |
+| Ei3024       | Heat, Smoke      |                  | False        | It may work, but untested   |
+| Ei3028       | CO, Heat         | FIRECOALARM      | True         |                             |
+| Ei3030       | CO, Heat, Smoke  |                  | False        | It may work, but untested   |
+| Ei450        | Alarm Controller | EIACCESSORY      | True         |                             |
 
-There is currently support for the following device types within Home Assistant:
+These are the presented as the following entity types within Home Assistant:
 
 - Binary Sensor
   - Property status
