@@ -5,7 +5,9 @@
 
 # AICO HomeLINK integration for Home Assistant
 
-The `homelink` platform allows you to view the status of your AICO alarm system. This table provides a list of AICO devices and there support status:
+The `homelink` platform allows you to view the status of your AICO alarm system. Note that you need an AICO HomeLINK dashboard account with Landlord access to be able to create the credentials needed to use this integration.
+
+This table provides a list of AICO devices and there support status:
 
 | **Model No** | **Sensor Type** |**Model Type**    |**Supported** | **Notes**                   |
 |:-------------|:-----------------|:-----------------|:------------:|:----------------------------|
