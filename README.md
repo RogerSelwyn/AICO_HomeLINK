@@ -7,7 +7,7 @@
 
 The `homelink` platform allows you to view the status of your AICO alarm system. Note that you need an AICO HomeLINK dashboard account with Landlord access to be able to create the credentials needed to use this integration.
 
-This table provides a list of AICO devices and there support status:
+This table provides a list of AICO 1000 and 3000 series devices and their support status. It is possible that 600 series devices will also work, but these have not been tested at all:
 
 | **Model No** | **Sensor Type** |**Model Type**    |**Supported** | **Notes**                   |
 |:-------------|:-----------------|:-----------------|:------------:|:----------------------------|
@@ -21,6 +21,8 @@ This table provides a list of AICO devices and there support status:
 | Ei3028       | CO, Heat         | FIRECOALARM      | True         |                             |
 | Ei3030       | CO, Heat, Smoke  |                  | False        | It may work, but untested   |
 | Ei450        | Alarm Controller | EIACCESSORY      | True         |                             |
+
+
 
 These are the presented as the following entity types within Home Assistant:
 
