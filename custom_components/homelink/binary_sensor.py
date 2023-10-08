@@ -151,8 +151,8 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         self._alert_status = {}
         self._update_attributes()
         self._startup = dt.utcnow()
-        self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
         if entry.options.get(CONF_MQTT_ENABLE):
+            self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
             self._register_mqtt_handler(hass, entry)
 
     @property
@@ -263,17 +263,18 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         if msgdate < self._startup:
             return
 
-        messagetype = _extract_message_type(self._root_topic, msg.topic)
+        topic = msg.topic.removeprefix(f"{self._root_topic}/")
+        messagetype = _extract_message_type(topic)
 
         if self._gateway_key.lower() in msg.topic:
             serialnumber = payload[MQTT_DEVICESERIALNUMBER]
             event = HOMELINK_MQTT_MESSAGE.format(
                 domain=DOMAIN, key=serialnumber
             ).lower()
-            dispatcher_send(self.hass, event, msg, messagetype)
+            dispatcher_send(self.hass, event, msg, topic, messagetype)
             return
 
-        raise_property_event(self.hass, messagetype, msg.topic, payload)
+        raise_property_event(self.hass, messagetype, topic, payload)
         if messagetype in [
             HomeLINKMessageType.MESSAGE_DEVICE,
             HomeLINKMessageType.MESSAGE_PROPERTY,
@@ -284,13 +285,13 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         if messagetype in [
             HomeLINKMessageType.MESSAGE_ALERT,
         ]:
-            self._process_alert(msg, payload)
+            self._process_alert(topic, payload)
             await self.coordinator.async_refresh()
 
         return
 
-    def _process_alert(self, msg, payload):
-        classifier = _extract_classifier(self._root_topic, msg.topic)
+    def _process_alert(self, topic, payload):
+        classifier = _extract_classifier(topic)
         eventid = payload[MQTT_EVENTID]
         if classifier == MQTT_CLASSIFIER_ACTIVE:
             self._alert_status[eventid] = payload[MQTT_EVENTTYPEID]
@@ -327,8 +328,8 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
 
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
         self._startup = dt.utcnow()
-        self._root_topic = entry.options.get(CONF_MQTT_TOPIC)
         if entry.options.get(CONF_MQTT_ENABLE):
+            self._root_topic = entry.options.get(CONF_MQTT_TOPIC)
             self._register_mqtt_handler(hass, entry)
 
     @property
@@ -434,18 +435,18 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
         )
 
     @callback
-    async def _async_mqtt_handle(self, msg, messagetype):
+    async def _async_mqtt_handle(self, msg, topic, messagetype):
         payload = json.loads(msg.payload)
 
-        raise_device_event(self.hass, self.device_info, messagetype, msg.topic, payload)
+        raise_device_event(self.hass, self.device_info, messagetype, topic, payload)
         if messagetype in [
             HomeLINKMessageType.MESSAGE_ALERT,
         ]:
-            self._process_alert(msg, payload)
+            self._process_alert(topic, payload)
             await self.coordinator.async_refresh()
 
-    def _process_alert(self, msg, payload):
-        classifier = _extract_classifier(self._root_topic, msg.topic)
+    def _process_alert(self, topic, payload):
+        classifier = _extract_classifier(topic)
         eventid = payload[MQTT_EVENTID]
         if classifier == MQTT_CLASSIFIER_ACTIVE:
             self._alert_status[eventid] = payload[MQTT_EVENTTYPEID]
@@ -453,8 +454,8 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
             self._alert_status.pop(eventid)
 
 
-def _extract_message_type(root_topic, topic):
-    messagetype = topic.removeprefix(f"{root_topic}/").split("/")[0]
+def _extract_message_type(topic):
+    messagetype = topic.split("/")[0]
     messagetypes = [item.value for item in HomeLINKMessageType]
     if messagetype in messagetypes:
         return messagetype
@@ -462,8 +463,8 @@ def _extract_message_type(root_topic, topic):
     return HomeLINKMessageType.MESSAGE_UNKNOWN
 
 
-def _extract_classifier(root_topic, topic):
-    return topic.removeprefix(f"{root_topic}/").split("/")[1]
+def _extract_classifier(topic):
+    return topic.split("/")[1]
 
 
 def _get_message_date(payload):
