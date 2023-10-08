@@ -63,8 +63,6 @@ event_type: homelink_alert
 data:
   sub_type: device
   topic_tree:
-    - homelink
-    - joe_bloggs
     - alert
     - active
     - joe_bloggs_home
