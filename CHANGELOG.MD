@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.2.2 (2023/10/08)
+### ✨ Enhancements
+- [Add unsubscribe from MQTT on unload](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/953dfaad3fac3c0448fbabbf222bbbea6914b609) - @RogerSelwyn
+
+### 🐛 Fixes
+- [Fix invalid default topic entry](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6bf073e854e04525b72f5761d1a7bea184353f17) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Tidy up code around root_topic](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3f97bf6811b9cd756f4599bd5d83706d3209a10c) - @RogerSelwyn
+- [Remove unrequired attribute](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4d06f5e60fc3d1c9c1668d44f596308a602b58d8) - @RogerSelwyn
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e5f9f0b699973c460eb5697b84c2472116af0a8b) - @actions-user
+
+### ⬆️ Depenencies
+- [Bump pyhomelink to 0.1.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/9bfa4f03e264270d69d18a2ff4d4e491c002f924) - @RogerSelwyn
+
+### 📚 Documentation
+- [Update README.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/949c4bf3b543fe6e6260f2b3a0b708b7a358527d) - @RogerSelwyn
+- [Update README.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f3443b42fdf2a6520cbe38a881bcb0b187006c96) - @RogerSelwyn
+- [Update index.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1675ead664fdd1e320b4488a06e9295d0cd6ae1d) - @RogerSelwyn
+- [Update README.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6c56c39ae78605e9cf7d0b8a78944c557186a5e9) - @RogerSelwyn
+- [Update index.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/460de3d5d2ef716a117f46d0aa3b70406fd1b827) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v0.2.2](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/5d96479da5a8c651ca875e341746fc4fe1392436) - @RogerSelwyn
+
 ## v0.2.1 (2023/10/01)
 ### 🐛 Fixes
 - [Fix events not being raised as correct type](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/83ae10e95c5d1231a804e524796ebb4144a10ec0) - @RogerSelwyn
