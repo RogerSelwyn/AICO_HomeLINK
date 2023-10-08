@@ -329,7 +329,6 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
         self._startup = dt.utcnow()
         if entry.options.get(CONF_MQTT_ENABLE):
-            self._root_topic = entry.options.get(CONF_MQTT_TOPIC)
             self._register_mqtt_handler(hass, entry)
 
     @property
