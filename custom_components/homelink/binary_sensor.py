@@ -102,9 +102,7 @@ async def async_setup_entry(
 
     @callback
     def async_add_device(hl_property, device):
-        async_add_entities(
-            [HomeLINKDevice(hass, entry, hl_coordinator, hl_property, device)]
-        )
+        async_add_entities([HomeLINKDevice(entry, hl_coordinator, hl_property, device)])
 
     for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
         async_add_property(hl_property)
@@ -139,7 +137,7 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
     ) -> None:
         """Property entity object for HomeLINK sensor."""
         super().__init__(coordinator)
-
+        self._entry = entry
         self._key = hl_property
         self._gateway_key = None
         self._attr_unique_id = f"{self._key}"
@@ -151,9 +149,9 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         self._alert_status = {}
         self._update_attributes()
         self._startup = dt.utcnow()
+        self._unregister_mqtt_handler = None
         if entry.options.get(CONF_MQTT_ENABLE):
             self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
-            self._register_mqtt_handler(hass, entry)
 
     @property
     def name(self) -> str:
@@ -197,6 +195,20 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
             ATTR_MODEL: ATTR_PROPERTY.capitalize(),
             ATTR_CONFIGURATION_URL: DASHBOARD_URL,
         }
+
+    async def async_added_to_hass(self) -> None:
+        """Register MQTT handler."""
+        if self._entry.options.get(CONF_MQTT_ENABLE):
+            event = HOMELINK_MQTT_MESSAGE.format(domain=DOMAIN, key=self._key).lower()
+
+            self._unregister_mqtt_handler = async_dispatcher_connect(
+                self.hass, event, self._async_message_received
+            )
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Unregister MQTT handler."""
+        if self._unregister_mqtt_handler:
+            self._unregister_mqtt_handler()
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -249,12 +261,6 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
             ]
             if not hasattr(alert.rel, ATTR_DEVICE)
         ]
-
-    def _register_mqtt_handler(self, hass, entry):
-        event = HOMELINK_MQTT_MESSAGE.format(domain=DOMAIN, key=self._key).lower()
-        entry.async_on_unload(
-            async_dispatcher_connect(hass, event, self._async_message_received)
-        )
 
     @callback
     async def _async_message_received(self, msg):
@@ -315,7 +321,6 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
 
     def __init__(
         self,
-        hass: HomeAssistant,
         entry,
         coordinator: HomeLINKDataCoordinator,
         hl_property_key,
@@ -325,11 +330,11 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
         self._alert_status = {}
         self._alerts = None
         super().__init__(coordinator, hl_property_key, device_key)
+        self._entry = entry
 
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
         self._startup = dt.utcnow()
-        if entry.options.get(CONF_MQTT_ENABLE):
-            self._register_mqtt_handler(hass, entry)
+        self._unregister_mqtt_handler = None
 
     @property
     def name(self) -> str:
@@ -372,6 +377,24 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
             attributes[ATTR_ALERTS] = self._alerts
 
         return attributes
+
+    async def async_added_to_hass(self) -> None:
+        """Register MQTT handler."""
+        if self._entry.options.get(CONF_MQTT_ENABLE):
+            if self._device.modeltype == MODELTYPE_GATEWAY:
+                key = self._key
+            else:
+                key = f"{self._gateway_key}-{self._key}"
+
+            event = HOMELINK_MQTT_MESSAGE.format(domain=DOMAIN, key=key).lower()
+            self._unregister_mqtt_handler = async_dispatcher_connect(
+                self.hass, event, self._async_mqtt_handle
+            )
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Unregister MQTT handler."""
+        if self._unregister_mqtt_handler:
+            self._unregister_mqtt_handler()
 
     def _update_attributes(self):
         if (
@@ -421,17 +444,6 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
                 and self._device.rel.self == alert.rel.device
             )
         ]
-
-    def _register_mqtt_handler(self, hass, entry):
-        if self._device.modeltype == MODELTYPE_GATEWAY:
-            key = self._key
-        else:
-            key = f"{self._gateway_key}-{self._key}"
-
-        event = HOMELINK_MQTT_MESSAGE.format(domain=DOMAIN, key=key).lower()
-        entry.async_on_unload(
-            async_dispatcher_connect(hass, event, self._async_mqtt_handle)
-        )
 
     @callback
     async def _async_mqtt_handle(self, msg, topic, messagetype):
