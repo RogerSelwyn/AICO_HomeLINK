@@ -130,7 +130,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize HomeLINK options flow."""
         options = config_entry.options
         self._mqtt_enable = options.get(CONF_MQTT_ENABLE, False)
-        self._mqtt_topic = options.get(CONF_MQTT_TOPIC, "landlord_name/#")
+        self._mqtt_topic = options.get(CONF_MQTT_TOPIC, "landlord_name")
         self._mqtt_homelink = options.get(CONF_MQTT_HOMELINK, True)
         self._mqtt_client_id = options.get(CONF_MQTT_CLIENT_ID, "")
         self._mqtt_username = options.get(CONF_USERNAME, "")
