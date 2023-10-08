@@ -50,6 +50,7 @@ COORD_GATEWAY_KEY = "gateway_key"
 COORD_PROPERTIES = "properties"
 COORD_PROPERTY = "property"
 DASHBOARD_URL = "https://dashboard.live.homelync.io/#/pages/portfolio/one-view"
+DATA_MQTT = "mqtt"
 DOMAIN = "homelink"
 
 ENTITY_NAME_LASTTESTDATE = "Last Tested Date"

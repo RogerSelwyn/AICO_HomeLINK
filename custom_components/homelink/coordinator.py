@@ -21,6 +21,8 @@ from .const import (
     COORD_GATEWAY_KEY,
     COORD_PROPERTIES,
     COORD_PROPERTY,
+    DATA_MQTT,
+    DOMAIN,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
     KNOWN_DEVICES_CHILDREN,
@@ -91,7 +93,16 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                     # ##### Must be removed
 
                 await self._async_check_for_changes(coord_properties)
-                return {COORD_PROPERTIES: coord_properties}
+                hl_mqtt = None
+                if (
+                    DOMAIN in self.hass.data
+                    and self._entry.entry_id in self.hass.data[DOMAIN]
+                    and DATA_MQTT in self.hass.data[DOMAIN][self._entry.entry_id].data
+                ):
+                    hl_mqtt = self.hass.data[DOMAIN][self._entry.entry_id].data[
+                        DATA_MQTT
+                    ]
+                return {COORD_PROPERTIES: coord_properties, DATA_MQTT: hl_mqtt}
         except AuthException as auth_err:
             raise ConfigEntryAuthFailed from auth_err
         except ApiException as api_err:

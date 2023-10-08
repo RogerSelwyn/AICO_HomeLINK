@@ -69,6 +69,13 @@ class HomeLINKMQTT:
                 return CONF_ERROR_UNAVAILABLE
             return CONF_ERROR_TOPIC if self._connected else CONF_ERROR_CREDENTIALS
 
+    async def async_stop(self):
+        """Stop up the MQTT client."""
+        _LOGGER.debug("HomeLINK MQTT unsubscribed: %s", self._mqtt_root_topic)
+        self._client.unsubscribe(self._mqtt_root_topic)
+        self._client.disconnect()
+        self._client.loop_stop()
+
     async def async_try_connect(self) -> None:
         """Try the connection."""
 
@@ -177,17 +184,23 @@ class HAMQTT:
         self._root_topic = options.get(CONF_MQTT_TOPIC)
         self._mqtt_root_topic = f"{self._root_topic}/#"
         self._properties = properties
+        self._unsubscribe_task = None
 
     async def async_start(self):
         """Start up the MQTT client."""
         async_when_setup(self._hass, MQTT_DOMAIN, self._async_subscribe)
+
+    async def async_stop(self):
+        """Stop up the MQTT client."""
+        _LOGGER.debug("HA MQTT unsubscribed: %s", self._mqtt_root_topic)
+        self._unsubscribe_task()
 
     @callback
     async def _async_subscribe(
         self, hass: HomeAssistant, component  # pylint: disable=unused-argument
     ):
         _LOGGER.debug("HA MQTT subscribed: %s", self._mqtt_root_topic)
-        await mqtt.async_subscribe(
+        self._unsubscribe_task = await mqtt.async_subscribe(
             self._hass, self._mqtt_root_topic, self._async_message_received, qos=2
         )
 

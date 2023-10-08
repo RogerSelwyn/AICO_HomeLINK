@@ -11,7 +11,13 @@ from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
 from pyhomelink.api import HomeLINKApi
 
 from .api import AsyncConfigEntryAuth
-from .const import CONF_MQTT_ENABLE, CONF_MQTT_HOMELINK, COORD_PROPERTIES, DOMAIN
+from .const import (
+    CONF_MQTT_ENABLE,
+    CONF_MQTT_HOMELINK,
+    COORD_PROPERTIES,
+    DATA_MQTT,
+    DOMAIN,
+)
 from .coordinator import HomeLINKDataCoordinator
 from .helpers.mqtt import HAMQTT, HomeLINKMQTT
 
@@ -46,7 +52,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = hl_coordinator
 
     if entry.options.get(CONF_MQTT_ENABLE):
-        await _async_start_mqtt(hass, entry, hl_coordinator)
+        hl_mqtt = await _async_start_mqtt(hass, entry, hl_coordinator)
+        hass.data[DOMAIN][entry.entry_id].data[DATA_MQTT] = hl_mqtt
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -57,8 +64,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
+
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        hass.data[DOMAIN].pop(entry.entry_id)
+        if hass.data[DOMAIN][entry.entry_id].data[DATA_MQTT]:
+            hl_mqtt = hass.data[DOMAIN][entry.entry_id].data[DATA_MQTT]
+            await hl_mqtt.async_stop()
+            hass.data[DOMAIN].pop(entry.entry_id)
     return unload_ok
 
 
@@ -87,5 +98,7 @@ async def _async_start_mqtt(hass: HomeAssistant, entry: ConfigEntry, hl_coordina
             raise ConfigEntryNotReady(
                 "HomeLink MQTT credentials/topic are invalid. Please reconfigure"
             )
+        return hl_mqtt
+
     except ConnectionRefusedError as err:
         raise ConfigEntryNotReady("HomeLink MQTT server not available") from err
