@@ -1,15 +1,18 @@
 """Support for HomeLINK events."""
 
 
+from homeassistant.components.event import DOMAIN as EVENT_DOMAIN
 from homeassistant.components.event import (
     EventEntity,
 )  # EventDeviceClass,; EventEntityDescription,
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import entity_registry
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
+    CONF_EVENT_ENABLE,
     CONF_MQTT_ENABLE,
     COORD_DEVICES,
     COORD_LOOKUP_EVENTTYPE,
@@ -28,38 +31,50 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """HomeLINK Sensor Setup."""
-    if entry.options.get(CONF_MQTT_ENABLE):
-        hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
+    if entry.options.get(CONF_MQTT_ENABLE) and entry.options.get(CONF_EVENT_ENABLE):
+        await _async_create_entities(hass, entry, async_add_entities)
+    else:
+        await _async_delete_entities(hass, entry)
 
-        @callback
-        def async_add_property(hl_property):
-            async_add_entities(
-                [HomeLINKPropertyEvent(entry, hl_coordinator, hl_property)]
-            )
-            for device in hl_coordinator.data[COORD_PROPERTIES][hl_property][
-                COORD_DEVICES
-            ]:
-                async_add_device(hl_property, device)
 
-        @callback
-        def async_add_device(hl_property, device):
-            async_add_entities(
-                [HomeLINKDeviceEvent(entry, hl_coordinator, hl_property, device)]
-            )
+async def _async_create_entities(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+):
+    hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-        for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
-            async_add_property(hl_property)
+    @callback
+    def async_add_property(hl_property):
+        async_add_entities([HomeLINKPropertyEvent(entry, hl_coordinator, hl_property)])
+        for device in hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES]:
+            async_add_device(hl_property, device)
 
-        entry.async_on_unload(
-            async_dispatcher_connect(hass, HOMELINK_ADD_PROPERTY, async_add_property)
+    @callback
+    def async_add_device(hl_property, device):
+        async_add_entities(
+            [HomeLINKDeviceEvent(entry, hl_coordinator, hl_property, device)]
         )
-        entry.async_on_unload(
-            async_dispatcher_connect(
-                hass,
-                HOMELINK_ADD_DEVICE,
-                async_add_device,
-            )
+
+    for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
+        async_add_property(hl_property)
+
+    entry.async_on_unload(
+        async_dispatcher_connect(hass, HOMELINK_ADD_PROPERTY, async_add_property)
+    )
+    entry.async_on_unload(
+        async_dispatcher_connect(
+            hass,
+            HOMELINK_ADD_DEVICE,
+            async_add_device,
         )
+    )
+
+
+async def _async_delete_entities(hass, entry):
+    ent_reg = entity_registry.async_get(hass)
+    entities = entity_registry.async_entries_for_config_entry(ent_reg, entry.entry_id)
+    for entity in entities:
+        if entity.domain == EVENT_DOMAIN:
+            ent_reg.async_remove(entity.entity_id)
 
 
 class HomeLINKPropertyEvent(HomeLINKPropertyEntity, EventEntity):

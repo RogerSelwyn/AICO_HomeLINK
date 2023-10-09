@@ -38,6 +38,7 @@ ATTR_TYPE = "type"
 CONF_ERROR_CREDENTIALS = "invalid_credentials"
 CONF_ERROR_TOPIC = "invalid_topic"
 CONF_ERROR_UNAVAILABLE = "server_unavailable"
+CONF_EVENT_ENABLE = "event_enable"
 
 CONF_MQTT_CLIENT_ID = "mqtt_client_id"
 CONF_MQTT_ENABLE = "mqtt_enable"

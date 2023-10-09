@@ -38,8 +38,9 @@
           },
           "ha_mqtt": {
             "data": {
-                "mqtt_topic": "The base subscription for your account"
-            },
+                "mqtt_topic": "The base subscription for your account",
+                "event_enable": "Enable MQTT event entities"
+              },
             "data_description": {
                 "mqtt_topic": "MQTT Root Topic"
             }
@@ -49,7 +50,8 @@
                 "mqtt_client_id": "HomeLINK Client ID",
                 "username": "HomeLINK Username",
                 "password": "HomeLINK Password",
-                "mqtt_topic": "The base subscription for youe account"
+                "mqtt_topic": "The base subscription for your account",
+                "event_enable": "Enable MQTT event entities"
             },
             "data_description": {
                 "mqtt_client_id": "The client_id provide by HomeLINK",

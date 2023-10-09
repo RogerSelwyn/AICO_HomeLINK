@@ -18,6 +18,7 @@ from homeassistant.helpers.selector import BooleanSelector, TextSelector
 
 from .const import (
     CONF_ERROR_TOPIC,
+    CONF_EVENT_ENABLE,
     CONF_MQTT_CLIENT_ID,
     CONF_MQTT_ENABLE,
     CONF_MQTT_HOMELINK,
@@ -130,6 +131,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize HomeLINK options flow."""
         options = config_entry.options
         self._mqtt_enable = options.get(CONF_MQTT_ENABLE, False)
+        self._event_enable = options.get(CONF_EVENT_ENABLE, False)
         self._mqtt_topic = options.get(CONF_MQTT_TOPIC, "landlord_name")
         self._mqtt_homelink = options.get(CONF_MQTT_HOMELINK, True)
         self._mqtt_client_id = options.get(CONF_MQTT_CLIENT_ID, "")
@@ -177,6 +179,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         """Handle a flow initialized by the user."""
         if user_input is not None:
             self._mqtt_topic = _remove_suffixes(user_input.get(CONF_MQTT_TOPIC))
+            self._event_enable = user_input.get(CONF_EVENT_ENABLE)
             user_input[CONF_MQTT_TOPIC] = self._mqtt_topic
 
             base_input = self._fake_base_input()
@@ -193,6 +196,10 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                             "suggested_value": _add_suffixes(self._mqtt_topic)
                         },
                     ): TEXT_SELECTOR,
+                    vol.Optional(
+                        CONF_EVENT_ENABLE,
+                        default=self._event_enable,
+                    ): BOOLEAN_SELECTOR,
                 }
             ),
             last_step=False,
@@ -202,6 +209,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         """Handle a flow initialized by the user."""
         errors = {}
         if user_input is not None:
+            self._event_enable = user_input.get(CONF_EVENT_ENABLE)
             self._mqtt_client_id = user_input.get(CONF_MQTT_CLIENT_ID)
             self._mqtt_username = user_input.get(CONF_USERNAME)
             self._mqtt_password = user_input.get(CONF_PASSWORD)
@@ -236,6 +244,10 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                             "suggested_value": _add_suffixes(self._mqtt_topic)
                         },
                     ): TEXT_SELECTOR,
+                    vol.Optional(
+                        CONF_EVENT_ENABLE,
+                        default=self._event_enable,
+                    ): BOOLEAN_SELECTOR,
                 }
             ),
             errors=errors,
