@@ -29,6 +29,9 @@ These are the presented as the following entity types within Home Assistant:
 - Binary Sensor
   - Property status
   - Device status
+- Event 
+  - Property last MQTT event
+  - Device last MQTT event
 - Sensor 
   - Device last tested date
   - Device replace by date
