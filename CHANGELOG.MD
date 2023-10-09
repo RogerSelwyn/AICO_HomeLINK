@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.1 (2023/10/09)
+### 🐛 Fixes
+- [Fix registration for mqtt events by event entity](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/81f8d73de7d97511dbe30deb2449a8b94247e868) - @RogerSelwyn
+
+### 📚 Documentation
+- [Update docs with event entity](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/dbed32efa0cbb82d83c1200907dc878dc58e6619) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.0.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/26142f8e5e147d4df2cecf110a5e066147f08939) - @RogerSelwyn
+
 ## v1.0.0 (2023/10/09)
 ### ✨ Enhancements
 - [Add event entities for MQTT events](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/dddc2dfc00b32c26ba65e1eaef3fef1c3a18a465) - @RogerSelwyn
