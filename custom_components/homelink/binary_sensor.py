@@ -136,7 +136,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         self._alerts = None
         self._alert_status = {}
         self._update_attributes()
-        self._startup = dt.utcnow()
+        self._lastdate = dt.utcnow()
         self._unregister_mqtt_handler = None
         if entry.options.get(CONF_MQTT_ENABLE):
             self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
@@ -254,8 +254,9 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
 
     async def _async_property_message(self, topic, payload, messagetype):
         msgdate = _get_message_date(payload)
-        if msgdate < self._startup:
+        if msgdate < self._lastdate:
             return
+        self._lastdate = msgdate
 
         if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
             event = HOMELINK_MESSAGE_EVENT.format(domain=DOMAIN, key=self._key).lower()
@@ -320,7 +321,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         self._entry = entry
 
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
-        self._startup = dt.utcnow()
+        self._lastdate = dt.utcnow()
         self._unregister_mqtt_handler = None
 
     @property
@@ -436,8 +437,9 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
     async def _async_mqtt_handle(self, msg, topic, messagetype):
         payload = json.loads(msg.payload)
         msgdate = _get_message_date(payload)
-        if msgdate < self._startup:
+        if msgdate < self._lastdate:
             return
+        self._lastdate = msgdate
 
         if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
             serialnumber = payload[MQTT_DEVICESERIALNUMBER]
