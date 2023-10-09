@@ -1,6 +1,7 @@
 """HomeLINK entity."""
 
 from homeassistant.const import (
+    ATTR_CONFIGURATION_URL,
     ATTR_IDENTIFIERS,
     ATTR_MANUFACTURER,
     ATTR_MODEL,
@@ -10,13 +11,43 @@ from homeassistant.const import (
 from homeassistant.core import callback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import ATTR_PROPERTY, ATTRIBUTION, COORD_DEVICES, COORD_PROPERTIES, DOMAIN
+from .const import (
+    ATTR_HOMELINK,
+    ATTR_PROPERTY,
+    ATTRIBUTION,
+    COORD_DEVICES,
+    COORD_PROPERTIES,
+    DASHBOARD_URL,
+    DOMAIN,
+)
 from .coordinator import HomeLINKDataCoordinator
 from .helpers.utils import build_device_identifiers
 
 
-class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
-    """HomeLINK Entity."""
+class HomeLINKPropertyEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
+    """HomeLINK Property Entity."""
+
+    _attr_attribution = ATTRIBUTION
+
+    def __init__(self, coordinator: HomeLINKDataCoordinator, hl_property_key) -> None:
+        """Property entity object for HomeLINK sensor."""
+        super().__init__(coordinator)
+        self._key = hl_property_key
+
+    @property
+    def device_info(self):
+        """Entity device information."""
+        return {
+            ATTR_IDENTIFIERS: {(DOMAIN, ATTR_PROPERTY, self._key)},
+            ATTR_NAME: self._key,
+            ATTR_MANUFACTURER: ATTR_HOMELINK,
+            ATTR_MODEL: ATTR_PROPERTY.capitalize(),
+            ATTR_CONFIGURATION_URL: DASHBOARD_URL,
+        }
+
+
+class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
+    """HomeLINK Device Entity."""
 
     _attr_attribution = ATTRIBUTION
 
@@ -37,6 +68,7 @@ class HomeLINKEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
             COORD_DEVICES
         ][self._key]
+
         return {
             ATTR_IDENTIFIERS: build_device_identifiers(self._key),
             ATTR_NAME: f"{self._parent_key} {self._device.location} {self._device.modeltype}",

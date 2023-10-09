@@ -1,5 +1,4 @@
 """Initialise the HomeLINK integration."""
-import logging
 
 import aiohttp
 from homeassistant.config_entries import ConfigEntry
@@ -14,15 +13,14 @@ from .api import AsyncConfigEntryAuth
 from .const import (
     CONF_MQTT_ENABLE,
     CONF_MQTT_HOMELINK,
+    COORD_DATA_MQTT,
     COORD_PROPERTIES,
-    DATA_MQTT,
     DOMAIN,
 )
 from .coordinator import HomeLINKDataCoordinator
 from .helpers.mqtt import HAMQTT, HomeLINKMQTT
 
-_LOGGER = logging.getLogger(__name__)
-PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR]
+PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.EVENT]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -53,7 +51,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     if entry.options.get(CONF_MQTT_ENABLE):
         hl_mqtt = await _async_start_mqtt(hass, entry, hl_coordinator)
-        hass.data[DOMAIN][entry.entry_id].data[DATA_MQTT] = hl_mqtt
+        hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT] = hl_mqtt
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -66,8 +64,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
 
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        if hass.data[DOMAIN][entry.entry_id].data[DATA_MQTT]:
-            hl_mqtt = hass.data[DOMAIN][entry.entry_id].data[DATA_MQTT]
+        if hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT]:
+            hl_mqtt = hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT]
             await hl_mqtt.async_stop()
             hass.data[DOMAIN].pop(entry.entry_id)
     return unload_ok

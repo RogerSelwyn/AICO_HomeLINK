@@ -45,12 +45,13 @@ CONF_MQTT_HOMELINK = "mqtt_homelink"
 CONF_MQTT_TOPIC = "mqtt_topic"
 
 COORD_ALERTS = "alerts"
+COORD_DATA_MQTT = "mqtt"
 COORD_DEVICES = "devices"
 COORD_GATEWAY_KEY = "gateway_key"
+COORD_LOOKUP_EVENTTYPE = "eventtypes"
 COORD_PROPERTIES = "properties"
 COORD_PROPERTY = "property"
 DASHBOARD_URL = "https://dashboard.live.homelync.io/#/pages/portfolio/one-view"
-DATA_MQTT = "mqtt"
 DOMAIN = "homelink"
 
 ENTITY_NAME_LASTTESTDATE = "Last Tested Date"
@@ -58,7 +59,9 @@ ENTITY_NAME_REPLACEDATE = "Replace By Date"
 
 HOMELINK_ADD_DEVICE = f"{DOMAIN}_add_device"
 HOMELINK_ADD_PROPERTY = f"{DOMAIN}_add_property"
-HOMELINK_MQTT_MESSAGE = "{domain}_mqtt_{key}"
+HOMELINK_LOOKUP_EVENTTYPE = "eventType"
+HOMELINK_MESSAGE_EVENT = "{domain}_event_{key}"
+HOMELINK_MESSAGE_MQTT = "{domain}_mqtt_{key}"
 
 HOMELINK_MQTT_PROTOCOL = "tcp"
 HOMELINK_MQTT_KEEPALIVE = 60
@@ -83,7 +86,6 @@ MQTT_CLASSIFIER_ACTIVE = "active"
 MQTT_DEVICESERIALNUMBER = "deviceSerialNumber"
 MQTT_EVENTID = "eventId"
 MQTT_EVENTTYPEID = "eventTypeId"
-MQTT_RAISEDDATE = "raisedDate"
 
 STATUS_GOOD = "GOOD"
 STATUS_NOT_GOOD = "NOT_GOOD"

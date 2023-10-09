@@ -28,7 +28,7 @@ from .const import (
     MODELTYPE_GATEWAY,
 )
 from .coordinator import HomeLINKDataCoordinator
-from .entity import HomeLINKEntity
+from .entity import HomeLINKDeviceEntity
 
 
 @dataclass
@@ -103,7 +103,7 @@ async def async_setup_entry(
     )
 
 
-class HomeLINKSensor(HomeLINKEntity, SensorEntity):
+class HomeLINKSensor(HomeLINKDeviceEntity, SensorEntity):
     """Sensor entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True

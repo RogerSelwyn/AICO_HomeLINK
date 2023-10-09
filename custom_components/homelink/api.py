@@ -6,8 +6,6 @@ from homeassistant.helpers import config_entry_oauth2_flow
 
 from pyhomelink import AbstractAuth
 
-DEVICE_AUTH_CREDS = "creds"
-
 
 class AsyncConfigEntryAuth(AbstractAuth):
     """Provide HomeLINK authentication tied to an OAuth2 based config entry."""
@@ -19,7 +17,7 @@ class AsyncConfigEntryAuth(AbstractAuth):
     ) -> None:
         """Initialize HomeLINK auth."""
         super().__init__(websession)
-        self._websession = websession
+        # self._websession = websession
         self._oauth_session = oauth_session
 
     async def async_get_access_token(self) -> str:

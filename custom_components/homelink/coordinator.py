@@ -18,13 +18,15 @@ from .const import COORD_DEVICES  # DOMAIN,
 from .const import (
     ATTR_PROPERTY,
     COORD_ALERTS,
+    COORD_DATA_MQTT,
     COORD_GATEWAY_KEY,
+    COORD_LOOKUP_EVENTTYPE,
     COORD_PROPERTIES,
     COORD_PROPERTY,
-    DATA_MQTT,
     DOMAIN,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
+    HOMELINK_LOOKUP_EVENTTYPE,
     KNOWN_DEVICES_CHILDREN,
     KNOWN_DEVICES_ID,
     MODELTYPE_GATEWAY,
@@ -50,65 +52,87 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             always_update=False,
         )
         self._hl_api = hl_api
-        self._count = 1
+        # self._count = 1
         self._entry = entry
         self._known_properties = {}
         self._ent_reg = entity_registry.async_get(hass)
         self._dev_reg = device_registry.async_get(hass)
         self._first_refresh = True
+        self._eventtypes = []
 
     async def _async_update_data(self):
         """Fetch data from API endpoint."""
 
         try:
             async with asyncio.timeout(10):
-                properties = await self._hl_api.async_get_properties()
-                devices = await self._hl_api.async_get_devices()
-                coord_properties = {}
-                for hl_property in properties:
-                    coord_devices = [
-                        device
-                        for device in devices
-                        if device.rel.hl_property == hl_property.rel.self
-                    ]
-                    gateway_key = next(
-                        (
-                            device.serialnumber
-                            for device in devices
-                            if device.modeltype == MODELTYPE_GATEWAY
-                        ),
-                        None,
-                    )
-                    coord_properties[hl_property.reference] = {
-                        COORD_GATEWAY_KEY: gateway_key,
-                        COORD_PROPERTY: hl_property,
-                        COORD_DEVICES: {
-                            device.serialnumber: device for device in coord_devices
-                        },
-                        COORD_ALERTS: await hl_property.async_get_alerts(),
-                    }
-                    # ##### Must be removed
-                    # coord_properties = get_test_data(self.hass, self._count)
-                    # self._count += 1
-                    # ##### Must be removed
+                if not self._eventtypes:
+                    await self._async_get_eventtypes_lookup()
+
+                coord_properties = await self._async_get_core_data()
+                # ##### Must be removed
+                # coord_properties = get_test_data(self.hass, self._count)
+                # self._count += 1
+                # ##### Must be removed
 
                 await self._async_check_for_changes(coord_properties)
-                hl_mqtt = None
-                if (
-                    DOMAIN in self.hass.data
-                    and self._entry.entry_id in self.hass.data[DOMAIN]
-                    and DATA_MQTT in self.hass.data[DOMAIN][self._entry.entry_id].data
-                ):
-                    hl_mqtt = self.hass.data[DOMAIN][self._entry.entry_id].data[
-                        DATA_MQTT
-                    ]
-                return {COORD_PROPERTIES: coord_properties, DATA_MQTT: hl_mqtt}
+                hl_mqtt = self._get_previous_mqtt()
+
+                return {
+                    COORD_PROPERTIES: coord_properties,
+                    COORD_DATA_MQTT: hl_mqtt,
+                    COORD_LOOKUP_EVENTTYPE: self._eventtypes,
+                }
         except AuthException as auth_err:
             raise ConfigEntryAuthFailed from auth_err
         except ApiException as api_err:
             raise UpdateFailed(
                 f"Error communicating with HL API: {api_err}"
             ) from api_err
+
+    async def _async_get_core_data(self):
+        properties = await self._hl_api.async_get_properties()
+        devices = await self._hl_api.async_get_devices()
+        coord_properties = {}
+        for hl_property in properties:
+            coord_devices = [
+                device
+                for device in devices
+                if device.rel.hl_property == hl_property.rel.self
+            ]
+            gateway_key = next(
+                (
+                    device.serialnumber
+                    for device in devices
+                    if device.modeltype == MODELTYPE_GATEWAY
+                ),
+                None,
+            )
+            coord_properties[hl_property.reference] = {
+                COORD_GATEWAY_KEY: gateway_key,
+                COORD_PROPERTY: hl_property,
+                COORD_DEVICES: {
+                    device.serialnumber: device for device in coord_devices
+                },
+                COORD_ALERTS: await hl_property.async_get_alerts(),
+            }
+
+        return coord_properties
+
+    async def _async_get_eventtypes_lookup(self):
+        eventtypes = await self._hl_api.async_get_lookups(HOMELINK_LOOKUP_EVENTTYPE)
+        for eventtype in eventtypes:
+            self._eventtypes.append(eventtype.lookupid)
+
+    def _get_previous_mqtt(self):
+        return (
+            self.hass.data[DOMAIN][self._entry.entry_id].data[COORD_DATA_MQTT]
+            if (
+                DOMAIN in self.hass.data
+                and self._entry.entry_id in self.hass.data[DOMAIN]
+                and COORD_DATA_MQTT in self.hass.data[DOMAIN][self._entry.entry_id].data
+            )
+            else None
+        )
 
     async def _async_check_for_changes(self, coord_properties):
         if not self._known_properties:

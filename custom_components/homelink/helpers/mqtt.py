@@ -17,8 +17,8 @@ from ..const import (
     CONF_MQTT_CLIENT_ID,
     CONF_MQTT_TOPIC,
     DOMAIN,
+    HOMELINK_MESSAGE_MQTT,
     HOMELINK_MQTT_KEEPALIVE,
-    HOMELINK_MQTT_MESSAGE,
     HOMELINK_MQTT_PORT,
     HOMELINK_MQTT_PROTOCOL,
     HOMELINK_MQTT_SERVER,
@@ -211,7 +211,7 @@ class HAMQTT:
 
 def _forward_message(hass, msg, root_topic, properties):
     if key := _extract_property(msg.topic, root_topic, properties):
-        event = HOMELINK_MQTT_MESSAGE.format(domain=DOMAIN, key=key).lower()
+        event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
         dispatcher_send(hass, event, msg)
 
 

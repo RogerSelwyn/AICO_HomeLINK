@@ -9,20 +9,11 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import (
-    ATTR_CONFIGURATION_URL,
-    ATTR_IDENTIFIERS,
-    ATTR_LATITUDE,
-    ATTR_LONGITUDE,
-    ATTR_MANUFACTURER,
-    ATTR_MODEL,
-    ATTR_NAME,
-)
+from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry
 from homeassistant.helpers.dispatcher import async_dispatcher_connect, dispatcher_send
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt
 
 from .const import (
@@ -38,12 +29,10 @@ from .const import (
     ATTR_DESCRIPTION,
     ATTR_DEVICE,
     ATTR_EVENTTYPE,
-    ATTR_HOMELINK,
     ATTR_INSTALLATIONDATE,
     ATTR_INSTALLEDBY,
     ATTR_LASTSEENDATE,
     ATTR_LASTTESTDATE,
-    ATTR_PROPERTY,
     ATTR_RAISEDDATE,
     ATTR_REFERENCE,
     ATTR_REPLACEDATE,
@@ -60,11 +49,11 @@ from .const import (
     COORD_GATEWAY_KEY,
     COORD_PROPERTIES,
     COORD_PROPERTY,
-    DASHBOARD_URL,
     DOMAIN,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
-    HOMELINK_MQTT_MESSAGE,
+    HOMELINK_MESSAGE_EVENT,
+    HOMELINK_MESSAGE_MQTT,
     MODELTYPE_COALARM,
     MODELTYPE_FIREALARM,
     MODELTYPE_FIRECOALARM,
@@ -81,7 +70,7 @@ from .const import (
     HomeLINKMessageType,
 )
 from .coordinator import HomeLINKDataCoordinator
-from .entity import HomeLINKEntity
+from .entity import HomeLINKDeviceEntity, HomeLINKPropertyEntity
 from .helpers.events import raise_device_event, raise_property_event
 from .helpers.utils import build_device_identifiers
 
@@ -119,7 +108,7 @@ async def async_setup_entry(
     )
 
 
-class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorEntity):
+class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
     """Property entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True
@@ -133,12 +122,11 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         hass: HomeAssistant,
         entry,
         coordinator: HomeLINKDataCoordinator,
-        hl_property,
+        hl_property_key,
     ) -> None:
         """Property entity object for HomeLINK sensor."""
-        super().__init__(coordinator)
+        super().__init__(coordinator, hl_property_key)
         self._entry = entry
-        self._key = hl_property
         self._gateway_key = None
         self._attr_unique_id = f"{self._key}"
         self._dev_reg = device_registry.async_get(hass)
@@ -185,21 +173,10 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
 
         return attributes
 
-    @property
-    def device_info(self):
-        """Entity device information."""
-        return {
-            ATTR_IDENTIFIERS: {(DOMAIN, ATTR_PROPERTY, self._key)},
-            ATTR_NAME: self._key,
-            ATTR_MANUFACTURER: ATTR_HOMELINK,
-            ATTR_MODEL: ATTR_PROPERTY.capitalize(),
-            ATTR_CONFIGURATION_URL: DASHBOARD_URL,
-        }
-
     async def async_added_to_hass(self) -> None:
         """Register MQTT handler."""
         if self._entry.options.get(CONF_MQTT_ENABLE):
-            event = HOMELINK_MQTT_MESSAGE.format(domain=DOMAIN, key=self._key).lower()
+            event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=self._key).lower()
 
             self._unregister_mqtt_handler = async_dispatcher_connect(
                 self.hass, event, self._async_message_received
@@ -264,21 +241,25 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
 
     @callback
     async def _async_message_received(self, msg):
+        topic = msg.topic.removeprefix(f"{self._root_topic}/")
+        messagetype = _extract_message_type(topic)
+        devicemessage = self._gateway_key.lower() in msg.topic
         payload = json.loads(msg.payload)
+
+        if devicemessage:
+            self._device_message(msg, topic, payload, messagetype)
+            return
+
+        await self._async_property_message(topic, payload, messagetype)
+
+    async def _async_property_message(self, topic, payload, messagetype):
         msgdate = _get_message_date(payload)
         if msgdate < self._startup:
             return
 
-        topic = msg.topic.removeprefix(f"{self._root_topic}/")
-        messagetype = _extract_message_type(topic)
-
-        if self._gateway_key.lower() in msg.topic:
-            serialnumber = payload[MQTT_DEVICESERIALNUMBER]
-            event = HOMELINK_MQTT_MESSAGE.format(
-                domain=DOMAIN, key=serialnumber
-            ).lower()
-            dispatcher_send(self.hass, event, msg, topic, messagetype)
-            return
+        if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
+            event = HOMELINK_MESSAGE_EVENT.format(domain=DOMAIN, key=self._key).lower()
+            dispatcher_send(self.hass, event, payload)
 
         raise_property_event(self.hass, messagetype, topic, payload)
         if messagetype in [
@@ -296,6 +277,12 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
 
         return
 
+    def _device_message(self, msg, topic, payload, messagetype):
+        serialnumber = payload[MQTT_DEVICESERIALNUMBER]
+        event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=serialnumber).lower()
+        dispatcher_send(self.hass, event, msg, topic, messagetype)
+        return
+
     def _process_alert(self, topic, payload):
         classifier = _extract_classifier(topic)
         eventid = payload[MQTT_EVENTID]
@@ -305,7 +292,7 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
             self._alert_status.pop(eventid)
 
 
-class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
+class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
     """Device entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True
@@ -386,7 +373,7 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
             else:
                 key = f"{self._gateway_key}-{self._key}"
 
-            event = HOMELINK_MQTT_MESSAGE.format(domain=DOMAIN, key=key).lower()
+            event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
             self._unregister_mqtt_handler = async_dispatcher_connect(
                 self.hass, event, self._async_mqtt_handle
             )
@@ -448,6 +435,16 @@ class HomeLINKDevice(HomeLINKEntity, BinarySensorEntity):
     @callback
     async def _async_mqtt_handle(self, msg, topic, messagetype):
         payload = json.loads(msg.payload)
+        msgdate = _get_message_date(payload)
+        if msgdate < self._startup:
+            return
+
+        if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
+            serialnumber = payload[MQTT_DEVICESERIALNUMBER]
+            event = HOMELINK_MESSAGE_EVENT.format(
+                domain=DOMAIN, key=serialnumber
+            ).lower()
+            dispatcher_send(self.hass, event, payload)
 
         raise_device_event(self.hass, self.device_info, messagetype, topic, payload)
         if messagetype in [
