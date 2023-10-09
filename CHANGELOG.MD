@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.0.0 (2023/10/09)
+### ✨ Enhancements
+- [Add event entities for MQTT events](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/dddc2dfc00b32c26ba65e1eaef3fef1c3a18a465) - @RogerSelwyn
+- [Add config control for creating event entities](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c591730760d4dd60b547ed64f2e3fb25019709b6) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Handle (de)registration of mqtt handlers in a more HA manner](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c21b5653121b270412c4457fe547e28384c11845) - @RogerSelwyn
+- [Remove redundant attribute](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6d483cd583c207360f4146744590394013a6a0ab) - @RogerSelwyn
+
+### 📚 Documentation
+- [Correct event example](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a2896d5bfd12daae386597a08d768a0e5b7c1411) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.0.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d5fa99d318a4b4f623136fee50ffa10a4a22eef7) - @RogerSelwyn
+
 ## v0.2.2 (2023/10/08)
 ### ✨ Enhancements
 - [Add unsubscribe from MQTT on unload](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/953dfaad3fac3c0448fbabbf222bbbea6914b609) - @RogerSelwyn
