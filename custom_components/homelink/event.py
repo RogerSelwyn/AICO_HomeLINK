@@ -15,6 +15,7 @@ from .const import (
     CONF_EVENT_ENABLE,
     CONF_MQTT_ENABLE,
     COORD_DEVICES,
+    COORD_GATEWAY_KEY,
     COORD_LOOKUP_EVENTTYPE,
     COORD_PROPERTIES,
     DOMAIN,
@@ -81,7 +82,7 @@ class HomeLINKPropertyEvent(HomeLINKPropertyEntity, EventEntity):
     """Event entity for HomeLINK Property."""
 
     _attr_has_entity_name = True
-    _attr_name = "event"
+    _attr_name = "Event"
     _attr_should_poll = False
 
     def __init__(
@@ -125,7 +126,7 @@ class HomeLINKDeviceEvent(HomeLINKDeviceEntity, EventEntity):
     """Event entity for HomeLINK Device."""
 
     _attr_has_entity_name = True
-    _attr_name = "event"
+    _attr_name = "Event"
     _attr_should_poll = False
 
     def __init__(
@@ -139,6 +140,9 @@ class HomeLINKDeviceEvent(HomeLINKDeviceEntity, EventEntity):
         self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
             COORD_DEVICES
         ][self._key]
+        self._gateway_key = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+            COORD_GATEWAY_KEY
+        ]
 
     @property
     def unique_id(self) -> str:
