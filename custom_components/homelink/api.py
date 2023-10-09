@@ -17,7 +17,6 @@ class AsyncConfigEntryAuth(AbstractAuth):
     ) -> None:
         """Initialize HomeLINK auth."""
         super().__init__(websession)
-        # self._websession = websession
         self._oauth_session = oauth_session
 
     async def async_get_access_token(self) -> str:
