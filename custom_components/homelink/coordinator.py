@@ -14,11 +14,11 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from pyhomelink import HomeLINKApi
 from pyhomelink.exceptions import ApiException, AuthException
 
-from .const import COORD_DEVICES  # DOMAIN,
 from .const import (
     ATTR_PROPERTY,
     COORD_ALERTS,
     COORD_DATA_MQTT,
+    COORD_DEVICES,
     COORD_GATEWAY_KEY,
     COORD_LOOKUP_EVENTTYPE,
     COORD_PROPERTIES,
@@ -31,8 +31,6 @@ from .const import (
     KNOWN_DEVICES_ID,
     MODELTYPE_GATEWAY,
 )
-
-# from .testdata.test_data import get_test_data
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,7 +50,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             always_update=False,
         )
         self._hl_api = hl_api
-        # self._count = 1
         self._entry = entry
         self._known_properties = {}
         self._ent_reg = entity_registry.async_get(hass)
@@ -69,10 +66,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                     await self._async_get_eventtypes_lookup()
 
                 coord_properties = await self._async_get_core_data()
-                # ##### Must be removed
-                # coord_properties = get_test_data(self.hass, self._count)
-                # self._count += 1
-                # ##### Must be removed
 
                 await self._async_check_for_changes(coord_properties)
                 hl_mqtt = self._get_previous_mqtt()

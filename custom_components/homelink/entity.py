@@ -33,6 +33,9 @@ class HomeLINKPropertyEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         """Property entity object for HomeLINK sensor."""
         super().__init__(coordinator)
         self._key = hl_property_key
+        self._gateway_key = None
+        self._property = None
+        self._update_attributes()
 
     @property
     def device_info(self):
@@ -44,6 +47,15 @@ class HomeLINKPropertyEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
             ATTR_MODEL: ATTR_PROPERTY.capitalize(),
             ATTR_CONFIGURATION_URL: DASHBOARD_URL,
         }
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle data update."""
+        self._update_attributes()
+        self.async_write_ha_state()
+
+    def _update_attributes(self):
+        """Overloaded in sub entities."""
 
 
 class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):

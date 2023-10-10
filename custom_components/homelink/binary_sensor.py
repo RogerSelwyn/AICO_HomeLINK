@@ -125,17 +125,14 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         hl_property_key,
     ) -> None:
         """Property entity object for HomeLINK sensor."""
+        self._alert_status = {}
+        self._alerts = None
+        self._status = None
+        self._alarms = []
         super().__init__(coordinator, hl_property_key)
         self._entry = entry
-        self._gateway_key = None
         self._attr_unique_id = f"{self._key}"
         self._dev_reg = device_registry.async_get(hass)
-        self._property = None
-        self._alarms = []
-        self._status = None
-        self._alerts = None
-        self._alert_status = {}
-        self._update_attributes()
         self._lastdate = dt.utcnow()
         self._unregister_mqtt_handler = None
         if entry.options.get(CONF_MQTT_ENABLE):
@@ -175,6 +172,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
 
     async def async_added_to_hass(self) -> None:
         """Register MQTT handler."""
+        await super().async_added_to_hass()
         if self._entry.options.get(CONF_MQTT_ENABLE):
             event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=self._key).lower()
 
@@ -186,12 +184,6 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         """Unregister MQTT handler."""
         if self._unregister_mqtt_handler:
             self._unregister_mqtt_handler()
-
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle data update."""
-        self._update_attributes()
-        self.async_write_ha_state()
 
     def _update_attributes(self):
         if self._key in self.coordinator.data[COORD_PROPERTIES]:
@@ -368,6 +360,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
 
     async def async_added_to_hass(self) -> None:
         """Register MQTT handler."""
+        await super().async_added_to_hass()
         if self._entry.options.get(CONF_MQTT_ENABLE):
             if self._device.modeltype == MODELTYPE_GATEWAY:
                 key = self._key
