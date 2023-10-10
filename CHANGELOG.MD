@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.2 (2023/10/10)
+### 🐛 Fixes
+- [Ensure latest event used](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/752ace8fd608d0ac24549947fdcb0de5216a25a0) - @RogerSelwyn
+- [Fix issue where binary sensors not updating](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2564e42f53ffd5bea6a98df71117c047d308dc22) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.0.2](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/90738966cccc3fe7352b2146d87d7f996c67ed9c) - @RogerSelwyn
+
 ## v1.0.1 (2023/10/09)
 ### 🐛 Fixes
 - [Fix registration for mqtt events by event entity](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/81f8d73de7d97511dbe30deb2449a8b94247e868) - @RogerSelwyn
