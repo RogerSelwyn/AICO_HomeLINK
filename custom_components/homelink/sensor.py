@@ -25,7 +25,6 @@ from .const import (
     ENTITY_NAME_REPLACEDATE,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
-    MODELTYPE_GATEWAY,
 )
 from .coordinator import HomeLINKDataCoordinator
 from .entity import HomeLINKDeviceEntity
@@ -74,22 +73,12 @@ async def async_setup_entry(
 
     @callback
     def async_add_sensor_device(hl_property, device):
-        if (
-            hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES][
-                device
-            ].modeltype
-            != MODELTYPE_GATEWAY
-        ):
-            async_add_entities(
-                [
-                    HomeLINKSensor(hl_coordinator, hl_property, device, description)
-                    for description in SENSOR_TYPES
-                ]
-            )
-        else:
-            async_add_entities(
-                [HomeLINKSensor(hl_coordinator, hl_property, device, SENSOR_TYPES[0])]
-            )
+        async_add_entities(
+            [
+                HomeLINKSensor(hl_coordinator, hl_property, device, description)
+                for description in SENSOR_TYPES
+            ]
+        )
 
     for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
         async_add_sensor_property(hl_property)

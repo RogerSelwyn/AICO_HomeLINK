@@ -57,7 +57,6 @@ from .const import (
     MODELTYPE_COALARM,
     MODELTYPE_FIREALARM,
     MODELTYPE_FIRECOALARM,
-    MODELTYPE_GATEWAY,
     MODELTYPE_PROBLEMS,
     MQTT_ACTIONTIMESTAMP,
     MQTT_CLASSIFIER_ACTIVE,
@@ -72,7 +71,7 @@ from .const import (
 from .coordinator import HomeLINKDataCoordinator
 from .entity import HomeLINKDeviceEntity, HomeLINKPropertyEntity
 from .helpers.events import raise_device_event, raise_property_event
-from .helpers.utils import build_device_identifiers
+from .helpers.utils import build_device_identifiers, build_mqtt_device_key
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -197,8 +196,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         if self._alerts:
             status = STATUS_NOT_GOOD
         alarms = []
-        for devicekey in self._property[COORD_DEVICES]:
-            device = self._property[COORD_DEVICES][devicekey]
+        for device in self._property[COORD_DEVICES].values():
             if device.status.operationalstatus != STATUS_GOOD:
                 status = device.status.operationalstatus
                 if devicereg := self._dev_reg.async_get_device(
@@ -362,10 +360,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         """Register MQTT handler."""
         await super().async_added_to_hass()
         if self._entry.options.get(CONF_MQTT_ENABLE):
-            if self._device.modeltype == MODELTYPE_GATEWAY:
-                key = self._key
-            else:
-                key = f"{self._gateway_key}-{self._key}"
+            key = build_mqtt_device_key(self._device, self._key, self._gateway_key)
 
             event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
             self._unregister_mqtt_handler = async_dispatcher_connect(
