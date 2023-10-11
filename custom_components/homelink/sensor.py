@@ -26,8 +26,8 @@ from .const import (
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
 )
-from .coordinator import HomeLINKDataCoordinator
-from .entity import HomeLINKDeviceEntity
+from .helpers.coordinator import HomeLINKDataCoordinator
+from .helpers.entity import HomeLINKDeviceEntity
 
 
 @dataclass

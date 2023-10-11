@@ -10,7 +10,7 @@ from homeassistant.helpers import config_entry_oauth2_flow
 from pyhomelink import AUTH_URL
 
 from .const import ATTR_INTEGRATIONS_URL, INTEGRATIONS_URL
-from .oauth2 import HomeLINKOAuth2Implementation
+from .helpers.oauth2 import HomeLINKOAuth2Implementation
 
 
 async def async_get_auth_implementation(

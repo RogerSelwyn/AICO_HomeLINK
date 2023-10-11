@@ -68,8 +68,8 @@ from .const import (
     UNKNOWN,
     HomeLINKMessageType,
 )
-from .coordinator import HomeLINKDataCoordinator
-from .entity import HomeLINKDeviceEntity, HomeLINKPropertyEntity
+from .helpers.coordinator import HomeLINKDataCoordinator
+from .helpers.entity import HomeLINKDeviceEntity, HomeLINKPropertyEntity
 from .helpers.events import raise_device_event, raise_property_event
 from .helpers.utils import build_device_identifiers, build_mqtt_device_key
 

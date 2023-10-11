@@ -19,8 +19,8 @@ from .const import (
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
 )
-from .coordinator import HomeLINKDataCoordinator
-from .entity import HomeLINKEventEntity
+from .helpers.coordinator import HomeLINKDataCoordinator
+from .helpers.entity import HomeLINKEventEntity
 from .helpers.utils import build_mqtt_device_key
 
 

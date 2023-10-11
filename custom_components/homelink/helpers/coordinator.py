@@ -14,7 +14,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from pyhomelink import HomeLINKApi
 from pyhomelink.exceptions import ApiException, AuthException
 
-from .const import (
+from ..const import (
     ATTR_PROPERTY,
     COORD_ALERTS,
     COORD_DATA_MQTT,

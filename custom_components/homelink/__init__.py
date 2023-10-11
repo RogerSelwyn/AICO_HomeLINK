@@ -9,7 +9,6 @@ from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
 
 from pyhomelink.api import HomeLINKApi
 
-from .api import AsyncConfigEntryAuth
 from .const import (
     CONF_MQTT_ENABLE,
     CONF_MQTT_HOMELINK,
@@ -17,7 +16,8 @@ from .const import (
     COORD_PROPERTIES,
     DOMAIN,
 )
-from .coordinator import HomeLINKDataCoordinator
+from .helpers.api import AsyncConfigEntryAuth
+from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.mqtt import HAMQTT, HomeLINKMQTT
 
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.EVENT]

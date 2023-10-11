@@ -13,7 +13,7 @@ from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import (
+from ..const import (
     ATTR_HOMELINK,
     ATTR_PROPERTY,
     ATTRIBUTION,
@@ -25,7 +25,7 @@ from .const import (
     HOMELINK_MESSAGE_EVENT,
 )
 from .coordinator import HomeLINKDataCoordinator
-from .helpers.utils import build_device_identifiers
+from .utils import build_device_identifiers
 
 
 class HomeLINKPropertyEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
