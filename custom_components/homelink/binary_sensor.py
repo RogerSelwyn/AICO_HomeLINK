@@ -136,6 +136,9 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         self._unregister_mqtt_handler = None
         if entry.options.get(CONF_MQTT_ENABLE):
             self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
+            self._event_dispatch_event = HOMELINK_MESSAGE_EVENT.format(
+                domain=DOMAIN, key=self._key
+            ).lower()
 
     @property
     def name(self) -> str:
@@ -249,8 +252,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         self._lastdate = msgdate
 
         if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
-            event = HOMELINK_MESSAGE_EVENT.format(domain=DOMAIN, key=self._key).lower()
-            dispatcher_send(self.hass, event, payload)
+            dispatcher_send(self.hass, self._event_dispatch_event, payload)
 
         raise_property_event(self.hass, messagetype, topic, payload)
         if messagetype in [
@@ -266,13 +268,10 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
             self._process_alert(topic, payload)
             await self.coordinator.async_refresh()
 
-        return
-
     def _device_message(self, msg, topic, payload, messagetype):
         serialnumber = payload[MQTT_DEVICESERIALNUMBER]
         event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=serialnumber).lower()
         dispatcher_send(self.hass, event, msg, topic, messagetype)
-        return
 
     def _process_alert(self, topic, payload):
         classifier = _extract_classifier(topic)
@@ -313,6 +312,14 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
         self._lastdate = dt.utcnow()
         self._unregister_mqtt_handler = None
+        self._device_class = self._build_device_class()
+        if entry.options.get(CONF_MQTT_ENABLE):
+            serialnumber = build_mqtt_device_key(
+                self._device, device_key, self._gateway_key
+            )
+            self._event_dispatch_event = HOMELINK_MESSAGE_EVENT.format(
+                domain=DOMAIN, key=serialnumber
+            ).lower()
 
     @property
     def name(self) -> str:
@@ -328,14 +335,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
     @property
     def device_class(self) -> BinarySensorDeviceClass:
         """Return the device_class."""
-        modeltype = self._device.modeltype
-        if modeltype in [MODELTYPE_FIRECOALARM, MODELTYPE_FIREALARM]:
-            return BinarySensorDeviceClass.SMOKE
-        if modeltype == MODELTYPE_COALARM:
-            return BinarySensorDeviceClass.CO
-        if modeltype in MODELTYPE_PROBLEMS:
-            return BinarySensorDeviceClass.PROBLEM
-        return None
+        return self._device_class
 
     @property
     def extra_state_attributes(self):
@@ -371,6 +371,16 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         """Unregister MQTT handler."""
         if self._unregister_mqtt_handler:
             self._unregister_mqtt_handler()
+
+    def _build_device_class(self):
+        modeltype = self._device.modeltype
+        if modeltype in [MODELTYPE_FIRECOALARM, MODELTYPE_FIREALARM]:
+            return BinarySensorDeviceClass.SMOKE
+        if modeltype == MODELTYPE_COALARM:
+            return BinarySensorDeviceClass.CO
+        if modeltype in MODELTYPE_PROBLEMS:
+            return BinarySensorDeviceClass.PROBLEM
+        return None
 
     def _update_attributes(self):
         if (
@@ -430,11 +440,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         self._lastdate = msgdate
 
         if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
-            serialnumber = payload[MQTT_DEVICESERIALNUMBER]
-            event = HOMELINK_MESSAGE_EVENT.format(
-                domain=DOMAIN, key=serialnumber
-            ).lower()
-            dispatcher_send(self.hass, event, payload)
+            dispatcher_send(self.hass, self._event_dispatch_event, payload)
 
         raise_device_event(self.hass, self.device_info, messagetype, topic, payload)
         if messagetype in [

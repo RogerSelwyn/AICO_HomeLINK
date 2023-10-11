@@ -87,15 +87,15 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         devices = await self._hl_api.async_get_devices()
         coord_properties = {}
         for hl_property in properties:
-            coord_devices = [
-                device
+            property_devices = {
+                device.serialnumber: device
                 for device in devices
                 if device.rel.hl_property == hl_property.rel.self
-            ]
+            }
             gateway_key = next(
                 (
                     device.serialnumber
-                    for device in devices
+                    for device in property_devices.values()
                     if device.modeltype == MODELTYPE_GATEWAY
                 ),
                 None,
@@ -103,9 +103,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             coord_properties[hl_property.reference] = {
                 COORD_GATEWAY_KEY: gateway_key,
                 COORD_PROPERTY: hl_property,
-                COORD_DEVICES: {
-                    device.serialnumber: device for device in coord_devices
-                },
+                COORD_DEVICES: property_devices,
                 COORD_ALERTS: await hl_property.async_get_alerts(),
             }
 
@@ -132,7 +130,26 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             self._build_known_properties()
 
         known_properties = deepcopy(self._known_properties)
+        self._check_for_deletes(known_properties, coord_properties)
+        self._check_for_adds(known_properties, coord_properties)
 
+    def _build_known_properties(self):
+        devices = device_registry.async_entries_for_config_entry(
+            self._dev_reg, self._entry.entry_id
+        )
+        for device in devices:
+            if device.model == ATTR_PROPERTY.capitalize():
+                children = {
+                    list(device_child.identifiers)[0][2]: device_child.id
+                    for device_child in devices
+                    if device_child.via_device_id == device.id
+                }
+                self._known_properties[list(device.identifiers)[0][2]] = {
+                    KNOWN_DEVICES_ID: device.id,
+                    KNOWN_DEVICES_CHILDREN: children,
+                }
+
+    def _check_for_deletes(self, known_properties, coord_properties):
         for known_property, device_key in known_properties.items():
             if known_property not in coord_properties:
                 for known_device, child_device in device_key[
@@ -157,6 +174,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                         known_device
                     )
 
+    def _check_for_adds(self, known_properties, coord_properties):
         if not self._first_refresh:
             added = False
             for hl_property_key, hl_property in coord_properties.items():
@@ -182,22 +200,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 self._known_properties = {}
 
         self._first_refresh = False
-
-    def _build_known_properties(self):
-        devices = device_registry.async_entries_for_config_entry(
-            self._dev_reg, self._entry.entry_id
-        )
-        for device in devices:
-            if device.model == ATTR_PROPERTY.capitalize():
-                children = {
-                    list(device_child.identifiers)[0][2]: device_child.id
-                    for device_child in devices
-                    if device_child.via_device_id == device.id
-                }
-                self._known_properties[list(device.identifiers)[0][2]] = {
-                    KNOWN_DEVICES_ID: device.id,
-                    KNOWN_DEVICES_CHILDREN: children,
-                }
 
     def _delete_device_and_entities(self, device):
         entities = entity_registry.async_entries_for_device(self._ent_reg, device, True)

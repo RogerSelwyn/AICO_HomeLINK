@@ -262,8 +262,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                 if ret != CONF_ERROR_TOPIC
                 else {CONF_MQTT_TOPIC: CONF_ERROR_TOPIC}
             )
-        else:
-            return {}
+        return {}
 
     def _fake_base_input(self):
         return {
