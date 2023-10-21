@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.0.3 (2023/10/21)
+### 🐛 Fixes
+- [Fix how alerts are handled, device operationstatus does not update](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/69a1fae8c08f07acc90799980ac2eec5375ca7f0) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Tidy up code](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/19b5afd8afb7385fd5351d28e355f9403c786db2) - @RogerSelwyn
+- [Move ancilliary classes to helpers folder](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/dc031cd7781f438947f20414761b4dbf81a272cb) - @RogerSelwyn
+- [More code tidy up](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7d1e703856a414b21c697e9f5d3572fe62991a6e) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.0.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c67cb2102b294c52336529e1f8a57b83d2d065dc) - @RogerSelwyn
+
 ## v1.0.2 (2023/10/10)
 ### 🐛 Fixes
 - [Ensure latest event used](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/752ace8fd608d0ac24549947fdcb0de5216a25a0) - @RogerSelwyn
