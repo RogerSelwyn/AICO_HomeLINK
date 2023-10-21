@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.4 (2023/10/21)
+### ✨ Enhancements
+- [Add action timestamp to event entities](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/943591c4a4e3fc5415b4a25556acf3a0b83b8bf2) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Remove unrequired imports](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1c8422075a9818f35a3624f4f15bf17c71bc4787) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.0.4](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e327ec189bc4194e0ef541774c17447e62bab21e) - @RogerSelwyn
+
 ## v1.0.3 (2023/10/21)
 ### 🐛 Fixes
 - [Fix how alerts are handled, device operationstatus does not update](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/69a1fae8c08f07acc90799980ac2eec5375ca7f0) - @RogerSelwyn
