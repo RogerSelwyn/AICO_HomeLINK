@@ -128,10 +128,10 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         self._alerts = None
         self._status = None
         self._alarms = []
+        self._dev_reg = device_registry.async_get(hass)
         super().__init__(coordinator, hl_property_key)
         self._entry = entry
         self._attr_unique_id = f"{self._key}"
-        self._dev_reg = device_registry.async_get(hass)
         self._lastdate = dt.utcnow()
         self._unregister_mqtt_handler = None
         if entry.options.get(CONF_MQTT_ENABLE):
@@ -199,13 +199,16 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         if self._alerts:
             status = STATUS_NOT_GOOD
         alarms = []
-        for device in self._property[COORD_DEVICES].values():
-            if device.status.operationalstatus != STATUS_GOOD:
-                status = device.status.operationalstatus
+        for alert in self.coordinator.data[COORD_PROPERTIES][self._key][COORD_ALERTS]:
+            if alert.rel.hl_property == f"property/{self._key}" and hasattr(
+                alert.rel, ATTR_DEVICE
+            ):
+                status = STATUS_NOT_GOOD
                 if devicereg := self._dev_reg.async_get_device(
-                    build_device_identifiers(device.serialnumber)
+                    build_device_identifiers(alert.serialnumber)
                 ):
                     alarms.append(devicereg.name_by_user or devicereg.name)
+
         return status != STATUS_GOOD, alarms or ALARMS_NONE
 
     def _set_alerts(self):
@@ -398,9 +401,6 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             self._status = self._set_status()
 
     def _set_status(self) -> bool:
-        if self._device.status.operationalstatus == STATUS_GOOD:
-            return False
-
         return bool(self._get_alerts())
 
     def _set_alerts(self):
