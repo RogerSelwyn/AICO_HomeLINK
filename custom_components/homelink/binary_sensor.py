@@ -71,7 +71,11 @@ from .const import (
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.entity import HomeLINKDeviceEntity, HomeLINKPropertyEntity
 from .helpers.events import raise_device_event, raise_property_event
-from .helpers.utils import build_device_identifiers, build_mqtt_device_key
+from .helpers.utils import (
+    build_device_identifiers,
+    build_mqtt_device_key,
+    get_message_date,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -249,7 +253,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         await self._async_property_message(topic, payload, messagetype)
 
     async def _async_property_message(self, topic, payload, messagetype):
-        msgdate = _get_message_date(payload)
+        msgdate = get_message_date(payload)
         if msgdate < self._lastdate:
             return
         self._lastdate = msgdate
@@ -434,7 +438,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
     @callback
     async def _async_mqtt_handle(self, msg, topic, messagetype):
         payload = json.loads(msg.payload)
-        msgdate = _get_message_date(payload)
+        msgdate = get_message_date(payload)
         if msgdate < self._lastdate:
             return
         self._lastdate = msgdate
@@ -469,7 +473,3 @@ def _extract_message_type(topic):
 
 def _extract_classifier(topic):
     return topic.split("/")[1]
-
-
-def _get_message_date(payload):
-    return parser.parse(payload[MQTT_ACTIONTIMESTAMP])

@@ -4,6 +4,7 @@ from enum import StrEnum
 ALARMS_NONE = "None"
 ATTRIBUTION = "Data provided by AICO HomeLINK"
 
+ATTR_ACTIONTIMESTAMP = "actiontimestamp"
 ATTR_ADDRESS = "address"
 ATTR_ALARMED_DEVICES = "alarmed_devices"
 ATTR_ALERTID = "alertid"

@@ -14,6 +14,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from ..const import (
+    ATTR_ACTIONTIMESTAMP,
     ATTR_HOMELINK,
     ATTR_PROPERTY,
     ATTRIBUTION,
@@ -23,9 +24,10 @@ from ..const import (
     DASHBOARD_URL,
     DOMAIN,
     HOMELINK_MESSAGE_EVENT,
+    MQTT_EVENTTYPEID,
 )
 from .coordinator import HomeLINKDataCoordinator
-from .utils import build_device_identifiers
+from .utils import build_device_identifiers, get_message_date
 
 
 class HomeLINKPropertyEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
@@ -140,5 +142,7 @@ class HomeLINKEventEntity(EventEntity):
     @callback
     def _handle_event(self, event) -> None:
         """Handle status event for this resource."""
-        self._trigger_event(event["eventTypeId"])
+        self._trigger_event(
+            event[MQTT_EVENTTYPEID], {ATTR_ACTIONTIMESTAMP: get_message_date(event)}
+        )
         self.async_write_ha_state()
