@@ -3,7 +3,6 @@
 import json
 import logging
 
-from dateutil import parser
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
@@ -58,7 +57,6 @@ from .const import (
     MODELTYPE_FIREALARM,
     MODELTYPE_FIRECOALARM,
     MODELTYPE_PROBLEMS,
-    MQTT_ACTIONTIMESTAMP,
     MQTT_CLASSIFIER_ACTIVE,
     MQTT_DEVICESERIALNUMBER,
     MQTT_EVENTID,
