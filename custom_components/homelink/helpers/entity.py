@@ -7,6 +7,11 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from ..const import (
     ATTR_ACTIONTIMESTAMP,
+    ATTR_ID,
+    ATTR_MODEL,
+    ATTR_MODELTYPE,
+    ATTR_SEVERITY,
+    ATTR_SOURCE,
     ATTRIBUTION,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
@@ -14,6 +19,10 @@ from ..const import (
     DOMAIN,
     HOMELINK_MESSAGE_EVENT,
     MQTT_EVENTTYPEID,
+    MQTT_SEVERITY,
+    MQTT_SOURCEID,
+    MQTT_SOURCEMODEL,
+    MQTT_SOURCEMODELTYPE,
 )
 from .coordinator import HomeLINKDataCoordinator
 from .utils import (
@@ -125,6 +134,15 @@ class HomeLINKEventEntity(EventEntity):
     def _handle_event(self, event) -> None:
         """Handle status event for this resource."""
         self._trigger_event(
-            event[MQTT_EVENTTYPEID], {ATTR_ACTIONTIMESTAMP: get_message_date(event)}
+            event[MQTT_EVENTTYPEID],
+            {
+                ATTR_ACTIONTIMESTAMP: get_message_date(event),
+                ATTR_SEVERITY: event[MQTT_SEVERITY],
+                ATTR_SOURCE: {
+                    ATTR_ID: event[MQTT_SOURCEID],
+                    ATTR_MODEL: event[MQTT_SOURCEMODEL],
+                    ATTR_MODELTYPE: event[MQTT_SOURCEMODELTYPE],
+                },
+            },
         )
         self.async_write_ha_state()
