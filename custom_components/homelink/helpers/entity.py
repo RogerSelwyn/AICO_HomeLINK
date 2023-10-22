@@ -1,33 +1,27 @@
 """HomeLINK entity."""
 
 from homeassistant.components.event import EventEntity
-from homeassistant.const import (
-    ATTR_CONFIGURATION_URL,
-    ATTR_IDENTIFIERS,
-    ATTR_MANUFACTURER,
-    ATTR_MODEL,
-    ATTR_NAME,
-    ATTR_VIA_DEVICE,
-)
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from ..const import (
     ATTR_ACTIONTIMESTAMP,
-    ATTR_HOMELINK,
-    ATTR_PROPERTY,
     ATTRIBUTION,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
     COORD_PROPERTIES,
-    DASHBOARD_URL,
     DOMAIN,
     HOMELINK_MESSAGE_EVENT,
     MQTT_EVENTTYPEID,
 )
 from .coordinator import HomeLINKDataCoordinator
-from .utils import build_device_identifiers, get_message_date
+from .utils import (
+    build_device_identifiers,
+    device_device_info,
+    get_message_date,
+    property_device_info,
+)
 
 
 class HomeLINKPropertyEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
@@ -46,13 +40,7 @@ class HomeLINKPropertyEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
     @property
     def device_info(self):
         """Entity device information."""
-        return {
-            ATTR_IDENTIFIERS: {(DOMAIN, ATTR_PROPERTY, self._key)},
-            ATTR_NAME: self._key,
-            ATTR_MANUFACTURER: ATTR_HOMELINK,
-            ATTR_MODEL: ATTR_PROPERTY.capitalize(),
-            ATTR_CONFIGURATION_URL: DASHBOARD_URL,
-        }
+        return property_device_info(self._key)
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -88,13 +76,7 @@ class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
     @property
     def device_info(self):
         """Entity device information."""
-        return {
-            ATTR_IDENTIFIERS: self._identifiers,
-            ATTR_NAME: f"{self._parent_key} {self._device.location} {self._device.modeltype}",
-            ATTR_VIA_DEVICE: (DOMAIN, ATTR_PROPERTY, self._parent_key),
-            ATTR_MANUFACTURER: self._device.manufacturer,
-            ATTR_MODEL: f"{self._device.model} ({self._device.modeltype})",
-        }
+        return device_device_info(self._identifiers, self._parent_key, self._device)
 
     @callback
     def _handle_coordinator_update(self) -> None:

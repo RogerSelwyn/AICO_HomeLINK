@@ -21,7 +21,12 @@ from .const import (
 )
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.entity import HomeLINKEventEntity
-from .helpers.utils import build_mqtt_device_key
+from .helpers.utils import (
+    build_device_identifiers,
+    build_mqtt_device_key,
+    device_device_info,
+    property_device_info,
+)
 
 
 async def async_setup_entry(
@@ -50,12 +55,16 @@ async def _async_create_entities(
         for device_key, device in hl_coordinator.data[COORD_PROPERTIES][hl_property][
             COORD_DEVICES
         ].items():
-            async_add_device(device_key, device, gateway_key, eventtypes)
+            async_add_device(hl_property, device_key, device, gateway_key, eventtypes)
 
     @callback
-    def async_add_device(device_key, device, gateway_key, eventtypes):
+    def async_add_device(hl_property, device_key, device, gateway_key, eventtypes):
         async_add_entities(
-            [HomeLINKDeviceEvent(entry, device_key, device, gateway_key, eventtypes)]
+            [
+                HomeLINKDeviceEvent(
+                    entry, hl_property, device_key, device, gateway_key, eventtypes
+                )
+            ]
         )
 
     for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
@@ -88,11 +97,26 @@ class HomeLINKPropertyEvent(HomeLINKEventEntity):
         """Property event entity object for HomeLINK sensor."""
         super().__init__(entry, hl_property_key, eventtypes, hl_property_key)
 
+    @property
+    def device_info(self):
+        """Entity device information."""
+        return property_device_info(self._key)
+
 
 class HomeLINKDeviceEvent(HomeLINKEventEntity):
     """Event entity for HomeLINK Device."""
 
-    def __init__(self, entry, device_key, device, gateway_key, eventtypes) -> None:
+    def __init__(
+        self, entry, hl_property_key, device_key, device, gateway_key, eventtypes
+    ) -> None:
         """Device event entity object for HomeLINK sensor."""
         mqtt_key = build_mqtt_device_key(device, device_key, gateway_key)
         super().__init__(entry, device_key, eventtypes, mqtt_key)
+        self._parent_key = hl_property_key
+        self._device = device
+        self._identifiers = build_device_identifiers(device_key)
+
+    @property
+    def device_info(self):
+        """Entity device information."""
+        return device_device_info(self._identifiers, self._parent_key, self._device)

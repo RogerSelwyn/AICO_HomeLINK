@@ -1,7 +1,23 @@
 """HomeLINK utilities."""
 from dateutil import parser
+from homeassistant.const import (
+    ATTR_CONFIGURATION_URL,
+    ATTR_IDENTIFIERS,
+    ATTR_MANUFACTURER,
+    ATTR_MODEL,
+    ATTR_NAME,
+    ATTR_VIA_DEVICE,
+)
 
-from ..const import ATTR_DEVICE, DOMAIN, MODELTYPE_GATEWAY, MQTT_ACTIONTIMESTAMP
+from ..const import (
+    ATTR_DEVICE,
+    ATTR_HOMELINK,
+    ATTR_PROPERTY,
+    DASHBOARD_URL,
+    DOMAIN,
+    MODELTYPE_GATEWAY,
+    MQTT_ACTIONTIMESTAMP,
+)
 
 
 def build_device_identifiers(device_id):
@@ -17,3 +33,25 @@ def build_mqtt_device_key(device, key, gateway_key):
 def get_message_date(payload):
     """Get the action timestamp from the message"""
     return parser.parse(payload[MQTT_ACTIONTIMESTAMP])
+
+
+def property_device_info(key):
+    """Property device information"""
+    return {
+        ATTR_IDENTIFIERS: {(DOMAIN, ATTR_PROPERTY, key)},
+        ATTR_NAME: key,
+        ATTR_MANUFACTURER: ATTR_HOMELINK,
+        ATTR_MODEL: ATTR_PROPERTY.capitalize(),
+        ATTR_CONFIGURATION_URL: DASHBOARD_URL,
+    }
+
+
+def device_device_info(identifiers, parent_key, device):
+    """Device device information."""
+    return {
+        ATTR_IDENTIFIERS: identifiers,
+        ATTR_NAME: f"{parent_key} {device.location} {device.modeltype}",
+        ATTR_VIA_DEVICE: (DOMAIN, ATTR_PROPERTY, parent_key),
+        ATTR_MANUFACTURER: device.manufacturer,
+        ATTR_MODEL: f"{device.model} ({device.modeltype})",
+    }
