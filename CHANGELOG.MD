@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.5 (2023/10/22)
+### 🐛 Fixes
+- [Correctly build device info for event entities](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/73c2a3e394879643ff191ff5073ba3e7bcb6c259) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.0.5](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c1b4ebc791f187f55b8c6ed6252ed1379f5670bf) - @RogerSelwyn
+
 ## v1.0.4 (2023/10/21)
 ### ✨ Enhancements
 - [Add action timestamp to event entities](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/943591c4a4e3fc5415b4a25556acf3a0b83b8bf2) - @RogerSelwyn
