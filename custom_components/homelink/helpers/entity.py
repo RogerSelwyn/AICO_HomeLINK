@@ -7,22 +7,26 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from ..const import (
     ATTR_ACTIONTIMESTAMP,
+    ATTR_CATEGORY,
     ATTR_ID,
     ATTR_MODEL,
     ATTR_MODELTYPE,
     ATTR_SEVERITY,
     ATTR_SOURCE,
+    ATTR_STATUSID,
     ATTRIBUTION,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
     COORD_PROPERTIES,
     DOMAIN,
     HOMELINK_MESSAGE_EVENT,
+    MQTT_CATEGORY,
     MQTT_EVENTTYPEID,
     MQTT_SEVERITY,
     MQTT_SOURCEID,
     MQTT_SOURCEMODEL,
     MQTT_SOURCEMODELTYPE,
+    MQTT_STATUSID,
 )
 from .coordinator import HomeLINKDataCoordinator
 from .utils import (
@@ -137,6 +141,8 @@ class HomeLINKEventEntity(EventEntity):
             event[MQTT_EVENTTYPEID],
             {
                 ATTR_ACTIONTIMESTAMP: get_message_date(event),
+                ATTR_STATUSID: event[MQTT_STATUSID],
+                ATTR_CATEGORY: event[MQTT_CATEGORY],
                 ATTR_SEVERITY: event[MQTT_SEVERITY],
                 ATTR_SOURCE: {
                     ATTR_ID: event[MQTT_SOURCEID],
