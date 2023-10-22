@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.6 (2023/10/22)
+### ✨ Enhancements
+- [Add more information to event entity](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/385ebb5ae5a0df3a9e216840028a08b5b4f9840f) - @RogerSelwyn
+- [Add further detail to event entity](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/848a35269bc9e17f31c7bfa349f2f8adf8f29bdf) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.0.6](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/eab027d55956f3feb7b41d27648b668fdff3b54c) - @RogerSelwyn
+
 ## v1.0.5 (2023/10/22)
 ### 🐛 Fixes
 - [Correctly build device info for event entities](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/73c2a3e394879643ff191ff5073ba3e7bcb6c259) - @RogerSelwyn
