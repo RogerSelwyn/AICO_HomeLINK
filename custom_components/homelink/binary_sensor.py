@@ -22,30 +22,37 @@ from .const import (
     ATTR_ALERTID,
     ATTR_ALERTS,
     ATTR_ALERTSTATUS,
+    ATTR_APPLIESTO,
     ATTR_CATEGORY,
     ATTR_CONNECTIVITYTYPE,
     ATTR_DATACOLLECTIONSTATUS,
     ATTR_DESCRIPTION,
     ATTR_DEVICE,
     ATTR_EVENTTYPE,
+    ATTR_INSIGHTID,
+    ATTR_INSIGHTS,
     ATTR_INSTALLATIONDATE,
     ATTR_INSTALLEDBY,
     ATTR_LASTSEENDATE,
     ATTR_LASTTESTDATE,
+    ATTR_LOCATION,
     ATTR_RAISEDDATE,
     ATTR_REFERENCE,
     ATTR_REPLACEDATE,
+    ATTR_RISKLEVEL,
     ATTR_SERIALNUMBER,
     ATTR_SEVERITY,
     ATTR_SIGNALSTRENGTH,
     ATTR_TAGS,
     ATTR_TYPE,
+    ATTR_VALUE,
     ATTRIBUTION,
     CONF_MQTT_ENABLE,
     CONF_MQTT_TOPIC,
     COORD_ALERTS,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
+    COORD_INSIGHTS,
     COORD_PROPERTIES,
     COORD_PROPERTY,
     DOMAIN,
@@ -53,10 +60,10 @@ from .const import (
     HOMELINK_ADD_PROPERTY,
     HOMELINK_MESSAGE_EVENT,
     HOMELINK_MESSAGE_MQTT,
+    MODELLIST_ALARMS,
+    MODELLIST_ENVIRONMENT,
+    MODELLIST_PROBLEMS,
     MODELTYPE_COALARM,
-    MODELTYPE_FIREALARM,
-    MODELTYPE_FIRECOALARM,
-    MODELTYPE_PROBLEMS,
     MQTT_CLASSIFIER_ACTIVE,
     MQTT_DEVICESERIALNUMBER,
     MQTT_EVENTID,
@@ -128,6 +135,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         """Property entity object for HomeLINK sensor."""
         self._alert_status = {}
         self._alerts = None
+        self._insights = None
         self._status = None
         self._alarms = []
         self._dev_reg = device_registry.async_get(hass)
@@ -171,6 +179,8 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         }
         if self._alerts:
             attributes[ATTR_ALERTS] = self._alerts
+        if self._insights:
+            attributes[ATTR_INSIGHTS] = self._insights
 
         return attributes
 
@@ -194,6 +204,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
             self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
             self._gateway_key = self._property[COORD_GATEWAY_KEY]
             self._alerts = self._set_alerts()
+            self._insights = self._set_insights()
             self._status, self._alarms = self._set_status()
 
     def _set_status(self) -> bool:
@@ -236,6 +247,23 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
             ]
             if not hasattr(alert.rel, ATTR_DEVICE)
         ]
+
+    def _set_insights(self):
+        insights = []
+        for insight in self.coordinator.data[COORD_PROPERTIES][self._key][
+            COORD_INSIGHTS
+        ]:
+            data = {
+                ATTR_INSIGHTID: insight.insightid,
+                ATTR_TYPE: insight.hl_type,
+                ATTR_RISKLEVEL: insight.risklevel,
+                ATTR_VALUE: insight.value,
+                ATTR_APPLIESTO: insight.appliesto,
+            }
+            if insight.location:
+                data[ATTR_LOCATION] = insight.location
+            insights.append(data)
+        return insights
 
     @callback
     async def _async_message_received(self, msg):
@@ -379,11 +407,11 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
 
     def _build_device_class(self):
         modeltype = self._device.modeltype
-        if modeltype in [MODELTYPE_FIRECOALARM, MODELTYPE_FIREALARM]:
+        if modeltype in MODELLIST_ALARMS:
             return BinarySensorDeviceClass.SMOKE
         if modeltype == MODELTYPE_COALARM:
             return BinarySensorDeviceClass.CO
-        if modeltype in MODELTYPE_PROBLEMS:
+        if modeltype in MODELLIST_PROBLEMS or modeltype in MODELLIST_ENVIRONMENT:
             return BinarySensorDeviceClass.PROBLEM
         return None
 

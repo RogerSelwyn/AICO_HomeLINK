@@ -20,6 +20,7 @@ from ..const import (
     COORD_DATA_MQTT,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
+    COORD_INSIGHTS,
     COORD_LOOKUP_EVENTTYPE,
     COORD_PROPERTIES,
     COORD_PROPERTY,
@@ -100,10 +101,12 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 ),
                 None,
             )
+
             coord_properties[hl_property.reference] = {
                 COORD_GATEWAY_KEY: gateway_key,
                 COORD_PROPERTY: hl_property,
                 COORD_DEVICES: property_devices,
+                COORD_INSIGHTS: await hl_property.async_get_insights(),
                 COORD_ALERTS: await hl_property.async_get_alerts(),
             }
 

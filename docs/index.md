@@ -7,13 +7,13 @@ nav_order: 1
 
 The `homelink` platform allows you to view the status of your AICO alarm system. Note that you need an AICO HomeLINK dashboard account with Landlord access to be able to create the credentials needed to use this integration.
 
-This table provides a list of AICO 1000 and 3000 series devices and their support status. It is possible that 600 series devices will also work, but these have not been tested at all:
+This table provides a list of AICO 1000 and 3000 series devices and their support status. It is possible that other RadioLINK devices will also work, but these have not been tested at all:
 
-| **Model No** | **Sensor Type** |**Model Type**    |**Supported** | **Notes**                   |
+| **Model No** | **Sensor Type**  |**Model Type**    |**Supported** | **Notes**                   |
 |:-------------|:-----------------|:-----------------|:------------:|:----------------------------|
 | Ei1000G      | Gateway          | GATEWAY          | True         | Required                    |
-| Ei1020       | Condensation, Damp, Mould |         | False        | No support                  |
-| Ei1025       | Condensation, Damp, Mould, Air |    | False        | No support                  |
+| Ei1020       | Condensation, Damp, Mould |         | False        | Experimental                |
+| Ei1025       | Condensation, Damp, Mould, Air |    | False        | Experimental                |
 | Ei3014       | Heat             | FIREALARM        | True         |                             |
 | Ei3016       | Smoke            | FIREALARM        | True         |                             |
 | Ei3018       | CO               |                  | False        | It may work, but untested   |
