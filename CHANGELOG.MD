@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.1.0 (2023/10/23)
+### ✨ Enhancements
+- [Add experimental support for Environment Sensor and Insights](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/98fc5041c195b07c1856173c19e0e3b1bada6877) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/49117e22be789015634133aa7eff4ba169792f16) - @actions-user
+
+### 🔖 Release
+- [Bump to v1.1.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/fa08822a76f325e635fbc3ce9ec1e92fb29a884d) - @RogerSelwyn
+
 ## v1.0.6 (2023/10/22)
 ### ✨ Enhancements
 - [Add more information to event entity](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/385ebb5ae5a0df3a9e216840028a08b5b4f9840f) - @RogerSelwyn
