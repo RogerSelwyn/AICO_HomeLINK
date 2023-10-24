@@ -86,6 +86,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
     async def _async_get_core_data(self):
         properties = await self._hl_api.async_get_properties()
         devices = await self._hl_api.async_get_devices()
+        insights = await self._hl_api.async_get_insights()
         coord_properties = {}
         for hl_property in properties:
             property_devices = {
@@ -101,12 +102,16 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 ),
                 None,
             )
-
+            property_insights = [
+                insight
+                for insight in insights
+                if insight.rel.hl_property == hl_property.rel.self
+            ]
             coord_properties[hl_property.reference] = {
                 COORD_GATEWAY_KEY: gateway_key,
                 COORD_PROPERTY: hl_property,
                 COORD_DEVICES: property_devices,
-                COORD_INSIGHTS: await hl_property.async_get_insights(),
+                COORD_INSIGHTS: property_insights,
                 COORD_ALERTS: await hl_property.async_get_alerts(),
             }
 
