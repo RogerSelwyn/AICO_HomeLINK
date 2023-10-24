@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.1.1 (2023/10/24)
+### 🔨 Maintenance
+- [Reduce number of calls to HomeLINK API](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3625b4a1e670f9018bed30442361b11c12832d3a) - @RogerSelwyn
+- [Reduce the number of valid eventtypes listed](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/cd84dd75b844353d7a8bf0ade1f20dada117676f) - @RogerSelwyn
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/05cf76376c6f25dbd84ea0b323f2fd248f3e211f) - @actions-user
+
+### 📚 Documentation
+- [Update index.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/bd1f1242bc39f50af170d9dfb4255e857a5d594e) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.1.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1c98ce4860d4a7936b6e612489fbd43bbfa50eac) - @RogerSelwyn
+
 ## v1.1.0 (2023/10/23)
 ### ✨ Enhancements
 - [Add experimental support for Environment Sensor and Insights](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/98fc5041c195b07c1856173c19e0e3b1bada6877) - @RogerSelwyn
