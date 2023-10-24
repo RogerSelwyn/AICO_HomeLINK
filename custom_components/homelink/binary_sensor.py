@@ -284,10 +284,11 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
             return
         self._lastdate = msgdate
 
+        raise_property_event(self.hass, messagetype, topic, payload)
         if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
             dispatcher_send(self.hass, self._event_dispatch_event, payload)
+            return
 
-        raise_property_event(self.hass, messagetype, topic, payload)
         if messagetype in [
             HomeLINKMessageType.MESSAGE_DEVICE,
             HomeLINKMessageType.MESSAGE_PROPERTY,
@@ -469,10 +470,11 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             return
         self._lastdate = msgdate
 
+        raise_device_event(self.hass, self.device_info, messagetype, topic, payload)
         if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
             dispatcher_send(self.hass, self._event_dispatch_event, payload)
+            return
 
-        raise_device_event(self.hass, self.device_info, messagetype, topic, payload)
         if messagetype in [
             HomeLINKMessageType.MESSAGE_ALERT,
         ]:
