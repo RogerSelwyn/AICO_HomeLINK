@@ -16,8 +16,10 @@ from .const import (
     COORD_LOOKUP_EVENTTYPE,
     COORD_PROPERTIES,
     DOMAIN,
+    EVENTTYPE_INSIGHT,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
+    MODELLIST_ENVIRONMENT,
 )
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.entity import HomeLINKEventEntity
@@ -43,7 +45,9 @@ async def _async_create_entities(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ):
     hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
-    eventtypes = hl_coordinator.data[COORD_LOOKUP_EVENTTYPE]
+    eventtypes_all = hl_coordinator.data[COORD_LOOKUP_EVENTTYPE]
+    eventtypes = _filter_eventtypes(eventtypes_all, [])
+    eventtypes_alarm = _filter_eventtypes(eventtypes_all, [EVENTTYPE_INSIGHT])
 
     @callback
     def async_add_property(hl_property):
@@ -55,14 +59,24 @@ async def _async_create_entities(
         for device_key, device in hl_coordinator.data[COORD_PROPERTIES][hl_property][
             COORD_DEVICES
         ].items():
-            async_add_device(hl_property, device_key, device, gateway_key, eventtypes)
+            async_add_device(hl_property, device_key, device, gateway_key)
 
     @callback
-    def async_add_device(hl_property, device_key, device, gateway_key, eventtypes):
+    def async_add_device(hl_property, device_key, device, gateway_key):
+        eventtypes_device = (
+            eventtypes
+            if device.modeltype in MODELLIST_ENVIRONMENT
+            else eventtypes_alarm
+        )
         async_add_entities(
             [
                 HomeLINKDeviceEvent(
-                    entry, hl_property, device_key, device, gateway_key, eventtypes
+                    entry,
+                    hl_property,
+                    device_key,
+                    device,
+                    gateway_key,
+                    eventtypes_device,
                 )
             ]
         )
@@ -120,3 +134,11 @@ class HomeLINKDeviceEvent(HomeLINKEventEntity):
     def device_info(self):
         """Entity device information."""
         return device_device_info(self._identifiers, self._parent_key, self._device)
+
+
+def _filter_eventtypes(eventtypes, filtertypes):
+    return [
+        eventtype.lookupid
+        for eventtype in eventtypes
+        if eventtype.eventcategoryid not in filtertypes
+    ]

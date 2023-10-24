@@ -118,9 +118,9 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         return coord_properties
 
     async def _async_get_eventtypes_lookup(self):
-        eventtypes = await self._hl_api.async_get_lookups(HOMELINK_LOOKUP_EVENTTYPE)
-        for eventtype in eventtypes:
-            self._eventtypes.append(eventtype.lookupid)
+        self._eventtypes = await self._hl_api.async_get_lookups(
+            HOMELINK_LOOKUP_EVENTTYPE
+        )
 
     def _get_previous_mqtt(self):
         return (
