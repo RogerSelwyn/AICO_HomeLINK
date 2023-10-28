@@ -36,6 +36,8 @@ from .const import (
     ATTR_LASTSEENDATE,
     ATTR_LASTTESTDATE,
     ATTR_LOCATION,
+    ATTR_METADATA,
+    ATTR_OPERATIONALSTATUS,
     ATTR_RAISEDDATE,
     ATTR_REFERENCE,
     ATTR_REPLACEDATE,
@@ -43,6 +45,7 @@ from .const import (
     ATTR_SERIALNUMBER,
     ATTR_SEVERITY,
     ATTR_SIGNALSTRENGTH,
+    ATTR_STATUS,
     ATTR_TAGS,
     ATTR_TYPE,
     ATTR_VALUE,
@@ -379,11 +382,16 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             ATTR_INSTALLATIONDATE: self._device.installationdate,
             ATTR_INSTALLEDBY: self._device.installedby,
             ATTR_REPLACEDATE: self._device.replacedate,
-            ATTR_SIGNALSTRENGTH: self._device.metadata.signalstrength,
-            ATTR_LASTSEENDATE: self._device.metadata.lastseendate,
-            ATTR_CONNECTIVITYTYPE: self._device.metadata.connectivitytype,
-            ATTR_LASTTESTDATE: self._device.status.lasttesteddate,
-            ATTR_DATACOLLECTIONSTATUS: self._device.status.datacollectionstatus,
+            ATTR_METADATA: {
+                ATTR_SIGNALSTRENGTH: self._device.metadata.signalstrength,
+                ATTR_LASTSEENDATE: self._device.metadata.lastseendate,
+                ATTR_CONNECTIVITYTYPE: self._device.metadata.connectivitytype,
+            },
+            ATTR_STATUS: {
+                ATTR_OPERATIONALSTATUS: self._device.status.operationalstatus,
+                ATTR_LASTTESTDATE: self._device.status.lasttesteddate,
+                ATTR_DATACOLLECTIONSTATUS: self._device.status.datacollectionstatus,
+            },
         }
         if self._alerts:
             attributes[ATTR_ALERTS] = self._alerts
