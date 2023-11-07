@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.1.3 (2023/11/07)
+### 🐛 Fixes
+- [Fix display of api error](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/bb9d601417d63c3036e2d7fbc1cbabf56e48ddb7) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [Bump pyhomelink to 0.1.6](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6e76a6a8119f6212570291fb40485ed3eda4d846) - @RogerSelwyn
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/fed120a838b76c988cef99ed4ee407a145ac3c13) - @actions-user
+
+### 🔖 Release
+- [Bump to v1.1.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c965bd46e155c87f633bfd1c931704b946403d00) - @RogerSelwyn
+
 ## v1.1.2 (2023/11/07)
 ### ✨ Enhancements
 - [Add operational status and restructure attributes for device binary sensors](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0f866dfd0f61bc05b35b55d1c41e4d6179ce2601) - @RogerSelwyn
