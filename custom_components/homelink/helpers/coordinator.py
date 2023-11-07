@@ -57,6 +57,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._dev_reg = device_registry.async_get(hass)
         self._first_refresh = True
         self._eventtypes = []
+        self._error = True
 
     async def _async_update_data(self):
         """Fetch data from API endpoint."""
@@ -71,17 +72,25 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 await self._async_check_for_changes(coord_properties)
                 hl_mqtt = self._get_previous_mqtt()
 
+                self._error = False
                 return {
                     COORD_PROPERTIES: coord_properties,
                     COORD_DATA_MQTT: hl_mqtt,
                     COORD_LOOKUP_EVENTTYPE: self._eventtypes,
                 }
         except AuthException as auth_err:
+            if not self._error:
+                _LOGGER.warning("Error authenticating with HL API: %s", auth_err)
+                self._error = True
             raise ConfigEntryAuthFailed from auth_err
         except ApiException as api_err:
+            if not self._error:
+                _LOGGER.warning("Error communicating with HL API: %s", api_err)
+                self._error = True
             raise UpdateFailed(
                 f"Error communicating with HL API: {api_err}"
             ) from api_err
+
 
     async def _async_get_core_data(self):
         properties = await self._hl_api.async_get_properties()
