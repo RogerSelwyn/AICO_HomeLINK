@@ -9,29 +9,18 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.dispatcher import dispatcher_send
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.update_coordinator import (DataUpdateCoordinator,
+                                                      UpdateFailed)
 
 from pyhomelink import HomeLINKApi
 from pyhomelink.exceptions import ApiException, AuthException
 
-from ..const import (
-    ATTR_PROPERTY,
-    COORD_ALERTS,
-    COORD_DATA_MQTT,
-    COORD_DEVICES,
-    COORD_GATEWAY_KEY,
-    COORD_INSIGHTS,
-    COORD_LOOKUP_EVENTTYPE,
-    COORD_PROPERTIES,
-    COORD_PROPERTY,
-    DOMAIN,
-    HOMELINK_ADD_DEVICE,
-    HOMELINK_ADD_PROPERTY,
-    HOMELINK_LOOKUP_EVENTTYPE,
-    KNOWN_DEVICES_CHILDREN,
-    KNOWN_DEVICES_ID,
-    MODELTYPE_GATEWAY,
-)
+from ..const import (ATTR_PROPERTY, COORD_ALERTS, COORD_DATA_MQTT,
+                     COORD_DEVICES, COORD_GATEWAY_KEY, COORD_INSIGHTS,
+                     COORD_LOOKUP_EVENTTYPE, COORD_PROPERTIES, COORD_PROPERTY,
+                     DOMAIN, HOMELINK_ADD_DEVICE, HOMELINK_ADD_PROPERTY,
+                     HOMELINK_LOOKUP_EVENTTYPE, KNOWN_DEVICES_CHILDREN,
+                     KNOWN_DEVICES_ID, MODELTYPE_GATEWAY)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -57,7 +46,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._dev_reg = device_registry.async_get(hass)
         self._first_refresh = True
         self._eventtypes = []
-        self._error = True
+        self._error = False
 
     async def _async_update_data(self):
         """Fetch data from API endpoint."""
