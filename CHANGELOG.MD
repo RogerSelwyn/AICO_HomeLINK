@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.1.2 (2023/11/07)
+### ✨ Enhancements
+- [Add operational status and restructure attributes for device binary sensors](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0f866dfd0f61bc05b35b55d1c41e4d6179ce2601) - @RogerSelwyn
+
+### 🐛 Fixes
+- [Fix warning not being logged on api failure](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/887b3c3d8338f3ee61da004e5cbdd60bf28569cd) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Minor code improvement](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ced3e74077fe7e6cf601a47d4dc2e29f3c699422) - @RogerSelwyn
+- [Add loggers to manifest.json](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1e3fb9f560207c3f0e38c16474a8c7229955bcc4) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.1.2](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/151fec44ca6c4403379209b286eee438fbfe4ae2) - @RogerSelwyn
+
 ## v1.1.1 (2023/10/24)
 ### 🔨 Maintenance
 - [Reduce number of calls to HomeLINK API](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3625b4a1e670f9018bed30442361b11c12832d3a) - @RogerSelwyn
