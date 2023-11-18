@@ -97,12 +97,18 @@ async def async_setup_entry(
     @callback
     def async_add_property(hl_property):
         async_add_entities([HomeLINKProperty(hass, entry, hl_coordinator, hl_property)])
-        for device in hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES]:
-            async_add_device(hl_property, device)
+        for device_key in hl_coordinator.data[COORD_PROPERTIES][hl_property][
+            COORD_DEVICES
+        ]:
+            async_add_device(hl_property, device_key, None, None)
 
     @callback
-    def async_add_device(hl_property, device):
-        async_add_entities([HomeLINKDevice(entry, hl_coordinator, hl_property, device)])
+    def async_add_device(
+        hl_property, device_key, device, gateway_key
+    ):  # pylint: disable=unused-argument
+        async_add_entities(
+            [HomeLINKDevice(entry, hl_coordinator, hl_property, device_key)]
+        )
 
     for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
         async_add_property(hl_property)

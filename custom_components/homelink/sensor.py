@@ -68,14 +68,18 @@ async def async_setup_entry(
 
     @callback
     def async_add_sensor_property(hl_property):
-        for device in hl_coordinator.data[COORD_PROPERTIES][hl_property][COORD_DEVICES]:
-            async_add_sensor_device(hl_property, device)
+        for device_key in hl_coordinator.data[COORD_PROPERTIES][hl_property][
+            COORD_DEVICES
+        ]:
+            async_add_sensor_device(hl_property, device_key, None, None)
 
     @callback
-    def async_add_sensor_device(hl_property, device):
+    def async_add_sensor_device(
+        hl_property, device_key, device, gateway_key
+    ):  # pylint: disable=unused-argument
         async_add_entities(
             [
-                HomeLINKSensor(hl_coordinator, hl_property, device, description)
+                HomeLINKSensor(hl_coordinator, hl_property, device_key, description)
                 for description in SENSOR_TYPES
             ]
         )

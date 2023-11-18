@@ -9,18 +9,29 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.dispatcher import dispatcher_send
-from homeassistant.helpers.update_coordinator import (DataUpdateCoordinator,
-                                                      UpdateFailed)
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from pyhomelink import HomeLINKApi
 from pyhomelink.exceptions import ApiException, AuthException
 
-from ..const import (ATTR_PROPERTY, COORD_ALERTS, COORD_DATA_MQTT,
-                     COORD_DEVICES, COORD_GATEWAY_KEY, COORD_INSIGHTS,
-                     COORD_LOOKUP_EVENTTYPE, COORD_PROPERTIES, COORD_PROPERTY,
-                     DOMAIN, HOMELINK_ADD_DEVICE, HOMELINK_ADD_PROPERTY,
-                     HOMELINK_LOOKUP_EVENTTYPE, KNOWN_DEVICES_CHILDREN,
-                     KNOWN_DEVICES_ID, MODELTYPE_GATEWAY)
+from ..const import (
+    ATTR_PROPERTY,
+    COORD_ALERTS,
+    COORD_DATA_MQTT,
+    COORD_DEVICES,
+    COORD_GATEWAY_KEY,
+    COORD_INSIGHTS,
+    COORD_LOOKUP_EVENTTYPE,
+    COORD_PROPERTIES,
+    COORD_PROPERTY,
+    DOMAIN,
+    HOMELINK_ADD_DEVICE,
+    HOMELINK_ADD_PROPERTY,
+    HOMELINK_LOOKUP_EVENTTYPE,
+    KNOWN_DEVICES_CHILDREN,
+    KNOWN_DEVICES_ID,
+    MODELTYPE_GATEWAY,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -79,7 +90,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             raise UpdateFailed(
                 f"Error communicating with HL API: {api_err}"
             ) from api_err
-
 
     async def _async_get_core_data(self):
         properties = await self._hl_api.async_get_properties()
@@ -188,7 +198,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                     dispatcher_send(self.hass, HOMELINK_ADD_PROPERTY, hl_property_key)
                     added = True
                 else:
-                    for device_key in hl_property[COORD_DEVICES]:
+                    for device_key, device in hl_property[COORD_DEVICES].items():
                         if (
                             device_key
                             not in self._known_properties[hl_property_key][
@@ -200,6 +210,8 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                                 HOMELINK_ADD_DEVICE,
                                 hl_property_key,
                                 device_key,
+                                device,
+                                coord_properties[COORD_GATEWAY_KEY],
                             )
                             added = True
             if added:
