@@ -1,2 +1,2 @@
-pyhomelink==0.1.6
+pyhomelink==0.1.7
 paho-mqtt==1.6.1
