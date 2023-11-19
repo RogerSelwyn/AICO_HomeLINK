@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.2.0 (2023/11/19)
+### ✨ Enhancements
+- [Add support for readings](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/54772df9aa3996263d13d6a37c16757be0624fbd) - @RogerSelwyn
+
+### 🐛 Fixes
+- [Fix error when new device added dynamically](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/35e3b5fb3e2be00af7f647cdb9ea7ba6658b7c61) - @RogerSelwyn
+- [Correct invalid release version](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/59bc96521281c0d7949da7369f028f2f7591f97f) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Delete .github/stale.yml](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0409d6e72451d62173c64ef1244590738978b3e0) - @RogerSelwyn
+- [Create stale.yaml](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/85f986e84c4918a01ee79c7edbd73cb072630b30) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e6ede62c81f471c8312e630a3ada4f0dbd7bf700) - @actions-user
+
+### 🔖 Release
+- [Auto update manifest.json](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/74ee7d1bfb666618e149a2e63d427f860d9bbabb) - @actions-user
+- [Bump to v1.2.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ca7a98cd4714c7267ee1db4636595f3a698f7ec8) - @RogerSelwyn
+
 ## v1.1.3 (2023/11/07)
 ### 🐛 Fixes
 - [Fix display of api error](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/bb9d601417d63c3036e2d7fbc1cbabf56e48ddb7) - @RogerSelwyn
