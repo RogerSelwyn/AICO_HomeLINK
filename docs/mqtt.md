@@ -120,6 +120,6 @@ context:
   user_id: null
 ```
 
-In addition, if the message type is `alert`, `device` or `property` it will trigger an update to all entities to ensure they reflect current state.
+In addition, if the message type is `alert`, `device`, `property`  or '`reading` it will trigger an update to all entities to ensure they reflect current state.
 
 Also, it will set an `alertstatus` on the alert listed against a device showing what state it is in. This will show for example `FIRE_ALARM` in the initial state and `CANCEL` when the alarm has been silenced.

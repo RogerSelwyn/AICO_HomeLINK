@@ -493,6 +493,11 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             HomeLINKMessageType.MESSAGE_ALERT,
         ]:
             self._process_alert(topic, payload)
+
+        if messagetype in [
+            HomeLINKMessageType.MESSAGE_ALERT,
+            HomeLINKMessageType.MESSAGE_READING,
+        ]:
             await self.coordinator.async_refresh()
 
     def _process_alert(self, topic, payload):

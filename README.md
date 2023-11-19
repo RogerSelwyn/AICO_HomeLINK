@@ -12,8 +12,8 @@ This table provides a list of AICO 1000 and 3000 series devices and their suppor
 | **Model No** | **Sensor Type** |**Model Type**    |**Supported** | **Notes**                   |
 |:-------------|:-----------------|:-----------------|:------------:|:----------------------------|
 | Ei1000G      | Gateway          | GATEWAY          | True         | Required                    |
-| Ei1020       | Condensation, Damp, Mould |         | False        | No support                  |
-| Ei1025       | Condensation, Damp, Mould, Air |    | False        | No support                  |
+| Ei1020       | Condensation, Damp, Mould |         | False        | It may work, but untested   |
+| Ei1025       | Condensation, Damp, Mould, Air |    | True         |                             |
 | Ei3014       | Heat             | FIREALARM        | True         |                             |
 | Ei3016       | Smoke            | FIREALARM        | True         |                             |
 | Ei3018       | CO               |                  | False        | It may work, but untested   |
@@ -35,6 +35,7 @@ These are the presented as the following entity types within Home Assistant:
 - Sensor 
   - Device last tested date
   - Device replace by date
+  - CO2, Humidity, Temperature 
 
 ### [Buy Me A ~~Coffee~~ Beer 🍻](https://buymeacoffee.com/rogtp)
 I work on this integration because I like things to work well for myself and others, and for it to deliver as much as is achievable with the API. Please don't feel you are obligated to donate, but of course it is appreciated.

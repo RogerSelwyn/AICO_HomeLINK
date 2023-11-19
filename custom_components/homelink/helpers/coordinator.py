@@ -2,7 +2,7 @@
 import asyncio
 import logging
 from copy import deepcopy
-from datetime import timedelta
+from datetime import date, timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -16,6 +16,7 @@ from pyhomelink.exceptions import ApiException, AuthException
 
 from ..const import (
     ATTR_PROPERTY,
+    ATTR_READINGS,
     COORD_ALERTS,
     COORD_DATA_MQTT,
     COORD_DEVICES,
@@ -24,6 +25,7 @@ from ..const import (
     COORD_LOOKUP_EVENTTYPE,
     COORD_PROPERTIES,
     COORD_PROPERTY,
+    COORD_READINGS,
     DOMAIN,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
@@ -122,7 +124,12 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 COORD_INSIGHTS: property_insights,
                 COORD_ALERTS: await hl_property.async_get_alerts(),
             }
-
+            readings = []
+            for device in property_devices.values():
+                if hasattr(device.rel, ATTR_READINGS):
+                    readings = await hl_property.async_get_readings(date.today())
+                    break
+            coord_properties[hl_property.reference][COORD_READINGS] = readings
         return coord_properties
 
     async def _async_get_eventtypes_lookup(self):
