@@ -13,7 +13,7 @@ This table provides a list of AICO 1000 and 3000 series devices and their suppor
 |:-------------|:-----------------|:-----------------|:------------:|:----------------------------|
 | Ei1000G      | Gateway          | GATEWAY          | True         | Required                    |
 | Ei1020       | Condensation, Damp, Mould |         | False        | It may work, but untested   |
-| Ei1025       | Condensation, Damp, Mould, Air |    | True         |                             |
+| Ei1025       | Condensation, Damp, Mould, Air | ENVCO2SENSOR | True |                           |
 | Ei3014       | Heat             | FIREALARM        | True         |                             |
 | Ei3016       | Smoke            | FIREALARM        | True         |                             |
 | Ei3018       | CO               |                  | False        | It may work, but untested   |
