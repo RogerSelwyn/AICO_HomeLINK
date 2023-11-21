@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.1 (2023/11/21)
+### ✨ Enhancements
+- [Use mqtt for maintaining reading sensors](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1edf4c712401f3a708421c0a8cdd851e36a71224) - @RogerSelwyn
+
+### 📚 Documentation
+- [Update docs with env sensor type](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0bfccbd1b8a0b9824d11692919fcf2d2dbe3f03b) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.2.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8319c8f10bc59b3845e3ea922fff808037879e70) - @RogerSelwyn
+
 ## v1.2.0 (2023/11/19)
 ### ✨ Enhancements
 - [Add support for readings](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/54772df9aa3996263d13d6a37c16757be0624fbd) - @RogerSelwyn
