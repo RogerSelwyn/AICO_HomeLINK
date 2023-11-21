@@ -317,7 +317,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         dispatcher_send(self.hass, event, msg, topic, messagetype)
 
     def _process_alert(self, topic, payload):
-        classifier = _extract_classifier(topic)
+        classifier = _extract_classifier(topic, 1)
         eventid = payload[MQTT_EVENTID]
         if classifier == MQTT_CLASSIFIER_ACTIVE:
             self._alert_status[eventid] = payload[MQTT_EVENTTYPEID]
@@ -493,20 +493,30 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             HomeLINKMessageType.MESSAGE_ALERT,
         ]:
             self._process_alert(topic, payload)
-
-        if messagetype in [
-            HomeLINKMessageType.MESSAGE_ALERT,
-            HomeLINKMessageType.MESSAGE_READING,
-        ]:
             await self.coordinator.async_refresh()
 
+        if messagetype in [
+            HomeLINKMessageType.MESSAGE_READING,
+        ]:
+            self._process_reading(topic, payload)
+
     def _process_alert(self, topic, payload):
-        classifier = _extract_classifier(topic)
+        classifier = _extract_classifier(topic, 1)
         eventid = payload[MQTT_EVENTID]
         if classifier == MQTT_CLASSIFIER_ACTIVE:
             self._alert_status[eventid] = payload[MQTT_EVENTTYPEID]
         else:
             self._alert_status.pop(eventid)
+
+    def _process_reading(self, topic, payload):
+        readingtype = _extract_classifier(topic, 3)
+
+        key = build_mqtt_device_key(
+            self._device, f"{self._key}-{readingtype}", self._gateway_key
+        )
+
+        event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
+        dispatcher_send(self.hass, event, payload)
 
 
 def _extract_message_type(topic):
@@ -518,5 +528,5 @@ def _extract_message_type(topic):
     return HomeLINKMessageType.MESSAGE_UNKNOWN
 
 
-def _extract_classifier(topic):
-    return topic.split("/")[1]
+def _extract_classifier(topic, item):
+    return topic.split("/")[item]

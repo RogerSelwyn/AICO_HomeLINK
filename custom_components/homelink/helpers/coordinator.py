@@ -124,12 +124,13 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 COORD_INSIGHTS: property_insights,
                 COORD_ALERTS: await hl_property.async_get_alerts(),
             }
-            readings = []
-            for device in property_devices.values():
-                if hasattr(device.rel, ATTR_READINGS):
-                    readings = await hl_property.async_get_readings(date.today())
-                    break
-            coord_properties[hl_property.reference][COORD_READINGS] = readings
+            if self._first_refresh:
+                readings = []
+                for device in property_devices.values():
+                    if hasattr(device.rel, ATTR_READINGS):
+                        readings = await hl_property.async_get_readings(date.today())
+                        break
+                coord_properties[hl_property.reference][COORD_READINGS] = readings
         return coord_properties
 
     async def _async_get_eventtypes_lookup(self):

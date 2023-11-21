@@ -88,6 +88,8 @@ HOMELINK_MQTT_PROTOCOL = "tcp"
 HOMELINK_MQTT_KEEPALIVE = 60
 HOMELINK_MQTT_PORT = 8883
 HOMELINK_MQTT_SERVER = "conduit.live.homelync.io"
+# HOMELINK_MQTT_PORT = 1883
+# HOMELINK_MQTT_SERVER = "broker.hivemq.com"
 
 
 INTEGRATIONS_URL = "https://dashboard.live.homelync.io/#/pages/admin/integrations"
@@ -111,14 +113,21 @@ MQTT_CLASSIFIER_ACTIVE = "active"
 MQTT_DEVICESERIALNUMBER = "deviceSerialNumber"
 MQTT_EVENTID = "eventId"
 MQTT_EVENTTYPEID = "eventTypeId"
+MQTT_READINGDATE = "readingDate"
 MQTT_SEVERITY = "severity"
 MQTT_SOURCEID = "sourceId"
 MQTT_SOURCEMODEL = "sourceModel"
 MQTT_SOURCEMODELTYPE = "sourceModelType"
 MQTT_STATUSID = "statusId"
+MQTT_VALUE = "value"
 
 STATUS_GOOD = "GOOD"
 STATUS_NOT_GOOD = "NOT_GOOD"
+STORAGE_ATTRIBUTES = "attributes"
+STORAGE_DEVICE = "device"
+STORAGE_DEVICES = "devices"
+STORAGE_ENCODING = "UTF8"
+STORAGE_STATEFILE = ".storage/homelink.restore_state"
 
 UNKNOWN = "RESOLVED/UNKNOWN"
 
