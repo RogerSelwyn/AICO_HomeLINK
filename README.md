@@ -30,12 +30,12 @@ These are the presented as the following entity types within Home Assistant:
   - Property status
   - Device status
 - Event 
-  - Property last MQTT event
-  - Device last MQTT event
+  - Property last MQTT event (with MQTT enabled)
+  - Device last MQTT event (with MQTT enabled)
 - Sensor 
   - Device last tested date
   - Device replace by date
-  - CO2, Humidity, Temperature 
+  - CO2, Humidity, Temperature (with MQTT enabled)
 
 ### [Buy Me A ~~Coffee~~ Beer 🍻](https://buymeacoffee.com/rogtp)
 I work on this integration because I like things to work well for myself and others, and for it to deliver as much as is achievable with the API. Please don't feel you are obligated to donate, but of course it is appreciated.

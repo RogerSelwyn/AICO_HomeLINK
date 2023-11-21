@@ -28,12 +28,12 @@ These are the presented as the following entity types within Home Assistant:
   - Property status
   - Device status
 - Event 
-  - Property last MQTT event
-  - Device last MQTT event
+  - Property last MQTT event (with MQTT enabled)
+  - Device last MQTT event (with MQTT enabled)
 - Sensor 
   - Device last tested date
   - Device replace by date
-  - CO2, Humidity, Temperature 
+  - CO2, Humidity, Temperature (with MQTT enabled)
 
 # Installation
 

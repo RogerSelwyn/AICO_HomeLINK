@@ -6,7 +6,11 @@ nav_order: 5
 # MQTT 
 
 ## Setup and configuration
-If you wish to receive alerts via MQTT (the base integration will update every 30 seconds) to give you quicker notification of alerts, then you will also need to set up an MQTT integration on the `Access Keys` tab of the HomeLINK dashboard.
+If you wish to:
+* Receive alerts via MQTT (the base integration will update every 30 seconds) to give you quicker notification of alerts
+* Receive readings from environment sensors 
+
+You will also need to set up an MQTT integration on the `Access Keys` tab of the HomeLINK dashboard.
 
 You may feed the MQTT messages into the integration by two methods:
 * HomeLINK MQTT - Simpler to set up, but does not bring the messages onto the HA MQTT message queue where they can be picked up by other integrations and add-ons
@@ -120,6 +124,7 @@ context:
   user_id: null
 ```
 
-In addition, if the message type is `alert`, `device`, `property`  or '`reading` it will trigger an update to all entities to ensure they reflect current state.
-
-Also, it will set an `alertstatus` on the alert listed against a device showing what state it is in. This will show for example `FIRE_ALARM` in the initial state and `CANCEL` when the alarm has been silenced.
+Additonally:
+* If the message type is `reading` it will update the relevant sensors status and `readingdate` attribute.
+* If the message type is `alert`, `device` or `property` it will trigger an update to all entities to ensure they reflect current state.
+* It will set an `alertstatus` on the alert listed against a device showing what state it is in. This will show for example `FIRE_ALARM` in the initial state and `CANCEL` when the alarm has been silenced.
