@@ -478,6 +478,11 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
 
     @callback
     async def _async_mqtt_handle(self, msg, topic, messagetype):
+        if messagetype in [
+            HomeLINKMessageType.MESSAGE_READING,
+        ]:
+            self._process_reading(msg, topic, messagetype)
+
         payload = json.loads(msg.payload)
         msgdate = get_message_date(payload)
         if msgdate < self._lastdate:
@@ -495,11 +500,6 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             self._process_alert(topic, payload)
             await self.coordinator.async_refresh()
 
-        if messagetype in [
-            HomeLINKMessageType.MESSAGE_READING,
-        ]:
-            self._process_reading(topic, payload)
-
     def _process_alert(self, topic, payload):
         classifier = _extract_classifier(topic, 1)
         eventid = payload[MQTT_EVENTID]
@@ -508,7 +508,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         else:
             self._alert_status.pop(eventid)
 
-    def _process_reading(self, topic, payload):
+    def _process_reading(self, msg, topic, messagetype):
         readingtype = _extract_classifier(topic, 3)
 
         key = build_mqtt_device_key(
@@ -516,7 +516,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         )
 
         event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
-        dispatcher_send(self.hass, event, payload)
+        dispatcher_send(self.hass, event, msg, topic, messagetype, readingtype)
 
 
 def _extract_message_type(topic):

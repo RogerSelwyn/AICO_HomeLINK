@@ -6,6 +6,7 @@ from ..const import (
     ATTR_DEVICE_INFO,
     ATTR_PAYLOAD,
     ATTR_PROPERTY,
+    ATTR_READING,
     ATTR_SUB_TYPE,
     ATTR_TOPIC,
     DOMAIN,
@@ -44,5 +45,25 @@ def raise_device_event(hass, device_info, event_type, topic, payload):
         DOMAIN,
         event_type,
         device_info,
+        payload,
+    )
+
+
+def raise_reading_event(hass, event_type, readingtype, topic, payload):
+    """Raise a reading event."""
+    hass.bus.fire(
+        f"{DOMAIN}_{event_type}",
+        {
+            ATTR_SUB_TYPE: ATTR_READING,
+            ATTR_TOPIC: topic.split("/"),
+            ATTR_PAYLOAD: payload,
+        },
+    )
+    _LOGGER.debug(
+        "%s - %s_%s - %s - %s",
+        ATTR_READING,
+        DOMAIN,
+        event_type,
+        readingtype,
         payload,
     )

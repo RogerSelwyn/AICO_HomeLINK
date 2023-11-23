@@ -1,4 +1,5 @@
 """Support for HomeLINK sensors."""
+import json
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
@@ -45,6 +46,7 @@ from .const import (
 )
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.entity import HomeLINKDeviceEntity
+from .helpers.events import raise_reading_event
 from .helpers.utils import (
     build_device_identifiers,
     build_mqtt_device_key,
@@ -275,7 +277,10 @@ class HomeLINKReadingSensor(SensorEntity):
             self._unregister_mqtt_handler()
 
     @callback
-    async def _async_mqtt_handle(self, payload):
+    async def _async_mqtt_handle(self, msg, topic, messagetype, readingtype):
+        payload = json.loads(msg.payload)
+        raise_reading_event(self.hass, messagetype, readingtype, topic, payload)
+
         self._state = payload[MQTT_VALUE]
         self._readingdate = parser.parse(payload[MQTT_READINGDATE])
         write_state(
