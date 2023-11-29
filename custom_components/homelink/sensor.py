@@ -236,29 +236,31 @@ class HomeLINKReadingSensor(SensorEntity):
 
     def _initial_attributes(self, coordinator):
         if (
-            self._parent_key in coordinator.data[COORD_PROPERTIES]
-            and self._key
-            in coordinator.data[COORD_PROPERTIES][self._parent_key][COORD_DEVICES]
+            self._parent_key not in coordinator.data[COORD_PROPERTIES]
+            or self._key
+            not in coordinator.data[COORD_PROPERTIES][self._parent_key][
+                COORD_DEVICES
+            ]
         ):
-            for reading in coordinator.data[COORD_PROPERTIES][self._parent_key][
-                COORD_READINGS
-            ]:
-                if reading.type != self._readingtype:
+            return
+        for reading in coordinator.data[COORD_PROPERTIES][self._parent_key][
+            COORD_READINGS
+        ]:
+            if reading.type != self._readingtype:
+                continue
+            for device in reading.devices:
+                if device.serialnumber != self._key:
                     continue
-                for device in reading.devices:
-                    if device.serialnumber != self._key:
-                        continue
-                    self._state = device.values[len(device.values) - 1].value
-                    self._readingdate = device.values[
-                        len(device.values) - 1
-                    ].readingdate
-                    break
+                self._state = device.values[len(device.values) - 1].value
+                self._readingdate = device.values[
+                    len(device.values) - 1
+                ].readingdate
+                break
 
     async def async_added_to_hass(self) -> None:
         """Register MQTT handler."""
         await super().async_added_to_hass()
-        attributes = read_state(self.hass, self.device_class, self._key)
-        if attributes:
+        if attributes := read_state(self.hass, self.device_class, self._key):
             self._state = attributes[ATTR_STATE]
             self._readingdate = parser.parse(attributes[ATTR_READINGDATE])
         if self._entry.options.get(CONF_MQTT_ENABLE):

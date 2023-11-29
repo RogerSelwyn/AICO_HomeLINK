@@ -197,7 +197,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
     def extra_state_attributes(self):
         """Return entity specific state attributes."""
         hl_property = self._property[COORD_PROPERTY]
-        attributes = {
+        return {
             ATTR_REFERENCE: hl_property.reference,
             ATTR_ADDRESS: hl_property.address,
             ATTR_LATITUDE: hl_property.latitude,
@@ -205,8 +205,6 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
             ATTR_TAGS: hl_property.tags,
             ATTR_ALARMED_DEVICES: self._alarms,
         }
-
-        return attributes
 
     # async def async_added_to_hass(self) -> None:
     #     """Register MQTT handler."""

@@ -32,8 +32,6 @@ from ..const import (
 
 def build_device_identifiers(device_id):
     """Build device identifiers"""
-    if not device_id:
-        pass
     return {(DOMAIN, ATTR_DEVICE, device_id.upper())}
 
 
