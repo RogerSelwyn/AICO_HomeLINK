@@ -587,9 +587,9 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
 
     def _update_attributes(self):
         if (
-            self._parent_key not in self._coordinator.data[COORD_PROPERTIES]
+            self._parent_key not in self.coordinator.data[COORD_PROPERTIES]
             or self._key
-            not in self._coordinator.data[COORD_PROPERTIES][self._parent_key][
+            not in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
                 COORD_DEVICES
             ]
         ):
