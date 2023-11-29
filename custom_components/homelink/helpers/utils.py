@@ -3,37 +3,18 @@ import json
 import os
 
 from dateutil import parser
-from homeassistant.const import (
-    ATTR_CONFIGURATION_URL,
-    ATTR_IDENTIFIERS,
-    ATTR_MANUFACTURER,
-    ATTR_MODEL,
-    ATTR_NAME,
-    ATTR_VIA_DEVICE,
-    Platform,
-)
+from homeassistant.const import (ATTR_CONFIGURATION_URL, ATTR_IDENTIFIERS,
+                                 ATTR_MANUFACTURER, ATTR_MODEL, ATTR_NAME,
+                                 ATTR_VIA_DEVICE, Platform)
 
-from ..const import (
-    ATTR_ALARM,
-    ATTR_DEVICE,
-    ATTR_HOMELINK,
-    ATTR_PROPERTY,
-    DASHBOARD_URL,
-    DOMAIN,
-    MODELTYPE_GATEWAY,
-    MQTT_ACTIONTIMESTAMP,
-    STORAGE_ATTRIBUTES,
-    STORAGE_DEVICE,
-    STORAGE_DEVICES,
-    STORAGE_ENCODING,
-    STORAGE_STATEFILE,
-)
+from ..const import (ATTR_ALARM, ATTR_DEVICE, ATTR_HOMELINK, ATTR_PROPERTY,
+                     DASHBOARD_URL, DOMAIN, MODELTYPE_GATEWAY,
+                     MQTT_ACTIONTIMESTAMP, STORAGE_ATTRIBUTES, STORAGE_DEVICE,
+                     STORAGE_DEVICES, STORAGE_ENCODING, STORAGE_STATEFILE)
 
 
 def build_device_identifiers(device_id):
     """Build device identifiers"""
-    if not device_id:
-        pass
     return {(DOMAIN, ATTR_DEVICE, device_id.upper())}
 
 

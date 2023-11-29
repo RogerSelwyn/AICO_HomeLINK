@@ -4,91 +4,41 @@ import json
 import logging
 from datetime import timedelta
 
-from homeassistant.components.binary_sensor import (
-    BinarySensorDeviceClass,
-    BinarySensorEntity,
-)
+from homeassistant.components.binary_sensor import (BinarySensorDeviceClass,
+                                                    BinarySensorEntity)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry
-from homeassistant.helpers.dispatcher import async_dispatcher_connect, dispatcher_send
+from homeassistant.helpers.dispatcher import (async_dispatcher_connect,
+                                              dispatcher_send)
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import dt
 
 from .const import ATTR_ADDRESS  # MQTT_LOCATION,
 from .const import ATTR_ALARMED_DEVICES  # ATTR_LOCATION,
 from .const import (  # HOMELINK_MESSAGE_EVENT,; MQTT_DEVICESERIALNUMBER,
-    ALARMS_NONE,
-    ALARMTYPE_ALARM,
-    ALARMTYPE_ENVIRONMENT,
-    APPLIESTO_PROPERTY,
-    APPLIESTO_ROOM,
-    ATTR_ALERTID,
-    ATTR_ALERTS,
-    ATTR_ALERTSTATUS,
-    ATTR_APPLIESTO,
-    ATTR_CATEGORY,
-    ATTR_CONNECTIVITYTYPE,
-    ATTR_DATACOLLECTIONSTATUS,
-    ATTR_DESCRIPTION,
-    ATTR_DEVICE,
-    ATTR_EVENTTYPE,
-    ATTR_INSIGHTID,
-    ATTR_INSIGHTS,
-    ATTR_INSTALLATIONDATE,
-    ATTR_INSTALLEDBY,
-    ATTR_LASTSEENDATE,
-    ATTR_LASTTESTDATE,
-    ATTR_METADATA,
-    ATTR_OPERATIONALSTATUS,
-    ATTR_RAISEDDATE,
-    ATTR_REFERENCE,
-    ATTR_REPLACEDATE,
-    ATTR_RISKLEVEL,
-    ATTR_SERIALNUMBER,
-    ATTR_SEVERITY,
-    ATTR_SIGNALSTRENGTH,
-    ATTR_STATUS,
-    ATTR_TAGS,
-    ATTR_TYPE,
-    ATTR_VALUE,
-    ATTRIBUTION,
-    CATEGORY_INSIGHT,
-    CONF_MQTT_ENABLE,
-    CONF_MQTT_TOPIC,
-    COORD_ALERTS,
-    COORD_DEVICES,
-    COORD_GATEWAY_KEY,
-    COORD_INSIGHTS,
-    COORD_PROPERTIES,
-    COORD_PROPERTY,
-    DOMAIN,
-    HOMELINK_ADD_DEVICE,
-    HOMELINK_ADD_PROPERTY,
-    HOMELINK_MESSAGE_MQTT,
-    MODELLIST_ALARMS,
-    MODELLIST_ENVIRONMENT,
-    MODELLIST_PROBLEMS,
-    MODELTYPE_COALARM,
-    MQTT_EVENTTYPEID,
-    STATUS_GOOD,
-    STATUS_NOT_GOOD,
-    UNKNOWN,
-    HomeLINKMessageType,
-)
+    ALARMS_NONE, ALARMTYPE_ALARM, ALARMTYPE_ENVIRONMENT, APPLIESTO_PROPERTY,
+    APPLIESTO_ROOM, ATTR_ALERTID, ATTR_ALERTS, ATTR_ALERTSTATUS,
+    ATTR_APPLIESTO, ATTR_CATEGORY, ATTR_CONNECTIVITYTYPE,
+    ATTR_DATACOLLECTIONSTATUS, ATTR_DESCRIPTION, ATTR_DEVICE, ATTR_EVENTTYPE,
+    ATTR_INSIGHTID, ATTR_INSIGHTS, ATTR_INSTALLATIONDATE, ATTR_INSTALLEDBY,
+    ATTR_LASTSEENDATE, ATTR_LASTTESTDATE, ATTR_METADATA,
+    ATTR_OPERATIONALSTATUS, ATTR_RAISEDDATE, ATTR_REFERENCE, ATTR_REPLACEDATE,
+    ATTR_RISKLEVEL, ATTR_SERIALNUMBER, ATTR_SEVERITY, ATTR_SIGNALSTRENGTH,
+    ATTR_STATUS, ATTR_TAGS, ATTR_TYPE, ATTR_VALUE, ATTRIBUTION,
+    CATEGORY_INSIGHT, CONF_MQTT_ENABLE, CONF_MQTT_TOPIC, COORD_ALERTS,
+    COORD_DEVICES, COORD_GATEWAY_KEY, COORD_INSIGHTS, COORD_PROPERTIES,
+    COORD_PROPERTY, DOMAIN, HOMELINK_ADD_DEVICE, HOMELINK_ADD_PROPERTY,
+    HOMELINK_MESSAGE_MQTT, MODELLIST_ALARMS, MODELLIST_ENVIRONMENT,
+    MODELLIST_PROBLEMS, MODELTYPE_COALARM, MQTT_EVENTTYPEID, STATUS_GOOD,
+    STATUS_NOT_GOOD, UNKNOWN, HomeLINKMessageType)
 from .helpers.coordinator import HomeLINKDataCoordinator
-from .helpers.entity import (
-    HomeLINKAlarmEntity,
-    HomeLINKDeviceEntity,
-    HomeLINKPropertyEntity,
-)
+from .helpers.entity import (HomeLINKAlarmEntity, HomeLINKDeviceEntity,
+                             HomeLINKPropertyEntity)
 from .helpers.events import raise_device_event, raise_property_event
-from .helpers.utils import (
-    build_device_identifiers,
-    build_mqtt_device_key,
-    get_message_date,
-)
+from .helpers.utils import (build_device_identifiers, build_mqtt_device_key,
+                            get_message_date)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -197,7 +147,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
     def extra_state_attributes(self):
         """Return entity specific state attributes."""
         hl_property = self._property[COORD_PROPERTY]
-        attributes = {
+        return {
             ATTR_REFERENCE: hl_property.reference,
             ATTR_ADDRESS: hl_property.address,
             ATTR_LATITUDE: hl_property.latitude,
@@ -206,7 +156,6 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
             ATTR_ALARMED_DEVICES: self._alarms,
         }
 
-        return attributes
 
     # async def async_added_to_hass(self) -> None:
     #     """Register MQTT handler."""
@@ -638,20 +587,24 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
 
     def _update_attributes(self):
         if (
-            self._parent_key in self.coordinator.data[COORD_PROPERTIES]
-            and self._key
-            in self.coordinator.data[COORD_PROPERTIES][self._parent_key][COORD_DEVICES]
-        ):
-            self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+            self._parent_key not in self._coordinator.data[COORD_PROPERTIES]
+            or self._key
+            not in self._coordinator.data[COORD_PROPERTIES][self._parent_key][
                 COORD_DEVICES
-            ][self._key]
-            self._gateway_key = self.coordinator.data[COORD_PROPERTIES][
-                self._parent_key
-            ][COORD_GATEWAY_KEY]
-            self._alerts = self._set_alerts()
-            if self._device.modeltype in MODELLIST_ENVIRONMENT:
-                self._insights = self._set_insights()
-            self._status = self._set_status()
+            ]
+        ):
+            return
+
+        self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+            COORD_DEVICES
+        ][self._key]
+        self._gateway_key = self.coordinator.data[COORD_PROPERTIES][
+            self._parent_key
+        ][COORD_GATEWAY_KEY]
+        self._alerts = self._set_alerts()
+        if self._device.modeltype in MODELLIST_ENVIRONMENT:
+            self._insights = self._set_insights()
+        self._status = self._set_status()
 
     def _set_status(self) -> bool:
         return bool(self._get_alerts())
