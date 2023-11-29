@@ -219,7 +219,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                                 hl_property_key,
                                 device_key,
                                 device,
-                                coord_properties[COORD_GATEWAY_KEY],
+                                hl_property[COORD_GATEWAY_KEY],
                             )
                             added = True
             if added:

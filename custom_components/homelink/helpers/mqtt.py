@@ -1,4 +1,5 @@
 """MQTT client for HomeLINK."""
+import json
 import logging
 import queue
 
@@ -11,17 +12,23 @@ from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.setup import async_when_setup
 
 from ..const import (
+    ALARMTYPE_ALARM,
+    ALARMTYPE_ENVIRONMENT,
+    CATEGORY_INSIGHT,
     CONF_ERROR_CREDENTIALS,
     CONF_ERROR_TOPIC,
     CONF_ERROR_UNAVAILABLE,
     CONF_MQTT_CLIENT_ID,
     CONF_MQTT_TOPIC,
     DOMAIN,
+    HOMELINK_MESSAGE_EVENT,
     HOMELINK_MESSAGE_MQTT,
     HOMELINK_MQTT_KEEPALIVE,
     HOMELINK_MQTT_PORT,
     HOMELINK_MQTT_PROTOCOL,
     HOMELINK_MQTT_SERVER,
+    MQTT_DEVICESERIALNUMBER,
+    HomeLINKMessageType,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -151,7 +158,7 @@ class HomeLINKMQTT:
 
     @callback
     def _on_message(self, client, userdata, msg):  # pylint: disable=unused-argument
-        _forward_message(self._hass, msg, self._root_topic, self._properties)
+        _async_forward_message(self._hass, msg, self._root_topic, self._properties)
 
     @callback
     def _on_subscribe(
@@ -206,13 +213,67 @@ class HAMQTT:
 
     @callback
     async def _async_message_received(self, msg):
-        _forward_message(self._hass, msg, self._root_topic, self._properties)
+        _async_forward_message(self._hass, msg, self._root_topic, self._properties)
 
 
-def _forward_message(hass, msg, root_topic, properties):
-    if key := _extract_property(msg.topic, root_topic, properties):
-        event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
-        dispatcher_send(hass, event, msg)
+async def _async_forward_message(hass, msg, root_topic, properties):
+    key = _extract_property(msg.topic, root_topic, properties)
+    if not key:
+        return
+
+    topic = msg.topic.removeprefix(f"{root_topic}/")
+    messagetype = _extract_message_type(topic)
+
+    if messagetype in [
+        HomeLINKMessageType.MESSAGE_INSIGHT,
+        HomeLINKMessageType.MESSAGE_INSIGHTCOMPONENT,
+        HomeLINKMessageType.MESSAGE_NOTIFICATION,
+    ]:
+        return
+
+    # devicemessage = self._gateway_key.lower() in msg.topic
+    payload = json.loads(msg.payload)
+    if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
+        await _async_event_message(hass, key, payload)
+        return
+
+    if hasattr(payload, MQTT_DEVICESERIALNUMBER) and payload[MQTT_DEVICESERIALNUMBER]:
+        await _async_device_message(hass, msg, topic, payload, messagetype)
+        return
+    # location = payload[MQTT_LOCATION]
+    # if location:
+    #     self._location_message(msg, topic, payload, messagetype)
+    #     return
+
+    await _async_alarm_message(hass, key, topic, payload, messagetype)
+
+
+async def _async_event_message(hass, key, payload):
+    if hasattr(payload, MQTT_DEVICESERIALNUMBER) and payload[MQTT_DEVICESERIALNUMBER]:
+        event = HOMELINK_MESSAGE_EVENT.format(
+            domain=DOMAIN, key=payload[MQTT_DEVICESERIALNUMBER]
+        ).lower()
+    else:
+        event = HOMELINK_MESSAGE_EVENT.format(domain=DOMAIN, key=key).lower()
+    dispatcher_send(hass, event, payload)
+    return
+
+
+async def _async_alarm_message(hass, key, topic, payload, messagetype):
+    if payload[CATEGORY_INSIGHT]:
+        alarm_type = ALARMTYPE_ENVIRONMENT
+    else:
+        alarm_type = ALARMTYPE_ALARM
+    event = HOMELINK_MESSAGE_MQTT.format(
+        domain=DOMAIN, key=f"{key}_{alarm_type}"
+    ).lower()
+    dispatcher_send(hass, event, topic, payload, messagetype)
+
+
+async def _async_device_message(hass, msg, topic, payload, messagetype):
+    serialnumber = payload[MQTT_DEVICESERIALNUMBER]
+    event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=serialnumber).lower()
+    dispatcher_send(hass, event, msg, topic, messagetype)
 
 
 def _extract_property(topic, root_topic, properties):
@@ -227,3 +288,16 @@ def _extract_property(topic, root_topic, properties):
         ),
         None,
     )
+
+
+def _extract_message_type(topic):
+    messagetype = topic.split("/")[0]
+    messagetypes = [item.value for item in HomeLINKMessageType]
+    if messagetype in messagetypes:
+        return messagetype
+
+    return HomeLINKMessageType.MESSAGE_UNKNOWN
+
+
+def _extract_classifier(topic, item):
+    return topic.split("/")[item]

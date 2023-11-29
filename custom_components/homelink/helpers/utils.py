@@ -14,6 +14,7 @@ from homeassistant.const import (
 )
 
 from ..const import (
+    ATTR_ALARM,
     ATTR_DEVICE,
     ATTR_HOMELINK,
     ATTR_PROPERTY,
@@ -31,6 +32,8 @@ from ..const import (
 
 def build_device_identifiers(device_id):
     """Build device identifiers"""
+    if not device_id:
+        pass
     return {(DOMAIN, ATTR_DEVICE, device_id.upper())}
 
 
@@ -52,6 +55,17 @@ def property_device_info(key):
         ATTR_MANUFACTURER: ATTR_HOMELINK,
         ATTR_MODEL: ATTR_PROPERTY.capitalize(),
         ATTR_CONFIGURATION_URL: DASHBOARD_URL,
+    }
+
+
+def alarm_device_info(key, alarm_type):
+    """Property device information"""
+    return {
+        ATTR_IDENTIFIERS: {(DOMAIN, ATTR_ALARM, key, alarm_type)},
+        ATTR_NAME: f"{key} {alarm_type}",
+        ATTR_VIA_DEVICE: (DOMAIN, ATTR_PROPERTY, key),
+        ATTR_MANUFACTURER: ATTR_HOMELINK,
+        ATTR_MODEL: ATTR_ALARM.capitalize(),
     }
 
 

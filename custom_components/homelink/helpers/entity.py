@@ -30,6 +30,7 @@ from ..const import (
 )
 from .coordinator import HomeLINKDataCoordinator
 from .utils import (
+    alarm_device_info,
     build_device_identifiers,
     device_device_info,
     get_message_date,
@@ -54,6 +55,37 @@ class HomeLINKPropertyEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
     def device_info(self):
         """Entity device information."""
         return property_device_info(self._key)
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle data update."""
+        self._update_attributes()
+        self.async_write_ha_state()
+
+    def _update_attributes(self):
+        """Overloaded in sub entities."""
+
+
+class HomeLINKAlarmEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
+    """HomeLINK Property Entity."""
+
+    _attr_attribution = ATTRIBUTION
+
+    def __init__(
+        self, coordinator: HomeLINKDataCoordinator, hl_property_key, alarm_type
+    ) -> None:
+        """Property entity object for HomeLINK sensor."""
+        super().__init__(coordinator)
+        self._key = hl_property_key
+        self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
+        self._gateway_key = self._property[COORD_GATEWAY_KEY]
+        self._alarm_type = alarm_type
+        self._update_attributes()
+
+    @property
+    def device_info(self):
+        """Entity device information."""
+        return alarm_device_info(self._key, self._alarm_type)
 
     @callback
     def _handle_coordinator_update(self) -> None:

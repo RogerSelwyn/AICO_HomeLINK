@@ -60,7 +60,7 @@ Once you have the data available to Home Assistant on your MQTT broker, you can 
 
 ## Processing
 
-The AICO HomeLINK integration raises Home Assistant events based on incoming [MQTT messages](https://help.live.homelync.io/hc/en-us/articles/7278758696465-MQTT-Topic-Structure). It will raise the event as `homelink_{message_type}` or `homelink_unknown` based on the message type received in the MQTT topic structure. Plus it outputs a debug entry. The event will be similar to the below:
+The AICO HomeLINK integration raises Home Assistant events based on incoming [MQTT messages](https://help.live.homelync.io/hc/en-us/articles/7278758696465-MQTT-Topic-Structure) for the majority of messages (at this time `insight`, `insightcomponent` and `notification` are ignored). It will raise the event as `homelink_{message_type}` or `homelink_unknown` based on the message type received in the MQTT topic structure. Plus it outputs a debug entry. The event will be similar to the below:
 
 ```
 event_type: homelink_alert

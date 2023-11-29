@@ -2,10 +2,15 @@
 from enum import StrEnum
 
 ALARMS_NONE = "None"
+ALARMTYPE_ALARM = "alarm"
+ALARMTYPE_ENVIRONMENT = "environment"
+APPLIESTO_PROPERTY = "PROPERTY"
+APPLIESTO_ROOM = "ROOM"
 ATTRIBUTION = "Data provided by AICO HomeLINK"
 
 ATTR_ACTIONTIMESTAMP = "actiontimestamp"
 ATTR_ADDRESS = "address"
+ATTR_ALARM = "property element"
 ATTR_ALARMED_DEVICES = "alarmed_devices"
 ATTR_ALERTID = "alertid"
 ATTR_ALERTS = "alerts"
@@ -27,7 +32,7 @@ ATTR_INSTALLEDBY = "installedby"
 ATTR_INTEGRATIONS_URL = "integrations_url"
 ATTR_LASTSEENDATE = "lastseendate"
 ATTR_LASTTESTDATE = "lasttesteddate"
-ATTR_LOCATION = "location"
+# ATTR_LOCATION = "location"
 ATTR_METADATA = "metadata"
 ATTR_MODEL = "model"
 ATTR_MODELTYPE = "modeltype"
@@ -52,6 +57,8 @@ ATTR_TAGS = "tags"
 ATTR_TOPIC = "topic_tree"
 ATTR_TYPE = "type"
 ATTR_VALUE = "value"
+
+CATEGORY_INSIGHT = "INSIGHT"
 
 CONF_ERROR_CREDENTIALS = "invalid_credentials"
 CONF_ERROR_TOPIC = "invalid_topic"
@@ -110,10 +117,11 @@ MODELLIST_PROBLEMS = [MODELTYPE_EIACCESSORY, MODELTYPE_GATEWAY]
 
 MQTT_ACTIONTIMESTAMP = "actionTimestamp"
 MQTT_CATEGORY = "category"
-MQTT_CLASSIFIER_ACTIVE = "active"
+# MQTT_CLASSIFIER_ACTIVE = "active"
 MQTT_DEVICESERIALNUMBER = "deviceSerialNumber"
-MQTT_EVENTID = "eventId"
+# MQTT_EVENTID = "eventId"
 MQTT_EVENTTYPEID = "eventTypeId"
+# MQTT_LOCATION = "location"
 MQTT_READINGDATE = "readingDate"
 MQTT_SEVERITY = "severity"
 MQTT_SOURCEID = "sourceId"
@@ -130,7 +138,7 @@ STORAGE_DEVICES = "devices"
 STORAGE_ENCODING = "UTF8"
 STORAGE_STATEFILE = ".storage/homelink.restore_state"
 
-UNKNOWN = "RESOLVED/UNKNOWN"
+UNKNOWN = "UNKNOWN"
 
 
 class HomeLINKMessageType(StrEnum):
@@ -140,6 +148,7 @@ class HomeLINKMessageType(StrEnum):
     MESSAGE_DEVICE = "device"
     MESSAGE_EVENT = "event"
     MESSAGE_INSIGHT = "insight"
+    MESSAGE_INSIGHTCOMPONENT = "insightcomponent"
     MESSAGE_NOTIFICATION = "notification"
     MESSAGE_PROPERTY = "property"
     MESSAGE_READING = "reading"
