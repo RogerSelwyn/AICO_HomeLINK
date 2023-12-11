@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.3.0 (2023/12/11)
+### ✨ Enhancements
+- [Separate upward reporting of fire/co alarm from environment.](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f5347a241104381ba620d26c9f83d867931145b4) - @RogerSelwyn
+- [Split out alarm and environment top level reporting](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6904fad718f702716bf9432cf9ffb4cc9843cdc0) - @RogerSelwyn
+
+### 🐛 Fixes
+- [Correct error in previous change](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1b8d51379c261c064ad70af71c8971feb3cd94ef) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Improve mqtt reading handling](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1c3c6d20b9038c32bcbc62259a53c132474de337) - @RogerSelwyn
+- [Sourcery recommended improvements](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f63b593daf74f504cad7c6465aa4691480a5de9d) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [Bump pyhomelink to 0.1.8](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d305df5de3a3715369d58d070d2895030658dd83) - @RogerSelwyn
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/24c47a97ec46e07611700cb557a1c0833b5ee691) - @actions-user
+
+### 🔖 Release
+- [Bump to v1.3.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a6fa4ada65294bb9031578ffd7cba8e2d23790ad) - @RogerSelwyn
+
 ## v1.2.1 (2023/11/21)
 ### ✨ Enhancements
 - [Use mqtt for maintaining reading sensors](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1edf4c712401f3a708421c0a8cdd851e36a71224) - @RogerSelwyn
