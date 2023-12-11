@@ -24,6 +24,7 @@ from .const import (
     APPLIESTO_ROOM,
     ATTR_ADDRESS,
     ATTR_ALARMED_DEVICES,
+    ATTR_ALARMED_ROOMS,
     ATTR_ALERTID,
     ATTR_ALERTS,
     ATTR_CATEGORY,
@@ -239,7 +240,8 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         self._alerts = None
         self._insights = None
         self._status = None
-        self._alarms = []
+        self._alarms_devices = []
+        self._alarms_rooms = []
         self._dev_reg = device_registry.async_get(hass)
         super().__init__(coordinator, hl_property_key, alarm_type)
         self._entry = entry
@@ -267,7 +269,9 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
     @property
     def extra_state_attributes(self):
         """Return entity specific state attributes."""
-        attributes = {}
+        attributes = {ATTR_ALARMED_DEVICES: self._alarms_devices}
+        if self._alarm_type == ALARMTYPE_ENVIRONMENT:
+            attributes[ATTR_ALARMED_ROOMS] = self._alarms_rooms
         if self._alerts:
             attributes[ATTR_ALERTS] = self._alerts
         if self._insights:
@@ -298,23 +302,35 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             self._gateway_key = self._property[COORD_GATEWAY_KEY]
             self._alerts = self._set_alerts()
             self._insights = self._set_insights()
-            self._status, self._alarms = self._set_status()
+            self._status, self._alarms_devices, self._alarms_rooms = self._set_status()
 
     def _set_status(self) -> bool:
         status = STATUS_GOOD
         if self._alerts:
             status = STATUS_NOT_GOOD
-        alarms = []
+        alarms_devices = []
+        alarms_rooms = []
         for alert in self._get_alerts():
             status = STATUS_NOT_GOOD
-            if not alert.serialnumber:
+            if not alert.serialnumber and not alert.location:
                 continue
-            if devicereg := self._dev_reg.async_get_device(
-                build_device_identifiers(alert.serialnumber)
-            ):
-                alarms.append(devicereg.name_by_user or devicereg.name)
+            if alert.serialnumber:
+                if devicereg := self._dev_reg.async_get_device(
+                    build_device_identifiers(alert.serialnumber)
+                ):
+                    device = devicereg.name_by_user or devicereg.name
+                    if device not in alarms_devices:
+                        alarms_devices.append(device)
+            else:
+                location = alert.locationnickname or alert.location
+                if location not in alarms_rooms:
+                    alarms_rooms.append(location)
 
-        return status != STATUS_GOOD, alarms or ALARMS_NONE
+        return (
+            status != STATUS_GOOD,
+            alarms_devices or ALARMS_NONE,
+            alarms_rooms or ALARMS_NONE,
+        )
 
     def _set_alerts(self):
         return [
@@ -329,6 +345,7 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
                 ATTR_DESCRIPTION: alert.description,
             }
             for alert in self._get_alerts()
+            if not alert.location
         ]
 
     def _get_alerts(self):
@@ -337,16 +354,19 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             for alert in self.coordinator.data[COORD_PROPERTIES][self._key][
                 COORD_ALERTS
             ]
-            if not hasattr(alert.rel, ATTR_DEVICE)
-            and (
-                (
-                    alert.category == CATEGORY_INSIGHT
-                    and self._alarm_type == ALARMTYPE_ENVIRONMENT
-                )
-                or (
-                    alert.category != CATEGORY_INSIGHT
-                    and self._alarm_type == ALARMTYPE_ALARM
-                )
+            if (
+                alert.category == CATEGORY_INSIGHT
+                and self._alarm_type == ALARMTYPE_ENVIRONMENT
+            )
+            or (
+                alert.category != CATEGORY_INSIGHT
+                and alert.modeltype not in MODELLIST_ENVIRONMENT
+                and self._alarm_type == ALARMTYPE_ALARM
+            )
+            or (
+                alert.category != CATEGORY_INSIGHT
+                and alert.modeltype in MODELLIST_ENVIRONMENT
+                and self._alarm_type == ALARMTYPE_ENVIRONMENT
             )
         ]
 
