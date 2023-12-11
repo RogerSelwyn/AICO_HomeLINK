@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.3.2 (2023/12/11)
+### 🐛 Fixes
+- [Stop reporting old events](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/889d515046c0520fd431a9ecef31a70e8307c447) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.3.2](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/9a6fbcaaf320ebf7ec815b00d43565bb44c9fe69) - @RogerSelwyn
+
 ## v1.3.1 (2023/12/11)
 ### 🔨 Maintenance
 - [Improve alarmed_devices/rooms attributes](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/acd048d7a1ae03674482eee40895640e16933e2a) - @RogerSelwyn
