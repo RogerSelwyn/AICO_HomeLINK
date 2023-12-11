@@ -14,8 +14,6 @@ ATTR_ALARM = "property element"
 ATTR_ALARMED_DEVICES = "alarmed_devices"
 ATTR_ALERTID = "alertid"
 ATTR_ALERTS = "alerts"
-ATTR_ALERTSTATUS = "alertstatus"
-ATTR_APPLIESTO = "appliesto"
 ATTR_CATEGORY = "category"
 ATTR_CONNECTIVITYTYPE = "connectivitytype"
 ATTR_DATACOLLECTIONSTATUS = "datacollectionstatus"
@@ -32,7 +30,6 @@ ATTR_INSTALLEDBY = "installedby"
 ATTR_INTEGRATIONS_URL = "integrations_url"
 ATTR_LASTSEENDATE = "lastseendate"
 ATTR_LASTTESTDATE = "lasttesteddate"
-# ATTR_LOCATION = "location"
 ATTR_METADATA = "metadata"
 ATTR_MODEL = "model"
 ATTR_MODELTYPE = "modeltype"
@@ -96,9 +93,6 @@ HOMELINK_MQTT_PROTOCOL = "tcp"
 HOMELINK_MQTT_KEEPALIVE = 60
 HOMELINK_MQTT_PORT = 8883
 HOMELINK_MQTT_SERVER = "conduit.live.homelync.io"
-# HOMELINK_MQTT_PORT = 1883
-# HOMELINK_MQTT_SERVER = "broker.hivemq.com"
-
 
 INTEGRATIONS_URL = "https://dashboard.live.homelync.io/#/pages/admin/integrations"
 
@@ -117,11 +111,9 @@ MODELLIST_PROBLEMS = [MODELTYPE_EIACCESSORY, MODELTYPE_GATEWAY]
 
 MQTT_ACTIONTIMESTAMP = "actionTimestamp"
 MQTT_CATEGORY = "category"
-# MQTT_CLASSIFIER_ACTIVE = "active"
 MQTT_DEVICESERIALNUMBER = "deviceSerialNumber"
-# MQTT_EVENTID = "eventId"
 MQTT_EVENTTYPEID = "eventTypeId"
-# MQTT_LOCATION = "location"
+MQTT_INSIGHTID = "insightId"
 MQTT_READINGDATE = "readingDate"
 MQTT_SEVERITY = "severity"
 MQTT_SOURCEID = "sourceId"
@@ -137,8 +129,6 @@ STORAGE_DEVICE = "device"
 STORAGE_DEVICES = "devices"
 STORAGE_ENCODING = "UTF8"
 STORAGE_STATEFILE = ".storage/homelink.restore_state"
-
-UNKNOWN = "UNKNOWN"
 
 
 class HomeLINKMessageType(StrEnum):

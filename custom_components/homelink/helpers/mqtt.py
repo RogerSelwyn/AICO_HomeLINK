@@ -14,7 +14,6 @@ from homeassistant.setup import async_when_setup
 from ..const import (
     ALARMTYPE_ALARM,
     ALARMTYPE_ENVIRONMENT,
-    CATEGORY_INSIGHT,
     CONF_ERROR_CREDENTIALS,
     CONF_ERROR_TOPIC,
     CONF_ERROR_UNAVAILABLE,
@@ -28,6 +27,7 @@ from ..const import (
     HOMELINK_MQTT_PROTOCOL,
     HOMELINK_MQTT_SERVER,
     MQTT_DEVICESERIALNUMBER,
+    MQTT_INSIGHTID,
     HomeLINKMessageType,
 )
 
@@ -121,15 +121,11 @@ class HomeLINKMQTT:
         self._client.on_message = self._on_message
         self._client.on_subscribe = self._on_subscribe
 
-    def _on_socket_open(
-        self, client, userdata, sock
-    ):  # pylint: disable=unused-argument
+    def _on_socket_open(self, client, userdata, sock):  # pylint: disable=unused-argument
         self._socket_open = True
 
     @callback
-    def _on_connect(
-        self, client, userdata, flags, ret, properties=None
-    ):  # pylint: disable=unused-argument
+    def _on_connect(self, client, userdata, flags, ret, properties=None):  # pylint: disable=unused-argument
         if not self._error:
             _LOGGER.debug("HomeLINK MQTT connected with result code: %s", ret)
         if ret == paho_mqtt.CONNACK_ACCEPTED:
@@ -139,9 +135,7 @@ class HomeLINKMQTT:
             client.subscribe(self._mqtt_root_topic, qos=2)
 
     @callback
-    def _on_disconnect(
-        self, client, userdata, ret, properties=None
-    ):  # pylint: disable=unused-argument
+    def _on_disconnect(self, client, userdata, ret, properties=None):  # pylint: disable=unused-argument
         if ret != paho_mqtt.MQTT_ERR_SUCCESS:
             if not self._connected:
                 self._check_error(
@@ -161,9 +155,7 @@ class HomeLINKMQTT:
         _async_forward_message(self._hass, msg, self._root_topic, self._properties)
 
     @callback
-    def _on_subscribe(
-        self, client, userdata, mid, granted_qos
-    ):  # pylint: disable=unused-argument
+    def _on_subscribe(self, client, userdata, mid, granted_qos):  # pylint: disable=unused-argument
         _LOGGER.debug("HomeLINK MQTT subscribed: %s", self._mqtt_root_topic)
         if self._error == SUBSCRIBE_ERROR:
             self._error = False
@@ -204,7 +196,9 @@ class HAMQTT:
 
     @callback
     async def _async_subscribe(
-        self, hass: HomeAssistant, component  # pylint: disable=unused-argument
+        self,
+        hass: HomeAssistant,  # pylint: disable=unused-argument
+        component,  # pylint: disable=unused-argument
     ):
         _LOGGER.debug("HA MQTT subscribed: %s", self._mqtt_root_topic)
         self._unsubscribe_task = await mqtt.async_subscribe(
@@ -213,7 +207,9 @@ class HAMQTT:
 
     @callback
     async def _async_message_received(self, msg):
-        _async_forward_message(self._hass, msg, self._root_topic, self._properties)
+        await _async_forward_message(
+            self._hass, msg, self._root_topic, self._properties
+        )
 
 
 async def _async_forward_message(hass, msg, root_topic, properties):
@@ -224,6 +220,7 @@ async def _async_forward_message(hass, msg, root_topic, properties):
     topic = msg.topic.removeprefix(f"{root_topic}/")
     messagetype = _extract_message_type(topic)
 
+    # Ignore insights, insightcomponents and notifications
     if messagetype in [
         HomeLINKMessageType.MESSAGE_INSIGHT,
         HomeLINKMessageType.MESSAGE_INSIGHTCOMPONENT,
@@ -231,36 +228,60 @@ async def _async_forward_message(hass, msg, root_topic, properties):
     ]:
         return
 
-    # devicemessage = self._gateway_key.lower() in msg.topic
     payload = json.loads(msg.payload)
+
+    # Device added or deleted, so route to property binary sensor to trigger refresh
+    if messagetype in [
+        HomeLINKMessageType.MESSAGE_DEVICE,
+        HomeLINKMessageType.MESSAGE_PROPERTY,
+    ]:
+        await _async_property_device_update_message(
+            hass, key, topic, payload, messagetype
+        )
+        return
+
+    # Event Message so route to event sensor
     if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
         await _async_event_message(hass, key, payload)
         return
 
-    if hasattr(payload, MQTT_DEVICESERIALNUMBER) and payload[MQTT_DEVICESERIALNUMBER]:
+    # Device alert or reading so route to device binary sensor for onward handling
+    if (
+        messagetype
+        in [HomeLINKMessageType.MESSAGE_ALERT, HomeLINKMessageType.MESSAGE_READING]
+        and MQTT_DEVICESERIALNUMBER in payload
+        and payload[MQTT_DEVICESERIALNUMBER]
+    ):
         await _async_device_message(hass, msg, topic, payload, messagetype)
         return
-    # location = payload[MQTT_LOCATION]
-    # if location:
-    #     self._location_message(msg, topic, payload, messagetype)
-    #     return
 
-    await _async_alarm_message(hass, key, topic, payload, messagetype)
+    # Property alert so route to 'alarm' binary sensor
+    if messagetype in [HomeLINKMessageType.MESSAGE_ALERT]:
+        await _async_alarm_message(hass, key, topic, payload, messagetype)
+        return
+
+    _LOGGER.warning("Unknown MQTT message type: %s - %s", messagetype, payload)
+
+
+async def _async_property_device_update_message(hass, key, topic, payload, messagetype):
+    event = HOMELINK_MESSAGE_MQTT.format(
+        domain=DOMAIN, key=f"{key}_{ALARMTYPE_ALARM}"
+    ).lower()
+    dispatcher_send(hass, event, topic, payload, messagetype)
 
 
 async def _async_event_message(hass, key, payload):
-    if hasattr(payload, MQTT_DEVICESERIALNUMBER) and payload[MQTT_DEVICESERIALNUMBER]:
+    if MQTT_DEVICESERIALNUMBER in payload and payload[MQTT_DEVICESERIALNUMBER]:
         event = HOMELINK_MESSAGE_EVENT.format(
             domain=DOMAIN, key=payload[MQTT_DEVICESERIALNUMBER]
         ).lower()
     else:
         event = HOMELINK_MESSAGE_EVENT.format(domain=DOMAIN, key=key).lower()
     dispatcher_send(hass, event, payload)
-    return
 
 
 async def _async_alarm_message(hass, key, topic, payload, messagetype):
-    if payload[CATEGORY_INSIGHT]:
+    if payload[MQTT_INSIGHTID]:
         alarm_type = ALARMTYPE_ENVIRONMENT
     else:
         alarm_type = ALARMTYPE_ALARM

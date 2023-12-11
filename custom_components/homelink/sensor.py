@@ -5,12 +5,19 @@ from dataclasses import dataclass
 from typing import Any
 
 from dateutil import parser
-from homeassistant.components.sensor import (STATE_CLASS_MEASUREMENT,
-                                             SensorDeviceClass, SensorEntity,
-                                             SensorEntityDescription)
+from homeassistant.components.sensor import (
+    STATE_CLASS_MEASUREMENT,
+    SensorDeviceClass,
+    SensorEntity,
+    SensorEntityDescription,
+)
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import (ATTR_STATE, CONCENTRATION_PARTS_PER_MILLION,
-                                 PERCENTAGE, UnitOfTemperature)
+from homeassistant.const import (
+    ATTR_STATE,
+    CONCENTRATION_PARTS_PER_MILLION,
+    PERCENTAGE,
+    UnitOfTemperature,
+)
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -18,17 +25,35 @@ from homeassistant.helpers.typing import StateType
 
 from pyhomelink import HomeLINKReadingType
 
-from .const import (ATTR_LASTTESTDATE, ATTR_READINGDATE, ATTR_READINGS,
-                    ATTR_REPLACEDATE, CONF_MQTT_ENABLE, COORD_DEVICES,
-                    COORD_GATEWAY_KEY, COORD_PROPERTIES, COORD_READINGS,
-                    DOMAIN, ENTITY_NAME_LASTTESTDATE, ENTITY_NAME_REPLACEDATE,
-                    HOMELINK_ADD_DEVICE, HOMELINK_ADD_PROPERTY,
-                    HOMELINK_MESSAGE_MQTT, MQTT_READINGDATE, MQTT_VALUE)
+from .const import (
+    ATTR_LASTTESTDATE,
+    ATTR_READINGDATE,
+    ATTR_READINGS,
+    ATTR_REPLACEDATE,
+    CONF_MQTT_ENABLE,
+    COORD_DEVICES,
+    COORD_GATEWAY_KEY,
+    COORD_PROPERTIES,
+    COORD_READINGS,
+    DOMAIN,
+    ENTITY_NAME_LASTTESTDATE,
+    ENTITY_NAME_REPLACEDATE,
+    HOMELINK_ADD_DEVICE,
+    HOMELINK_ADD_PROPERTY,
+    HOMELINK_MESSAGE_MQTT,
+    MQTT_READINGDATE,
+    MQTT_VALUE,
+)
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.entity import HomeLINKDeviceEntity
 from .helpers.events import raise_reading_event
-from .helpers.utils import (build_device_identifiers, build_mqtt_device_key,
-                            device_device_info, read_state, write_state)
+from .helpers.utils import (
+    build_device_identifiers,
+    build_mqtt_device_key,
+    device_device_info,
+    read_state,
+    write_state,
+)
 
 
 @dataclass
@@ -75,25 +100,20 @@ async def async_setup_entry(
             async_add_sensor_device(hl_property, device_key, device, None)
 
     @callback
-    def async_add_sensor_device(
-        hl_property, device_key, device, gateway_key
-    ):  # pylint: disable=unused-argument
+    def async_add_sensor_device(hl_property, device_key, device, gateway_key):  # pylint: disable=unused-argument
         async_add_entities(
             [
                 HomeLINKSensor(hl_coordinator, hl_property, device_key, description)
                 for description in SENSOR_TYPES
             ]
         )
-        if hasattr(device.rel, ATTR_READINGS):
-            if entry.options.get(CONF_MQTT_ENABLE):
-                for reading in hl_coordinator.data[COORD_PROPERTIES][hl_property][
-                    COORD_READINGS
-                ]:
-                    for readingdevice in reading.devices:
-                        if readingdevice.serialnumber == device_key:
-                            _add_sensor_reading(reading, device_key)
-            # else:
-            #     await _async_delete_entities(hass, entry)
+        if hasattr(device.rel, ATTR_READINGS) and entry.options.get(CONF_MQTT_ENABLE):
+            for reading in hl_coordinator.data[COORD_PROPERTIES][hl_property][
+                COORD_READINGS
+            ]:
+                for readingdevice in reading.devices:
+                    if readingdevice.serialnumber == device_key:
+                        _add_sensor_reading(reading, device_key)
 
     def _add_sensor_reading(reading, device_key):
         async_add_entities(
@@ -213,9 +233,7 @@ class HomeLINKReadingSensor(SensorEntity):
         if (
             self._parent_key not in coordinator.data[COORD_PROPERTIES]
             or self._key
-            not in coordinator.data[COORD_PROPERTIES][self._parent_key][
-                COORD_DEVICES
-            ]
+            not in coordinator.data[COORD_PROPERTIES][self._parent_key][COORD_DEVICES]
         ):
             return
         for reading in coordinator.data[COORD_PROPERTIES][self._parent_key][
@@ -227,15 +245,13 @@ class HomeLINKReadingSensor(SensorEntity):
                 if device.serialnumber != self._key:
                     continue
                 self._state = device.values[len(device.values) - 1].value
-                self._readingdate = device.values[
-                    len(device.values) - 1
-                ].readingdate
+                self._readingdate = device.values[len(device.values) - 1].readingdate
                 break
 
     async def async_added_to_hass(self) -> None:
         """Register MQTT handler."""
         await super().async_added_to_hass()
-        if attributes:= read_state(self.hass, self.device_class, self._key):
+        if attributes := read_state(self.hass, self.device_class, self._key):
             self._state = attributes[ATTR_STATE]
             self._readingdate = parser.parse(attributes[ATTR_READINGDATE])
         if self._entry.options.get(CONF_MQTT_ENABLE):
