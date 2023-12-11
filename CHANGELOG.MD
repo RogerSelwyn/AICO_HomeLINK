@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.3.1 (2023/12/11)
+### 🔨 Maintenance
+- [Improve alarmed_devices/rooms attributes](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/acd048d7a1ae03674482eee40895640e16933e2a) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.3.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1bcf2fbc7ecd30b3d17a4e80e2870e8078503ed2) - @RogerSelwyn
+
 ## v1.3.0 (2023/12/11)
 ### ✨ Enhancements
 - [Separate upward reporting of fire/co alarm from environment.](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f5347a241104381ba620d26c9f83d867931145b4) - @RogerSelwyn
