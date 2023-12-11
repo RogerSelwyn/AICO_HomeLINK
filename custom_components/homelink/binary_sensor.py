@@ -2,7 +2,6 @@
 
 import json
 import logging
-from datetime import timedelta
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -164,7 +163,6 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         super().__init__(coordinator, hl_property_key)
         self._entry = entry
         self._attr_unique_id = f"{self._key}"
-        self._lastdate = dt.utcnow() - timedelta(days=1)
         self._unregister_mqtt_handler = None
         if entry.options.get(CONF_MQTT_ENABLE):
             self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
@@ -246,7 +244,7 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         super().__init__(coordinator, hl_property_key, alarm_type)
         self._entry = entry
         self._attr_unique_id = f"{self._key}_{alarm_type}"
-        self._lastdate = dt.utcnow() - timedelta(days=1)
+        self._lastdate = dt.utcnow()
         self._unregister_mqtt_handler = None
         if entry.options.get(CONF_MQTT_ENABLE):
             self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
@@ -438,7 +436,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         self._entry = entry
 
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
-        self._lastdate = dt.utcnow() - timedelta(days=1)
+        self._lastdate = dt.utcnow()
         self._unregister_mqtt_handler = None
         self._device_class = self._build_device_class()
 

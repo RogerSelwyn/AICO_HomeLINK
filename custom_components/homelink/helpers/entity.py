@@ -4,6 +4,7 @@ from homeassistant.components.event import EventEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util import dt
 
 from ..const import (
     ATTR_ACTIONTIMESTAMP,
@@ -147,6 +148,7 @@ class HomeLINKEventEntity(EventEntity):
         self._entry = entry
         self._mqtt_key = mqtt_key
         self._unregister_event_handler = None
+        self._lastdate = dt.utcnow()
 
     @property
     def unique_id(self) -> str:
@@ -169,10 +171,15 @@ class HomeLINKEventEntity(EventEntity):
     @callback
     def _handle_event(self, event) -> None:
         """Handle status event for this resource."""
+        msgdate = get_message_date(event)
+        if msgdate < self._lastdate:
+            return
+        self._lastdate = msgdate
+
         self._trigger_event(
             event[MQTT_EVENTTYPEID],
             {
-                ATTR_ACTIONTIMESTAMP: get_message_date(event),
+                ATTR_ACTIONTIMESTAMP: msgdate,
                 ATTR_STATUSID: event[MQTT_STATUSID],
                 ATTR_CATEGORY: event[MQTT_CATEGORY],
                 ATTR_SEVERITY: event[MQTT_SEVERITY],
