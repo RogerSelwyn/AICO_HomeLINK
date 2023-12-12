@@ -15,6 +15,7 @@ from pyhomelink import HomeLINKApi
 from pyhomelink.exceptions import ApiException, AuthException
 
 from ..const import (
+    ATTR_ALARM,
     ATTR_PROPERTY,
     ATTR_READINGS,
     COORD_ALERTS,
@@ -31,7 +32,9 @@ from ..const import (
     HOMELINK_ADD_PROPERTY,
     HOMELINK_LOOKUP_EVENTTYPE,
     KNOWN_DEVICES_CHILDREN,
+    KNOWN_DEVICES_DEVICEID,
     KNOWN_DEVICES_ID,
+    KNOWN_DEVICES_MODEL,
     MODELTYPE_GATEWAY,
 )
 
@@ -164,7 +167,10 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         for device in devices:
             if device.model == ATTR_PROPERTY.capitalize():
                 children = {
-                    list(device_child.identifiers)[0][2]: device_child.id
+                    list(device_child.identifiers)[0][2]: {
+                        KNOWN_DEVICES_DEVICEID: device_child.id,
+                        KNOWN_DEVICES_MODEL: device_child.model,
+                    }
                     for device_child in devices
                     if device_child.via_device_id == device.id
                 }
@@ -179,7 +185,9 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 for known_device, child_device in device_key[
                     KNOWN_DEVICES_CHILDREN
                 ].items():
-                    self._delete_device_and_entities(child_device)
+                    self._delete_device_and_entities(
+                        child_device[KNOWN_DEVICES_DEVICEID]
+                    )
                     self._known_properties[known_property][KNOWN_DEVICES_CHILDREN].pop(
                         known_device
                     )
@@ -190,10 +198,15 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 for known_device, child_device in device_key[
                     KNOWN_DEVICES_CHILDREN
                 ].items():
-                    if known_device in coord_property[COORD_DEVICES]:
+                    if (
+                        known_device in coord_property[COORD_DEVICES]
+                        or child_device[KNOWN_DEVICES_MODEL].lower() == ATTR_ALARM
+                    ):
                         continue
 
-                    self._delete_device_and_entities(child_device)
+                    self._delete_device_and_entities(
+                        child_device[KNOWN_DEVICES_DEVICEID]
+                    )
                     self._known_properties[known_property][KNOWN_DEVICES_CHILDREN].pop(
                         known_device
                     )

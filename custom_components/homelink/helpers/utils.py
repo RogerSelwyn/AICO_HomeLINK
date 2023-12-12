@@ -3,14 +3,31 @@ import json
 import os
 
 from dateutil import parser
-from homeassistant.const import (ATTR_CONFIGURATION_URL, ATTR_IDENTIFIERS,
-                                 ATTR_MANUFACTURER, ATTR_MODEL, ATTR_NAME,
-                                 ATTR_VIA_DEVICE, Platform)
+from homeassistant.const import (
+    ATTR_CONFIGURATION_URL,
+    ATTR_IDENTIFIERS,
+    ATTR_MANUFACTURER,
+    ATTR_MODEL,
+    ATTR_NAME,
+    ATTR_VIA_DEVICE,
+    Platform,
+)
 
-from ..const import (ATTR_ALARM, ATTR_DEVICE, ATTR_HOMELINK, ATTR_PROPERTY,
-                     DASHBOARD_URL, DOMAIN, MODELTYPE_GATEWAY,
-                     MQTT_ACTIONTIMESTAMP, STORAGE_ATTRIBUTES, STORAGE_DEVICE,
-                     STORAGE_DEVICES, STORAGE_ENCODING, STORAGE_STATEFILE)
+from ..const import (
+    ATTR_ALARM,
+    ATTR_DEVICE,
+    ATTR_HOMELINK,
+    ATTR_PROPERTY,
+    DASHBOARD_URL,
+    DOMAIN,
+    MODELTYPE_GATEWAY,
+    MQTT_ACTIONTIMESTAMP,
+    STORAGE_ATTRIBUTES,
+    STORAGE_DEVICE,
+    STORAGE_DEVICES,
+    STORAGE_ENCODING,
+    STORAGE_STATEFILE,
+)
 
 
 def build_device_identifiers(device_id):
@@ -42,7 +59,7 @@ def property_device_info(key):
 def alarm_device_info(key, alarm_type):
     """Property device information"""
     return {
-        ATTR_IDENTIFIERS: {(DOMAIN, ATTR_ALARM, key, alarm_type)},
+        ATTR_IDENTIFIERS: {(DOMAIN, ATTR_ALARM, f"{key} {alarm_type}")},
         ATTR_NAME: f"{key} {alarm_type}",
         ATTR_VIA_DEVICE: (DOMAIN, ATTR_PROPERTY, key),
         ATTR_MANUFACTURER: ATTR_HOMELINK,
