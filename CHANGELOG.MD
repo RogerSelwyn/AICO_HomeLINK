@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.3.3 (2023/12/12)
+### 🐛 Fixes
+- [Environment property element being deleted and recreated on every restart](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2f6ac18083f25bfd94fbf2cb5e0896d1e85c1f6d) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.3.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1a251bb3a81f586936b02571d31bbe142d80fccd) - @RogerSelwyn
+
 ## v1.3.2 (2023/12/11)
 ### 🐛 Fixes
 - [Stop reporting old events](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/889d515046c0520fd431a9ecef31a70e8307c447) - @RogerSelwyn
