@@ -75,7 +75,7 @@ class OAuth2FlowHandler(
             if err.status == 401:
                 return self.async_abort(reason="oauth_error")
             raise
-        except aiohttp.client_exceptions.ClientConnectorError as err:
+        except aiohttp.client_exceptions.ClientConnectorError:
             return self.async_abort(reason="cannot_connect")
 
         try:
@@ -92,7 +92,8 @@ class OAuth2FlowHandler(
         )
 
     async def async_step_reauth(
-        self, entry_data: Mapping[str, Any]  # pylint: disable=unused-argument
+        self,
+        entry_data: Mapping[str, Any],  # pylint: disable=unused-argument
     ) -> FlowResult:
         """Perform reauth upon an API authentication error."""
         self._reauth_config_entry = self.hass.config_entries.async_get_entry(
@@ -139,7 +140,8 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         self._mqtt_password = options.get(CONF_PASSWORD, "")
 
     async def async_step_init(
-        self, user_input=None  # pylint: disable=unused-argument
+        self,
+        user_input=None,  # pylint: disable=unused-argument
     ) -> FlowResult:
         """Set up the option flow."""
 
