@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.3.4 (2023/12/25)
+### 🔨 Maintenance
+- [Config flow tweaks](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e5365d5e68d40ba1673cfe1303b800c4f393f1af) - @RogerSelwyn
+- [Remove deprecated constant](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/96474cb25d8a4de183d3cbfa14ada6efbd8814d2) - @RogerSelwyn
+- [Disable warning](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a63b1bb672e88675def23038f82944f560c7eae9) - @RogerSelwyn
+
+### 🔖 Release
+- [Bump to v1.3.4](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3a8837781f4435eae00f79d1ccfc86b6533ef197) - @actions-user
+
 ## v1.3.3 (2023/12/12)
 ### 🐛 Fixes
 - [Environment property element being deleted and recreated on every restart](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2f6ac18083f25bfd94fbf2cb5e0896d1e85c1f6d) - @RogerSelwyn
