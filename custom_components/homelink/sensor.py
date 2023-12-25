@@ -6,10 +6,10 @@ from typing import Any
 
 from dateutil import parser
 from homeassistant.components.sensor import (
-    STATE_CLASS_MEASUREMENT,
     SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
+    SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -176,7 +176,7 @@ class HomeLINKReadingSensor(SensorEntity):
     """Reading sensor entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True
-    _attr_state_class = STATE_CLASS_MEASUREMENT
+    _attr_state_class = SensorStateClass.MEASUREMENT
 
     def __init__(
         self,
