@@ -71,13 +71,13 @@ class HomeLINKEntityDescription(
 
 
 SENSOR_TYPES: tuple[HomeLINKEntityDescription, ...] = (
-    HomeLINKEntityDescription(
+    HomeLINKEntityDescription(  # pylint: disable=unexpected-keyword-arg
         key=ATTR_REPLACEDATE,
         name=ENTITY_NAME_REPLACEDATE,
         device_class=SensorDeviceClass.DATE,
         value_fn=lambda data: data.replacedate.date() or None,
     ),
-    HomeLINKEntityDescription(
+    HomeLINKEntityDescription(  # pylint: disable=unexpected-keyword-arg
         key=ATTR_LASTTESTDATE,
         name=ENTITY_NAME_LASTTESTDATE,
         device_class=SensorDeviceClass.TIMESTAMP,
