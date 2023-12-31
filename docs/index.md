@@ -39,7 +39,7 @@ These are the presented as the following entity types within Home Assistant:
 
 You can either use HACS or install the component manually:
 
-- **HACS** - Add this GitHub as a custom repository in HACS, then search for and install AICO HomelINK
+- **HACS** - [Home Assistant Community Store (HACS)](https://hacs.xyz/) - search for and install AICO HomelINK
 
 - **Manual** - Put the files from `/custom_components/homelink/` in your folder `<config directory>/custom_components/homelin/`
 
