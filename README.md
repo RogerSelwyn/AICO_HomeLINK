@@ -1,6 +1,6 @@
 [![Validate with hassfest](https://github.com/RogerSelwyn/AICO_HomeLINK/actions/workflows/hassfest.yaml/badge.svg)](https://github.com/RogerSelwyn/AICO_HomeLINK/actions/workflows/hassfest.yaml) [![HACS Validate](https://github.com/RogerSelwyn/AICO_HomeLINK/actions/workflows/hacs.yaml/badge.svg)](https://github.com/RogerSelwyn/AICO_HomeLINK/actions/workflows/hacs.yaml) [![CodeFactor](https://www.codefactor.io/repository/github/rogerselwyn/AICO_HomeLINK/badge)](https://www.codefactor.io/repository/github/rogerselwyn/AICO_HomeLINK) [![Downloads for latest release](https://img.shields.io/github/downloads/RogerSelwyn/AICO_HomeLINK/latest/total.svg)](https://github.com/RogerSelwyn/AICO_HomeLINK/releases/latest)
 
-![GitHub release](https://img.shields.io/github/v/release/RogerSelwyn/AICO_HomeLINK) [![maintained](https://img.shields.io/maintenance/yes/2023.svg)](#) [![maintainer](https://img.shields.io/badge/maintainer-%20%40RogerSelwyn-blue.svg)](https://github.com/RogerSelwyn) [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration) 
+![GitHub release](https://img.shields.io/github/v/release/RogerSelwyn/AICO_HomeLINK) [![maintained](https://img.shields.io/maintenance/yes/2023.svg)](#) [![maintainer](https://img.shields.io/badge/maintainer-%20%40RogerSelwyn-blue.svg)](https://github.com/RogerSelwyn) [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://github.com/hacs/integration) 
 
 
 # AICO HomeLINK integration for Home Assistant
@@ -37,8 +37,13 @@ These are the presented as the following entity types within Home Assistant:
   - Device replace by date
   - CO2, Humidity, Temperature (with MQTT enabled)
 
-### [Buy Me A ~~Coffee~~ Beer 🍻](https://buymeacoffee.com/rogtp)
+### [Buy Me A Beer 🍻](https://buymeacoffee.com/rogtp)
 I work on this integration because I like things to work well for myself and others, and for it to deliver as much as is achievable with the API. Please don't feel you are obligated to donate, but of course it is appreciated.
+
+<a href="https://www.buymeacoffee.com/rogtp" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a> 
+<a href="https://www.paypal.com/donate/?hosted_button_id=F7TGHNGH7A526">
+  <img src="https://github.com/RogerSelwyn/actions/blob/e82dab9e5643bbb82e182215a748a3024e3e7eac/images/paypal-donate-button.png" alt="Donate with PayPal" height="40"/>
+</a>
 
 # Documentation
 
