@@ -28,6 +28,8 @@ These are the presented as the following entity types within Home Assistant:
 
 - Binary Sensor
   - Property status
+  - Property Fire/Heat/CO Alarm Overall Status
+  - Property Environment Overall Status
   - Device status
 - Event 
   - Property last MQTT event (with MQTT enabled)
