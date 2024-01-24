@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.3.5 (2024/01/24)
+### ✨ Enhancements
+- [Add optional Insight sensors for environment devices](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2d5cb7e2d8891fc7b43bb354c2d763525dd2275c) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2b7ae9d4477654a270deb4443039bda08c9c2327) - @actions-user
+
+### 🔖 Release
+- [Auto update manifest.json](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3a8837781f4435eae00f79d1ccfc86b6533ef197) - @actions-user
+- [Release v1.3.5](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4826eb5e1f940a1b1c59462e49842b3508293291) - @RogerSelwyn
+
 ## v1.3.4 (2023/12/25)
 ### 🔨 Maintenance
 - [Config flow tweaks](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e5365d5e68d40ba1673cfe1303b800c4f393f1af) - @RogerSelwyn
