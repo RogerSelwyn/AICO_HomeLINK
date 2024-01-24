@@ -1,65 +1,66 @@
 {
-    "application_credentials": {
-        "description": "Go to the [HomeLINK Dashboard]({integrations_url}) as a Landlord Admin to setup Client ID and Secret, then enter below."
+  "application_credentials": {
+    "description": "Go to the [HomeLINK Dashboard]({integrations_url}) as a Landlord Admin to setup Client ID and Secret, then enter below."
+  },
+  "config": {
+    "abort": {
+      "cannot_connect": "Failed to connect",
+      "oauth_error": "Client ID and Secret are invalid. If you have deleted your HomeLINK Web Api integration you will need to delete and reinstall this HA integration. If you have not yet installed the HA integration, go to [Application Credentials](/config/application_credentials), delete the HomeLINK credentials and then retry installation.",
+      "single_instance_allowed": "Only one instance is allowed",
+      "timeout_connect": "Timeout establishing connection"
     },
-    "config": {
-        "abort": {
-            "cannot_connect": "Failed to connect",
-            "oauth_error": "Client ID and Secret are invalid. If you have deleted your HomeLINK Web Api integration you will need to delete and reinstall this HA integration. If you have not yet installed the HA integration, go to [Application Credentials](/config/application_credentials), delete the HomeLINK credentials and then retry installation.",
-            "single_instance_allowed": "Only one instance is allowed",
-            "timeout_connect": "Timeout establishing connection"
-        },
-        "create_entry": {
-            "default": "Successfully authenticated"
-        },
-        "step": {
-            "auth": {
-                "title": "Authenticate to AICO HomeLINK"
-            },
-            "reauth_confirm": {
-                "title": "Reauthenticate AICO HomeLINK Integration",
-                "description": "The HomeLINK integration needs to be re-setup for your account"
-              }       }
+    "create_entry": {
+      "default": "Successfully authenticated"
     },
-    "options": {
-        "error": {
-            "invalid_credentials": "Client ID, Username and Password combination is invalid",
-            "invalid_topic": "Topic invalid for given credentials",
-            "server_unavailable": "HomeLINK server unavailable"
-          },
-        "step": {
-          "user": {
-            "data": {
-                "mqtt_enable": "Enable MQTT updates",
-                "mqtt_homelink": "Use HomeLINK MQTT broker"
-            },
-            "data_description": {
-            }
-          },
-          "ha_mqtt": {
-            "data": {
-                "mqtt_topic": "The base subscription for your account",
-                "event_enable": "Enable MQTT event entities"
-              },
-            "data_description": {
-                "mqtt_topic": "MQTT Root Topic"
-            }
-          },
-          "homelink_mqtt": {
-            "data": {
-                "mqtt_client_id": "HomeLINK Client ID",
-                "username": "HomeLINK Username",
-                "password": "HomeLINK Password",
-                "mqtt_topic": "The base subscription for your account",
-                "event_enable": "Enable MQTT event entities"
-            },
-            "data_description": {
-                "mqtt_client_id": "The client_id provide by HomeLINK",
-                "username": "The username provide by HomeLINK",
-                "password": "The password provide by HomeLINK",
-                "mqtt_topic": "MQTT Root Topic"
-            }
-          }
+    "step": {
+      "auth": {
+        "title": "Authenticate to AICO HomeLINK"
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate AICO HomeLINK Integration",
+        "description": "The HomeLINK integration needs to be re-setup for your account"
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "invalid_credentials": "Client ID, Username and Password combination is invalid",
+      "invalid_topic": "Topic invalid for given credentials",
+      "server_unavailable": "HomeLINK server unavailable"
+    },
+    "step": {
+      "user": {
+        "data": {
+          "insights_enable": "Enable Insight sensors (if available)",
+          "mqtt_enable": "Enable MQTT updates",
+          "mqtt_homelink": "Use HomeLINK MQTT broker"
+        },
+        "data_description": {}
+      },
+      "ha_mqtt": {
+        "data": {
+          "mqtt_topic": "The base subscription for your account",
+          "event_enable": "Enable MQTT event entities"
+        },
+        "data_description": {
+          "mqtt_topic": "MQTT Root Topic"
+        }
+      },
+      "homelink_mqtt": {
+        "data": {
+          "mqtt_client_id": "HomeLINK Client ID",
+          "username": "HomeLINK Username",
+          "password": "HomeLINK Password",
+          "mqtt_topic": "The base subscription for your account",
+          "event_enable": "Enable MQTT event entities"
+        },
+        "data_description": {
+          "mqtt_client_id": "The client_id provide by HomeLINK",
+          "username": "The username provide by HomeLINK",
+          "password": "The password provide by HomeLINK",
+          "mqtt_topic": "MQTT Root Topic"
         }
       }
     }
+  }
+}

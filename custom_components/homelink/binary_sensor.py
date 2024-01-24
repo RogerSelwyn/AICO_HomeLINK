@@ -19,8 +19,6 @@ from .const import (
     ALARMS_NONE,
     ALARMTYPE_ALARM,
     ALARMTYPE_ENVIRONMENT,
-    APPLIESTO_PROPERTY,
-    APPLIESTO_ROOM,
     ATTR_ADDRESS,
     ATTR_ALARMED_DEVICES,
     ATTR_ALARMED_ROOMS,
@@ -32,8 +30,6 @@ from .const import (
     ATTR_DESCRIPTION,
     ATTR_DEVICE,
     ATTR_EVENTTYPE,
-    ATTR_INSIGHTID,
-    ATTR_INSIGHTS,
     ATTR_INSTALLATIONDATE,
     ATTR_INSTALLEDBY,
     ATTR_LASTSEENDATE,
@@ -43,14 +39,12 @@ from .const import (
     ATTR_RAISEDDATE,
     ATTR_REFERENCE,
     ATTR_REPLACEDATE,
-    ATTR_RISKLEVEL,
     ATTR_SERIALNUMBER,
     ATTR_SEVERITY,
     ATTR_SIGNALSTRENGTH,
     ATTR_STATUS,
     ATTR_TAGS,
     ATTR_TYPE,
-    ATTR_VALUE,
     ATTRIBUTION,
     CATEGORY_INSIGHT,
     CONF_MQTT_ENABLE,
@@ -58,7 +52,6 @@ from .const import (
     COORD_ALERTS,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
-    COORD_INSIGHTS,
     COORD_PROPERTIES,
     COORD_PROPERTY,
     DOMAIN,
@@ -236,7 +229,6 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
     ) -> None:
         """Property entity object for HomeLINK sensor."""
         self._alerts = None
-        self._insights = None
         self._status = None
         self._alarms_devices = []
         self._alarms_rooms = []
@@ -272,8 +264,6 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             attributes[ATTR_ALARMED_ROOMS] = self._alarms_rooms
         if self._alerts:
             attributes[ATTR_ALERTS] = self._alerts
-        if self._insights:
-            attributes[ATTR_INSIGHTS] = self._insights
 
         return attributes
 
@@ -299,7 +289,6 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
             self._gateway_key = self._property[COORD_GATEWAY_KEY]
             self._alerts = self._set_alerts()
-            self._insights = self._set_insights()
             self._status, self._alarms_devices, self._alarms_rooms = self._set_status()
 
     def _set_status(self) -> bool:
@@ -368,24 +357,6 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             )
         ]
 
-    def _set_insights(self):
-        if self._alarm_type == ALARMTYPE_ALARM:
-            return []
-        insights = []
-        for insight in self.coordinator.data[COORD_PROPERTIES][self._key][
-            COORD_INSIGHTS
-        ]:
-            if insight.appliesto == APPLIESTO_ROOM:
-                continue
-            data = {
-                ATTR_INSIGHTID: insight.insightid,
-                ATTR_TYPE: insight.hl_type,
-                ATTR_RISKLEVEL: insight.risklevel,
-                ATTR_VALUE: insight.value,
-            }
-            insights.append(data)
-        return insights
-
     @callback
     async def _async_mqtt_handle(self, topic, payload, messagetype):
         msgdate = get_message_date(payload)
@@ -431,7 +402,6 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
     ) -> None:
         """Device entity object for HomeLINK sensor."""
         self._alerts = None
-        self._insights = None
         super().__init__(coordinator, hl_property_key, device_key)
         self._entry = entry
 
@@ -477,8 +447,6 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         }
         if self._alerts:
             attributes[ATTR_ALERTS] = self._alerts
-        if self._insights:
-            attributes[ATTR_INSIGHTS] = self._insights
 
         return attributes
 
@@ -532,8 +500,6 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             COORD_GATEWAY_KEY
         ]
         self._alerts = self._set_alerts()
-        if self._device.modeltype in MODELLIST_ENVIRONMENT:
-            self._insights = self._set_insights()
         self._status = self._set_status()
 
     def _set_status(self) -> bool:
@@ -554,25 +520,6 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             }
             for alert in alerts
         ]
-
-    def _set_insights(self):
-        insights = []
-        for insight in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-            COORD_INSIGHTS
-        ]:
-            if (
-                insight.appliesto == APPLIESTO_PROPERTY
-                or insight.location != self._device.location
-            ):
-                continue
-            data = {
-                ATTR_INSIGHTID: insight.insightid,
-                ATTR_TYPE: insight.hl_type,
-                ATTR_RISKLEVEL: insight.risklevel,
-                ATTR_VALUE: insight.value,
-            }
-            insights.append(data)
-        return insights
 
     def _get_alerts(self):
         return [

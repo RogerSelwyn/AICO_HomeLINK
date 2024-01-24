@@ -34,6 +34,7 @@ These are the presented as the following entity types within Home Assistant:
   - Device last tested date
   - Device replace by date
   - CO2, Humidity, Temperature (with MQTT enabled)
+  - Insights (with Insights enabled)
 
 # Installation
 
@@ -51,6 +52,9 @@ Configuration is done via the Home Assistant Integrations UI dialogue which will
 You will need to create a set of credentials by going to the `Access Keys` tab of the integrations dialogue and requesting a `Web Api` credential with the `Standard` scope. Make a note of the credentials generated and enter them into the standard Home Assistant integration installation dialogue. If you input incorrect credentials and it fails to authenticate at setup time, then you will likely need to delete the credentials via the Home Assistant Application Credentials and start again. 
 
 **Note:-** Only one instance of the integration can be installed to Home Assistant. However, all properties and devices you have access to will be exposed.
+
+### Insights
+If you have environment devices (Ei1020 and Ei1025) installed, then you may optionally enable Insight sensors. These will display the level of various types of risk as a percentage.
 
 ### MQTT
 If you wish to receive alerts via MQTT (the base integration will update every 30 seconds) to give you quicker notification of alerts, then please follow the instructions here - [MQTT Setup](mqtt.md#setup-and-configuration).

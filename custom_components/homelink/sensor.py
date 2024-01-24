@@ -26,13 +26,24 @@ from homeassistant.helpers.typing import StateType
 from pyhomelink import HomeLINKReadingType
 
 from .const import (
+    ALARMTYPE_ENVIRONMENT,
+    APPLIESTO_PROPERTY,
+    APPLIESTO_ROOM,
+    ATTR_CALCULATEDAT,
+    ATTR_INSIGHT,
+    ATTR_INSIGHTID,
     ATTR_LASTTESTDATE,
+    ATTR_READING,
     ATTR_READINGDATE,
     ATTR_READINGS,
     ATTR_REPLACEDATE,
+    ATTR_RISKLEVEL,
+    ATTR_TYPE,
+    CONF_INSIGHTS_ENABLE,
     CONF_MQTT_ENABLE,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
+    COORD_INSIGHTS,
     COORD_PROPERTIES,
     COORD_READINGS,
     DOMAIN,
@@ -41,11 +52,12 @@ from .const import (
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
     HOMELINK_MESSAGE_MQTT,
+    MODELLIST_ENVIRONMENT,
     MQTT_READINGDATE,
     MQTT_VALUE,
 )
 from .helpers.coordinator import HomeLINKDataCoordinator
-from .helpers.entity import HomeLINKDeviceEntity
+from .helpers.entity import HomeLINKAlarmEntity, HomeLINKDeviceEntity
 from .helpers.events import raise_reading_event
 from .helpers.utils import (
     build_device_identifiers,
@@ -98,6 +110,14 @@ async def async_setup_entry(
             COORD_DEVICES
         ].items():
             async_add_sensor_device(hl_property, device_key, device, None)
+        if (
+            entry.options.get(CONF_INSIGHTS_ENABLE)
+            and COORD_INSIGHTS in hl_coordinator.data[COORD_PROPERTIES][hl_property]
+        ):
+            for insight in hl_coordinator.data[COORD_PROPERTIES][hl_property][
+                COORD_INSIGHTS
+            ]:
+                _add_sensor_insight(insight)
 
     @callback
     def async_add_sensor_device(hl_property, device_key, device, gateway_key):  # pylint: disable=unused-argument
@@ -123,6 +143,16 @@ async def async_setup_entry(
                 )
             ]
         )
+
+    def _add_sensor_insight(insight):
+        if insight.appliesto == APPLIESTO_ROOM:
+            async_add_entities(
+                [HomeLINKDeviceInsightSensor(hl_coordinator, hl_property, insight)]
+            )
+        else:
+            async_add_entities(
+                [HomeLINKPropertyInsightSensor(hl_coordinator, hl_property, insight)]
+            )
 
     for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
         async_add_sensor_property(hl_property)
@@ -186,7 +216,7 @@ class HomeLINKReadingSensor(SensorEntity):
         device_key,
         readingtype,
     ) -> None:
-        """Device entity object for HomeLINK sensor."""
+        """Reading entity object for HomeLINK sensor."""
         self._readingtype = readingtype
         self._state = None
         self._readingdate = None
@@ -222,7 +252,7 @@ class HomeLINKReadingSensor(SensorEntity):
     @property
     def extra_state_attributes(self):
         """Return entity specific state attributes."""
-        return {ATTR_READINGDATE: self._readingdate}
+        return {ATTR_READINGDATE: self._readingdate, ATTR_TYPE: ATTR_READING}
 
     @property
     def device_info(self):
@@ -286,3 +316,114 @@ class HomeLINKReadingSensor(SensorEntity):
             },
         )
         self.async_write_ha_state()
+
+
+class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
+    """Property Insight sensor entity object for HomeLINK sensor."""
+
+    _attr_has_entity_name = True
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = PERCENTAGE
+
+    def __init__(
+        self,
+        coordinator: HomeLINKDataCoordinator,
+        hl_property_key,
+        insight,
+    ) -> None:
+        """Insight entity object for HomeLINK sensor."""
+        self._insight = insight
+        super().__init__(coordinator, hl_property_key, ALARMTYPE_ENVIRONMENT)
+        self._attr_unique_id = f"{self._key}_{ALARMTYPE_ENVIRONMENT} {insight.hl_type}"
+
+    @property
+    def name(self) -> Any:
+        return self._insight.hl_type.capitalize()
+
+    @property
+    def native_value(self) -> Any:
+        return self._insight.value
+
+    @property
+    def extra_state_attributes(self):
+        """Return entity specific state attributes."""
+        return {
+            ATTR_TYPE: ATTR_INSIGHT,
+            ATTR_INSIGHTID: self._insight.insightid,
+            ATTR_RISKLEVEL: self._insight.risklevel,
+            ATTR_CALCULATEDAT: parser.parse(self._insight.calculatedat),
+        }
+
+    def _update_attributes(self):
+        for insight in self.coordinator.data[COORD_PROPERTIES][self._key][
+            COORD_INSIGHTS
+        ]:
+            if (
+                insight.appliesto == APPLIESTO_PROPERTY
+                and insight.hl_type == self._insight.hl_type
+            ):
+                self.insight = insight
+
+
+class HomeLINKDeviceInsightSensor(HomeLINKDeviceEntity, SensorEntity):
+    """Device Insight sensor entity object for HomeLINK sensor."""
+
+    _attr_has_entity_name = True
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = PERCENTAGE
+
+    def __init__(
+        self,
+        coordinator: HomeLINKDataCoordinator,
+        hl_property_key,
+        insight,
+    ) -> None:
+        """Insight entity object for HomeLINK sensor."""
+        self._insight = insight
+        device_key = self._get_device_key(
+            coordinator, hl_property_key, insight.location
+        )
+        super().__init__(coordinator, hl_property_key, device_key)
+        self._attr_unique_id = f"{self._parent_key}_{self._key} {insight.hl_type}"
+
+    def _get_device_key(self, coordinator, hl_property_key, location):
+        return next(
+            (
+                device_key
+                for device_key, device in coordinator.data[COORD_PROPERTIES][
+                    hl_property_key
+                ][COORD_DEVICES].items()
+                if location in [device.location, device.locationnickname]
+                and device.modeltype in MODELLIST_ENVIRONMENT
+            ),
+            None,
+        )
+
+    @property
+    def name(self) -> Any:
+        return self._insight.hl_type.capitalize()
+
+    @property
+    def native_value(self) -> Any:
+        return self._insight.value
+
+    @property
+    def extra_state_attributes(self):
+        """Return entity specific state attributes."""
+        return {
+            ATTR_TYPE: ATTR_INSIGHT,
+            ATTR_INSIGHTID: self._insight.insightid,
+            ATTR_RISKLEVEL: self._insight.risklevel,
+            ATTR_CALCULATEDAT: parser.parse(self._insight.calculatedat),
+        }
+
+    def _update_attributes(self):
+        for insight in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+            COORD_INSIGHTS
+        ]:
+            if (
+                insight.appliesto == APPLIESTO_ROOM
+                and insight.location == self._insight.location
+                and insight.hl_type == self._insight.hl_type
+            ):
+                self.insight = insight

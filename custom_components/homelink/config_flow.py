@@ -19,6 +19,7 @@ from homeassistant.helpers.selector import BooleanSelector, TextSelector
 from .const import (
     CONF_ERROR_TOPIC,
     CONF_EVENT_ENABLE,
+    CONF_INSIGHTS_ENABLE,
     CONF_MQTT_CLIENT_ID,
     CONF_MQTT_ENABLE,
     CONF_MQTT_HOMELINK,
@@ -133,6 +134,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         options = config_entry.options
         self._mqtt_enable = options.get(CONF_MQTT_ENABLE, False)
         self._event_enable = options.get(CONF_EVENT_ENABLE, False)
+        self._insights_enable = options.get(CONF_INSIGHTS_ENABLE, False)
         self._mqtt_topic = options.get(CONF_MQTT_TOPIC, "landlord_name")
         self._mqtt_homelink = options.get(CONF_MQTT_HOMELINK, True)
         self._mqtt_client_id = options.get(CONF_MQTT_CLIENT_ID, "")
@@ -148,8 +150,10 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         return await self.async_step_user()
 
     async def async_step_user(self, user_input=None) -> FlowResult:
+        # sourcery skip: last-if-guard
         """Handle a flow initialized by the user."""
         if user_input is not None:
+            self._insights_enable = user_input.get(CONF_INSIGHTS_ENABLE)
             self._mqtt_enable = user_input.get(CONF_MQTT_ENABLE)
             self._mqtt_homelink = user_input.get(CONF_MQTT_HOMELINK)
 
@@ -164,6 +168,10 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="user",
             data_schema=vol.Schema(
                 {
+                    vol.Optional(
+                        CONF_INSIGHTS_ENABLE,
+                        default=self._insights_enable,
+                    ): BOOLEAN_SELECTOR,
                     vol.Optional(
                         CONF_MQTT_ENABLE,
                         default=self._mqtt_enable,
@@ -268,6 +276,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
 
     def _fake_base_input(self):
         return {
+            CONF_INSIGHTS_ENABLE: self._insights_enable,
             CONF_MQTT_ENABLE: self._mqtt_enable,
             CONF_MQTT_HOMELINK: self._mqtt_homelink,
         }

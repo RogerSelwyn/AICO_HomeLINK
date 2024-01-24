@@ -18,6 +18,7 @@ from ..const import (
     ATTR_ALARM,
     ATTR_PROPERTY,
     ATTR_READINGS,
+    CONF_INSIGHTS_ENABLE,
     COORD_ALERTS,
     COORD_DATA_MQTT,
     COORD_DEVICES,
@@ -99,7 +100,11 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
     async def _async_get_core_data(self):
         properties = await self._hl_api.async_get_properties()
         devices = await self._hl_api.async_get_devices()
-        insights = await self._hl_api.async_get_insights()
+        insights = (
+            await self._hl_api.async_get_insights()
+            if self._entry.options.get(CONF_INSIGHTS_ENABLE)
+            else []
+        )
         coord_properties = {}
         for hl_property in properties:
             property_devices = {
