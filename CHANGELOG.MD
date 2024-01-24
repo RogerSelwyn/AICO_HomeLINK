@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.3.6 (2024/01/24)
+### 🔨 Maintenance
+- [Identify property/device insights from each other](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/21885844ee62c5a0edec8720ddfe44ffb61c8522) - @RogerSelwyn
+
+### 🔖 Release
+- [v1.3.6](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/fa2cf22f88045ce806b31fe8b6f955ced2ae9045) - @RogerSelwyn
+
 ## v1.3.5 (2024/01/24)
 ### ✨ Enhancements
 - [Add optional Insight sensors for environment devices](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2d5cb7e2d8891fc7b43bb354c2d763525dd2275c) - @RogerSelwyn
