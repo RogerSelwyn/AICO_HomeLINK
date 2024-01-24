@@ -30,7 +30,8 @@ from .const import (
     APPLIESTO_PROPERTY,
     APPLIESTO_ROOM,
     ATTR_CALCULATEDAT,
-    ATTR_INSIGHT,
+    ATTR_INSIGHT_DEVICE,
+    ATTR_INSIGHT_PROPERTY,
     ATTR_INSIGHTID,
     ATTR_LASTTESTDATE,
     ATTR_READING,
@@ -348,7 +349,7 @@ class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
     def extra_state_attributes(self):
         """Return entity specific state attributes."""
         return {
-            ATTR_TYPE: ATTR_INSIGHT,
+            ATTR_TYPE: ATTR_INSIGHT_PROPERTY,
             ATTR_INSIGHTID: self._insight.insightid,
             ATTR_RISKLEVEL: self._insight.risklevel,
             ATTR_CALCULATEDAT: parser.parse(self._insight.calculatedat),
@@ -411,7 +412,7 @@ class HomeLINKDeviceInsightSensor(HomeLINKDeviceEntity, SensorEntity):
     def extra_state_attributes(self):
         """Return entity specific state attributes."""
         return {
-            ATTR_TYPE: ATTR_INSIGHT,
+            ATTR_TYPE: ATTR_INSIGHT_DEVICE,
             ATTR_INSIGHTID: self._insight.insightid,
             ATTR_RISKLEVEL: self._insight.risklevel,
             ATTR_CALCULATEDAT: parser.parse(self._insight.calculatedat),
