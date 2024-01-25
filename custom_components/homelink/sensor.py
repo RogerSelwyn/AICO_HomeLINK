@@ -30,8 +30,8 @@ from .const import (
     APPLIESTO_PROPERTY,
     APPLIESTO_ROOM,
     ATTR_CALCULATEDAT,
-    ATTR_INSIGHT_DEVICE,
     ATTR_INSIGHT_PROPERTY,
+    ATTR_INSIGHT_ROOM,
     ATTR_INSIGHTID,
     ATTR_LASTTESTDATE,
     ATTR_READING,
@@ -148,7 +148,7 @@ async def async_setup_entry(
     def _add_sensor_insight(insight):
         if insight.appliesto == APPLIESTO_ROOM:
             async_add_entities(
-                [HomeLINKDeviceInsightSensor(hl_coordinator, hl_property, insight)]
+                [HomeLINKRoomInsightSensor(hl_coordinator, hl_property, insight)]
             )
         else:
             async_add_entities(
@@ -366,7 +366,7 @@ class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
                 self.insight = insight
 
 
-class HomeLINKDeviceInsightSensor(HomeLINKDeviceEntity, SensorEntity):
+class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
     """Device Insight sensor entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True
@@ -412,7 +412,7 @@ class HomeLINKDeviceInsightSensor(HomeLINKDeviceEntity, SensorEntity):
     def extra_state_attributes(self):
         """Return entity specific state attributes."""
         return {
-            ATTR_TYPE: ATTR_INSIGHT_DEVICE,
+            ATTR_TYPE: ATTR_INSIGHT_ROOM,
             ATTR_INSIGHTID: self._insight.insightid,
             ATTR_RISKLEVEL: self._insight.risklevel,
             ATTR_CALCULATEDAT: parser.parse(self._insight.calculatedat),
