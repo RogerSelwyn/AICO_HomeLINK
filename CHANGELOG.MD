@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3.7 (2024/01/26)
+### 🐛 Fixes
+- [Fix insights not updating after initial load](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f1681816b3ab5c1e095876f0cd70d3503c9b28c8) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Correct 'type' of room insight](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d14d5e475187cdc4c02f6c41b6b7ee73a8823e72) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.3.7](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/583cc2c2c740facf8174303e88bfb113522cb2ae) - @RogerSelwyn
+
 ## v1.3.6 (2024/01/24)
 ### 🔨 Maintenance
 - [Identify property/device insights from each other](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/21885844ee62c5a0edec8720ddfe44ffb61c8522) - @RogerSelwyn
