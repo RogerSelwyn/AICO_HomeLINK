@@ -363,7 +363,7 @@ class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
                 insight.appliesto == APPLIESTO_PROPERTY
                 and insight.hl_type == self._insight.hl_type
             ):
-                self.insight = insight
+                self._insight = insight
 
 
 class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
@@ -427,4 +427,4 @@ class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
                 and insight.location == self._insight.location
                 and insight.hl_type == self._insight.hl_type
             ):
-                self.insight = insight
+                self._insight = insight
