@@ -30,25 +30,9 @@ All the information you need is in the MQTTX file that you should download. In t
 
 ### HA MQTT
 
-It is beyond the scope of this guide to define how you bridge the data onto your HA broker. Some information is provided below, with an example that may help you for the standard HA `Mosquitto Broker`. I personally use the EMQX add-on, which while more GUI based for configuration, has complications around configuring the client_id required by HomeLINK.
+It is beyond the scope of this guide to define how you bridge the data onto your HA broker. I personally use the EMQX add-on and have struggled to get the standard HA Eclipse Mosquitto broker to connect to HomeLINK. If using EMQX you cannot specify the client ID directly, but the connector name is prepended to it, so name the connector in line with your landlord ID (e.g. `joe_bloggs`). At this time, HomeLINK only support MQTT v3.1.1, and you must use an encrypted connection over port 8883.
 
-All the information you need is in the MQTTX file that you should download. 
-* clientId - Used for `local_clientid` (it might be for the remote, I forget)
-* username - Used for `remote_username`
-* password - Used for `remote_password`
-* host/port - Use for `address`
-* topic - The file provides 5 topics. Please just use the first level (your landlord reference) with `/#` on the end. e.g. `joe_bloggs/reading/#` should be entered as `joe_bloggs/#`
-
-```
-connection homelink
-address conduit.live.homelync.io:8883
-remote_username externalmqtt:joe_bloggs-hassio
-remote_password obscurepassword
-topic joe_bloggs/# in 0
-bridge_capath /etc/ssl/certs/
-local_clientid joe_bloggs_obscure
-remote_clientid joe_bloggs_obscure
-```
+All the information you need is in the MQTTX file that you should download. Topic - The file provides 5 topics. Please just use the first level (your landlord reference) with `/#` on the end. e.g. `joe_bloggs/reading/#` should be entered as `joe_bloggs/#`
 
 Once you have the data available to Home Assistant on your MQTT broker, you can configure the options for the HomeLINK integration to enable MQTT. In the configuration:-
 * Turn on `Enable MQTT updates`
