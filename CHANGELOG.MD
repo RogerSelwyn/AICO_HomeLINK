@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.3.8 (2024/02/21)
+### 🐛 Fixes
+- [Fix issue where reading sensors would become unavailable](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/435b31c6437c008ef5af0baed0fbc0bee25508cd) - @RogerSelwyn
+
+### 🔨 Maintenance
+- [Update bug_report.yml](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f1f869b5a019f4f33f2338a73b3a08efefd7f2ea) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.3.8](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f349b180168b5b215b43038e5d6d2eb5e5b20a66) - @RogerSelwyn
+
 ## v1.3.7 (2024/01/26)
 ### 🐛 Fixes
 - [Fix insights not updating after initial load](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f1681816b3ab5c1e095876f0cd70d3503c9b28c8) - @RogerSelwyn
