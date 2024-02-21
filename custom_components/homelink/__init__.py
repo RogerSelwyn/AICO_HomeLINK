@@ -1,5 +1,4 @@
 """Initialise the HomeLINK integration."""
-
 import aiohttp
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -12,6 +11,7 @@ from pyhomelink.api import HomeLINKApi
 from .const import (
     CONF_MQTT_ENABLE,
     CONF_MQTT_HOMELINK,
+    COORD_CONFIG_ENTRY_OPTIONS,
     COORD_DATA_MQTT,
     COORD_PROPERTIES,
     DOMAIN,
@@ -67,13 +67,17 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         if hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT]:
             hl_mqtt = hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT]
             await hl_mqtt.async_stop()
-            hass.data[DOMAIN].pop(entry.entry_id)
+        hass.data[DOMAIN].pop(entry.entry_id)
     return unload_ok
 
 
-async def async_reload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
-    """Handle options update."""
-    await hass.config_entries.async_reload(config_entry.entry_id)
+async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Handle options update - only reload if the options have chnaged."""
+    if (
+        hass.data[DOMAIN][entry.entry_id].data[COORD_CONFIG_ENTRY_OPTIONS]
+        != entry.options
+    ):
+        await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def _async_start_mqtt(hass: HomeAssistant, entry: ConfigEntry, hl_coordinator):

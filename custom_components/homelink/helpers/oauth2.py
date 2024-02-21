@@ -1,5 +1,4 @@
 """API access for HomeLINK service."""
-import logging
 from typing import Any, cast
 
 from homeassistant.components.application_credentials import (
@@ -9,8 +8,6 @@ from homeassistant.components.application_credentials import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class HomeLINKOAuth2Implementation(AuthImplementation):

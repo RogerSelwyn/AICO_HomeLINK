@@ -10,6 +10,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import Throttle
 
 from pyhomelink import HomeLINKApi
 from pyhomelink.exceptions import ApiException, AuthException
@@ -20,6 +21,7 @@ from ..const import (
     ATTR_READINGS,
     CONF_INSIGHTS_ENABLE,
     COORD_ALERTS,
+    COORD_CONFIG_ENTRY_OPTIONS,
     COORD_DATA_MQTT,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
@@ -37,6 +39,7 @@ from ..const import (
     KNOWN_DEVICES_ID,
     KNOWN_DEVICES_MODEL,
     MODELTYPE_GATEWAY,
+    RETRIEVAL_INTERVAL_READINGS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -77,12 +80,14 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
 
                 await self._async_check_for_changes(coord_properties)
                 hl_mqtt = self._get_previous_mqtt()
+                config_entry = self._entry.options
 
                 self._error = False
                 return {
                     COORD_PROPERTIES: coord_properties,
                     COORD_DATA_MQTT: hl_mqtt,
                     COORD_LOOKUP_EVENTTYPE: self._eventtypes,
+                    COORD_CONFIG_ENTRY_OPTIONS: config_entry,
                 }
         except AuthException as auth_err:
             if not self._error:
@@ -132,14 +137,20 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 COORD_INSIGHTS: property_insights,
                 COORD_ALERTS: await hl_property.async_get_alerts(),
             }
-            if self._first_refresh:
-                readings = []
-                for device in property_devices.values():
-                    if hasattr(device.rel, ATTR_READINGS):
-                        readings = await hl_property.async_get_readings(date.today())
-                        break
-                coord_properties[hl_property.reference][COORD_READINGS] = readings
+
+            coord_properties[hl_property.reference][COORD_READINGS] = (
+                await self._async_retrieve_readings(hl_property, property_devices) or []
+            )
         return coord_properties
+
+    @Throttle(RETRIEVAL_INTERVAL_READINGS)
+    async def _async_retrieve_readings(self, hl_property, property_devices):
+        readings = []
+        for device in property_devices.values():
+            if hasattr(device.rel, ATTR_READINGS):
+                readings = await hl_property.async_get_readings(date.today())
+                break
+        return readings
 
     async def _async_get_eventtypes_lookup(self):
         self._eventtypes = await self._hl_api.async_get_lookups(

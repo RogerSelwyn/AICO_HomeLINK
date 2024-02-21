@@ -124,7 +124,7 @@ context:
   user_id: null
 ```
 
-Additonally:
+Additionally:
 * If the message type is `reading` it will update the relevant sensors status and `readingdate` attribute.
 * If the message type is `alert`, `device` or `property` it will trigger an update to all entities to ensure they reflect current state.
 * It will set an `alertstatus` on the alert listed against a device showing what state it is in. This will show for example `FIRE_ALARM` in the initial state and `CANCEL` when the alarm has been silenced.

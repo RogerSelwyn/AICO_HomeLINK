@@ -1,4 +1,5 @@
 """Constants for HomeLINK integration."""
+from datetime import timedelta
 from enum import StrEnum
 
 ALARMS_NONE = "None"
@@ -71,6 +72,7 @@ CONF_MQTT_HOMELINK = "mqtt_homelink"
 CONF_MQTT_TOPIC = "mqtt_topic"
 
 COORD_ALERTS = "alerts"
+COORD_CONFIG_ENTRY_OPTIONS = "config_entry_options"
 COORD_DATA_MQTT = "mqtt"
 COORD_DEVICES = "devices"
 COORD_GATEWAY_KEY = "gateway_key"
@@ -128,13 +130,22 @@ MQTT_SOURCEMODELTYPE = "sourceModelType"
 MQTT_STATUSID = "statusId"
 MQTT_VALUE = "value"
 
+READINGS_CO2 = "co2readings"
+READINGS_HUMIDITY = "humidityreadings"
+READINGS_TEMPERATURE = "temperaturereadings"
+READINGS_SENSOR_CO2 = "environment-co2-indoor"
+READINGS_SENSOR_HUMIDITY = "environment-humidity-indoor"
+READINGS_SENSOR_TEMPERATURE = "environment-temperature-indoor"
+READINGS = {
+    READINGS_CO2: READINGS_SENSOR_CO2,
+    READINGS_HUMIDITY: READINGS_SENSOR_HUMIDITY,
+    READINGS_TEMPERATURE: READINGS_SENSOR_TEMPERATURE,
+}
+
+RETRIEVAL_INTERVAL_READINGS = timedelta(minutes=5)
+
 STATUS_GOOD = "GOOD"
 STATUS_NOT_GOOD = "NOT_GOOD"
-STORAGE_ATTRIBUTES = "attributes"
-STORAGE_DEVICE = "device"
-STORAGE_DEVICES = "devices"
-STORAGE_ENCODING = "UTF8"
-STORAGE_STATEFILE = ".storage/homelink.restore_state"
 
 
 class HomeLINKMessageType(StrEnum):

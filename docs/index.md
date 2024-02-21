@@ -35,7 +35,7 @@ These are the presented as the following entity types within Home Assistant:
 - Sensor 
   - Device last tested date
   - Device replace by date
-  - CO2, Humidity, Temperature (with MQTT enabled)
+  - CO2, Humidity, Temperature
   - Insights (with Insights enabled)
 
 # Installation
@@ -59,6 +59,6 @@ You will need to create a set of credentials by going to the `Access Keys` tab o
 If you have environment devices (Ei1020 and Ei1025) installed, then you may optionally enable Insight sensors. These will display the level of various types of risk as a percentage.
 
 ### MQTT
-If you wish to receive alerts via MQTT (the base integration will update every 30 seconds) to give you quicker notification of alerts, then please follow the instructions here - [MQTT Setup](mqtt.md#setup-and-configuration).
+If you wish to receive alerts via MQTT (the base integration will update every 30 seconds) to give you quicker notification of alerts and readings, then please follow the instructions here - [MQTT Setup](mqtt.md#setup-and-configuration).
 
 
