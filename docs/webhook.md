@@ -14,7 +14,7 @@ You will also need to set up Webhooks on the HomeLINK dashboard. If you wish to:
 * Receive alerts via Webhooks (the base integration will update every 30 seconds) to give you quicker notification of alerts
 * Receive readings from environment sensors 
 
-All the information you need is in the MQTTX file that you should download. In the configuration:-
+In the configuration:-
 * Turn on `Enable Webhooks`
 * Click `Next`
 * On the next page (depending on whether you have enabled MQTT or not), take a copy of the provided URL
