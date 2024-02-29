@@ -61,4 +61,6 @@ If you have environment devices (Ei1020 and Ei1025) installed, then you may opti
 ### MQTT
 If you wish to receive alerts via MQTT (the base integration will update every 30 seconds) to give you quicker notification of alerts and readings, then please follow the instructions here - [MQTT Setup](mqtt.md#setup-and-configuration).
 
+### Webhook
+If you wish to receive alerts via Webhook (the base integration will update every 30 seconds) to give you quicker notification of alerts and readings, then please follow the instructions here - [Webhook Setup](webhook.md#setup-and-configuration).
 
