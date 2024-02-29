@@ -10,13 +10,16 @@ from typing import Any
 import aiohttp
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.components import webhook
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_WEBHOOK_ID
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import config_entry_oauth2_flow
+from homeassistant.helpers.network import get_url
 from homeassistant.helpers.selector import BooleanSelector, TextSelector
 
 from .const import (
+    ATTR_EXTERNAL_URL,
     CONF_ERROR_TOPIC,
     CONF_EVENT_ENABLE,
     CONF_INSIGHTS_ENABLE,
@@ -24,6 +27,7 @@ from .const import (
     CONF_MQTT_ENABLE,
     CONF_MQTT_HOMELINK,
     CONF_MQTT_TOPIC,
+    CONF_WEBHOOK_ENABLE,
     DOMAIN,
 )
 from .helpers.mqtt import HomeLINKMQTT
@@ -133,6 +137,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize HomeLINK options flow."""
         options = config_entry.options
         self._mqtt_enable = options.get(CONF_MQTT_ENABLE, False)
+        self._webhook_enable = options.get(CONF_WEBHOOK_ENABLE, False)
         self._event_enable = options.get(CONF_EVENT_ENABLE, False)
         self._insights_enable = options.get(CONF_INSIGHTS_ENABLE, False)
         self._mqtt_topic = options.get(CONF_MQTT_TOPIC, "landlord_name")
@@ -140,6 +145,9 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         self._mqtt_client_id = options.get(CONF_MQTT_CLIENT_ID, "")
         self._mqtt_username = options.get(CONF_USERNAME, "")
         self._mqtt_password = options.get(CONF_PASSWORD, "")
+        self._webhook_id = options.get(CONF_WEBHOOK_ID, None)
+        self._user_input = None
+        self._webhook_displayed = False
 
     async def async_step_init(
         self,
@@ -155,12 +163,18 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             self._insights_enable = user_input.get(CONF_INSIGHTS_ENABLE)
             self._mqtt_enable = user_input.get(CONF_MQTT_ENABLE)
+            self._webhook_enable = user_input.get(CONF_WEBHOOK_ENABLE)
             self._mqtt_homelink = user_input.get(CONF_MQTT_HOMELINK)
 
+            self._user_input = user_input
+            if not self._webhook_enable:
+                user_input[CONF_WEBHOOK_ID] = None
             if self._mqtt_enable:
                 if self._mqtt_homelink:
                     return await self.async_step_homelink_mqtt()
                 return await self.async_step_ha_mqtt()
+            if self._webhook_enable:
+                return await self.async_step_homelink_webhook()
 
             return self.async_create_entry(title="", data=user_input)
 
@@ -180,22 +194,28 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                         CONF_MQTT_HOMELINK,
                         default=self._mqtt_homelink,
                     ): BOOLEAN_SELECTOR,
+                    vol.Optional(
+                        CONF_WEBHOOK_ENABLE,
+                        default=self._webhook_enable,
+                    ): BOOLEAN_SELECTOR,
                 }
             ),
             last_step=False,
         )
 
     async def async_step_ha_mqtt(self, user_input=None) -> FlowResult:
-        """Handle a flow initialized by the user."""
+        """Handle HA MQTT setup."""
         if user_input is not None:
             self._mqtt_topic = _remove_suffixes(user_input.get(CONF_MQTT_TOPIC))
             self._event_enable = user_input.get(CONF_EVENT_ENABLE)
             user_input[CONF_MQTT_TOPIC] = self._mqtt_topic
 
-            base_input = self._fake_base_input()
-            combined_input = {**user_input, **base_input}
-            return self.async_create_entry(title="", data=combined_input)
+            self._user_input = {**user_input, **self._user_input}
+            if self._webhook_enable:
+                return await self.async_step_homelink_webhook()
+            return self.async_create_entry(title="", data=self._user_input)
 
+        last_step = not self._webhook_enable
         return self.async_show_form(
             step_id="ha_mqtt",
             data_schema=vol.Schema(
@@ -212,11 +232,11 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                     ): BOOLEAN_SELECTOR,
                 }
             ),
-            last_step=False,
+            last_step=last_step,
         )
 
     async def async_step_homelink_mqtt(self, user_input=None) -> FlowResult:
-        """Handle a flow initialized by the user."""
+        """Handle HomeLINK MQTT setup."""
         errors = {}
         if user_input is not None:
             self._event_enable = user_input.get(CONF_EVENT_ENABLE)
@@ -226,12 +246,14 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             self._mqtt_topic = _remove_suffixes(user_input.get(CONF_MQTT_TOPIC))
             user_input[CONF_MQTT_TOPIC] = self._mqtt_topic
 
-            base_input = self._fake_base_input()
-            combined_input = {**user_input, **base_input}
-            errors = await self._async_test_connection(combined_input)
+            self._user_input = {**user_input, **self._user_input}
+            errors = await self._async_test_connection(self._user_input)
             if not errors:
-                return self.async_create_entry(title="", data=combined_input)
+                if self._webhook_enable:
+                    return await self.async_step_homelink_webhook()
+                return self.async_create_entry(title="", data=self._user_input)
 
+        last_step = not self._webhook_enable
         return self.async_show_form(
             step_id="homelink_mqtt",
             data_schema=vol.Schema(
@@ -261,7 +283,27 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                 }
             ),
             errors=errors,
+            last_step=last_step,
         )
+
+    async def async_step_homelink_webhook(self, user_input=None) -> FlowResult:
+        """Handle HomeLINK MQTT setup."""
+        if not self._webhook_id:
+            self._webhook_id = webhook.async_generate_id()
+        user_input = {CONF_WEBHOOK_ID: self._webhook_id}
+
+        if not self._webhook_displayed:
+            external_url = get_url(self.hass, allow_internal=False)
+            self._webhook_displayed = True
+            return self.async_show_form(
+                step_id="homelink_webhook",
+                description_placeholders={
+                    CONF_WEBHOOK_ID: self._webhook_id,
+                    ATTR_EXTERNAL_URL: external_url,
+                },
+            )
+        self._user_input = {**user_input, **self._user_input}
+        return self.async_create_entry(title="", data=self._user_input)
 
     async def _async_test_connection(self, options):
         hl_mqtt = HomeLINKMQTT(self.hass, options)
@@ -273,13 +315,6 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                 else {CONF_MQTT_TOPIC: CONF_ERROR_TOPIC}
             )
         return {}
-
-    def _fake_base_input(self):
-        return {
-            CONF_INSIGHTS_ENABLE: self._insights_enable,
-            CONF_MQTT_ENABLE: self._mqtt_enable,
-            CONF_MQTT_HOMELINK: self._mqtt_homelink,
-        }
 
 
 def _remove_suffixes(topic):

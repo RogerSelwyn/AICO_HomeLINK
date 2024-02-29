@@ -23,6 +23,7 @@ from ..const import (
     COORD_ALERTS,
     COORD_CONFIG_ENTRY_OPTIONS,
     COORD_DATA_MQTT,
+    COORD_DATA_WEBHOOK,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
     COORD_INSIGHTS,
@@ -79,13 +80,14 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 coord_properties = await self._async_get_core_data()
 
                 await self._async_check_for_changes(coord_properties)
-                hl_mqtt = self._get_previous_mqtt()
+                hl_mqtt, hl_webhook = self._get_previous_mqtt_webhook()
                 config_entry = self._entry.options
 
                 self._error = False
                 return {
                     COORD_PROPERTIES: coord_properties,
                     COORD_DATA_MQTT: hl_mqtt,
+                    COORD_DATA_WEBHOOK: hl_webhook,
                     COORD_LOOKUP_EVENTTYPE: self._eventtypes,
                     COORD_CONFIG_ENTRY_OPTIONS: config_entry,
                 }
@@ -157,8 +159,8 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             HOMELINK_LOOKUP_EVENTTYPE
         )
 
-    def _get_previous_mqtt(self):
-        return (
+    def _get_previous_mqtt_webhook(self):
+        hl_mqtt = (
             self.hass.data[DOMAIN][self._entry.entry_id].data[COORD_DATA_MQTT]
             if (
                 DOMAIN in self.hass.data
@@ -167,6 +169,17 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             )
             else None
         )
+        hl_webhook = (
+            self.hass.data[DOMAIN][self._entry.entry_id].data[COORD_DATA_WEBHOOK]
+            if (
+                DOMAIN in self.hass.data
+                and self._entry.entry_id in self.hass.data[DOMAIN]
+                and COORD_DATA_WEBHOOK
+                in self.hass.data[DOMAIN][self._entry.entry_id].data
+            )
+            else None
+        )
+        return hl_mqtt, hl_webhook
 
     async def _async_check_for_changes(self, coord_properties):
         if not self._known_properties:

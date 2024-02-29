@@ -32,8 +32,9 @@
       "user": {
         "data": {
           "insights_enable": "Enable Insight sensors (if available)",
-          "mqtt_enable": "Enable MQTT updates",
-          "mqtt_homelink": "Use HomeLINK MQTT broker"
+          "mqtt_enable": "Enable MQTT",
+          "mqtt_homelink": "Use HomeLINK MQTT broker",
+          "webhook_enable": "Enable Webhooks"
         },
         "data_description": {}
       },
@@ -60,6 +61,10 @@
           "password": "The password provide by HomeLINK",
           "mqtt_topic": "MQTT Root Topic"
         }
+      },
+      "homelink_webhook": {
+        "description": "{external_url}/api/webhook/{webhook_id}",
+        "title": "Use the URL below for your webhooks"
       }
     }
   }

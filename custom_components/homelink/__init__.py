@@ -1,7 +1,7 @@
 """Initialise the HomeLINK integration."""
 import aiohttp
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import Platform
+from homeassistant.const import CONF_WEBHOOK_ID, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
@@ -11,14 +11,17 @@ from pyhomelink.api import HomeLINKApi
 from .const import (
     CONF_MQTT_ENABLE,
     CONF_MQTT_HOMELINK,
+    CONF_WEBHOOK_ENABLE,
     COORD_CONFIG_ENTRY_OPTIONS,
     COORD_DATA_MQTT,
+    COORD_DATA_WEBHOOK,
     COORD_PROPERTIES,
     DOMAIN,
 )
 from .helpers.api import AsyncConfigEntryAuth
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.mqtt import HAMQTT, HomeLINKMQTT
+from .helpers.webhook import HomeLINKWebhook
 
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.EVENT]
 
@@ -53,6 +56,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hl_mqtt = await _async_start_mqtt(hass, entry, hl_coordinator)
         hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT] = hl_mqtt
 
+    if entry.options.get(CONF_WEBHOOK_ENABLE):
+        hl_webhook = HomeLINKWebhook()
+        hl_webhook.register_webhooks(hass, entry.options.get(CONF_WEBHOOK_ID))
+        hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_WEBHOOK] = hl_webhook
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
@@ -64,6 +72,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
 
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+        if hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_WEBHOOK]:
+            hl_webhook = hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_WEBHOOK]
+            hl_webhook.unregister_webhooks(hass, entry.options.get(CONF_WEBHOOK_ID))
         if hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT]:
             hl_mqtt = hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT]
             await hl_mqtt.async_stop()

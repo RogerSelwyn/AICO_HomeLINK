@@ -252,7 +252,7 @@ async def _async_forward_message(hass, msg, root_topic, properties):
         and MQTT_DEVICESERIALNUMBER in payload
         and payload[MQTT_DEVICESERIALNUMBER]
     ):
-        await _async_device_message(hass, msg, topic, payload, messagetype)
+        await _async_device_message(hass, topic, payload, messagetype)
         return
 
     # Property alert so route to 'alarm' binary sensor
@@ -291,10 +291,10 @@ async def _async_alarm_message(hass, key, topic, payload, messagetype):
     dispatcher_send(hass, event, topic, payload, messagetype)
 
 
-async def _async_device_message(hass, msg, topic, payload, messagetype):
+async def _async_device_message(hass, topic, payload, messagetype):
     serialnumber = payload[MQTT_DEVICESERIALNUMBER]
     event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=serialnumber).lower()
-    dispatcher_send(hass, event, msg, topic, messagetype)
+    dispatcher_send(hass, event, payload, topic, messagetype)
 
 
 def _extract_property(topic, root_topic, properties):

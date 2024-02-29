@@ -1,6 +1,5 @@
 """Support for HomeLINK sensors."""
 
-import json
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -43,6 +42,7 @@ from .const import (
     ATTR_TYPE,
     CONF_INSIGHTS_ENABLE,
     CONF_MQTT_ENABLE,
+    CONF_WEBHOOK_ENABLE,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
     COORD_INSIGHTS,
@@ -233,7 +233,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         elif readingtype == HomeLINKReadingType.TEMPERATURE:
             self._attr_device_class = SensorDeviceClass.TEMPERATURE
             self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
-        self._unregister_mqtt_handler = None
+        self._unregister_message_handler = None
 
     @property
     def native_value(self) -> Any:
@@ -282,26 +282,27 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         self._readingdate = value.readingdate
 
     async def async_added_to_hass(self) -> None:
-        """Register MQTT handler."""
+        """Register message handler."""
         await super().async_added_to_hass()
-        if self._entry.options.get(CONF_MQTT_ENABLE):
+        if self._entry.options.get(CONF_MQTT_ENABLE) or self._entry.options.get(
+            CONF_WEBHOOK_ENABLE
+        ):
             key = build_mqtt_device_key(
                 self._device, f"{self._key}-{self._readingtype}", self._gateway_key
             )
 
             event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
-            self._unregister_mqtt_handler = async_dispatcher_connect(
-                self.hass, event, self._async_mqtt_handle
+            self._unregister_message_handler = async_dispatcher_connect(
+                self.hass, event, self._async_message_handle
             )
 
     async def async_will_remove_from_hass(self) -> None:
-        """Unregister MQTT handler."""
-        if self._unregister_mqtt_handler:
-            self._unregister_mqtt_handler()
+        """Unregister message handler."""
+        if self._unregister_message_handler:
+            self._unregister_message_handler()
 
     @callback
-    async def _async_mqtt_handle(self, msg, topic, messagetype, readingtype):
-        payload = json.loads(msg.payload)
+    async def _async_message_handle(self, payload, topic, messagetype, readingtype):
         readingdate = parser.parse(payload[MQTT_READINGDATE])
 
         if readingdate > self._readingdate:

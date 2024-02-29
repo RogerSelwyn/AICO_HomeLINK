@@ -1,6 +1,5 @@
 """Support for HomeLINK sensors."""
 
-import json
 import logging
 
 from homeassistant.components.binary_sensor import (
@@ -49,6 +48,7 @@ from .const import (
     CATEGORY_INSIGHT,
     CONF_MQTT_ENABLE,
     CONF_MQTT_TOPIC,
+    CONF_WEBHOOK_ENABLE,
     COORD_ALERTS,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
@@ -64,6 +64,7 @@ from .const import (
     MODELTYPE_COALARM,
     STATUS_GOOD,
     STATUS_NOT_GOOD,
+    WEBHOOK_READINGTYPEID,
     HomeLINKMessageType,
 )
 from .helpers.coordinator import HomeLINKDataCoordinator
@@ -156,7 +157,6 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         super().__init__(coordinator, hl_property_key)
         self._entry = entry
         self._attr_unique_id = f"{self._key}"
-        self._unregister_mqtt_handler = None
         if entry.options.get(CONF_MQTT_ENABLE):
             self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
 
@@ -237,7 +237,7 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         self._entry = entry
         self._attr_unique_id = f"{self._key}_{alarm_type}"
         self._lastdate = dt.utcnow()
-        self._unregister_mqtt_handler = None
+        self._unregister_message_handler = None
         if entry.options.get(CONF_MQTT_ENABLE):
             self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
 
@@ -270,19 +270,21 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
     async def async_added_to_hass(self) -> None:
         """Register MQTT handler."""
         await super().async_added_to_hass()
-        if self._entry.options.get(CONF_MQTT_ENABLE):
+        if self._entry.options.get(CONF_MQTT_ENABLE) or self._entry.options.get(
+            CONF_WEBHOOK_ENABLE
+        ):
             event = HOMELINK_MESSAGE_MQTT.format(
                 domain=DOMAIN, key=f"{self._key}_{self._alarm_type}"
             ).lower()
 
-            self._unregister_mqtt_handler = async_dispatcher_connect(
-                self.hass, event, self._async_mqtt_handle
+            self._unregister_message_handler = async_dispatcher_connect(
+                self.hass, event, self._async_message_handle
             )
 
     async def async_will_remove_from_hass(self) -> None:
         """Unregister MQTT handler."""
-        if self._unregister_mqtt_handler:
-            self._unregister_mqtt_handler()
+        if self._unregister_message_handler:
+            self._unregister_message_handler()
 
     def _update_attributes(self):
         if self._key in self.coordinator.data[COORD_PROPERTIES]:
@@ -358,7 +360,7 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         ]
 
     @callback
-    async def _async_mqtt_handle(self, topic, payload, messagetype):
+    async def _async_message_handle(self, topic, payload, messagetype):
         msgdate = get_message_date(payload)
         if msgdate < self._lastdate:
             return
@@ -407,7 +409,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
 
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
         self._lastdate = dt.utcnow()
-        self._unregister_mqtt_handler = None
+        self._unregister_message_handler = None
         self._device_class = self._build_device_class()
 
     @property
@@ -451,27 +453,29 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         return attributes
 
     async def async_added_to_hass(self) -> None:
-        """Register MQTT handler."""
+        """Register message handler."""
         await super().async_added_to_hass()
-        if self._entry.options.get(CONF_MQTT_ENABLE):
+        if self._entry.options.get(CONF_MQTT_ENABLE) or self._entry.options.get(
+            CONF_WEBHOOK_ENABLE
+        ):
             key = build_mqtt_device_key(self._device, self._key, self._gateway_key)
 
             event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
-            self._unregister_mqtt_handler = async_dispatcher_connect(
-                self.hass, event, self._async_mqtt_handle
+            self._unregister_message_handler = async_dispatcher_connect(
+                self.hass, event, self._async_message_handle
             )
             if self._device.modeltype in MODELLIST_ENVIRONMENT:
                 event = HOMELINK_MESSAGE_MQTT.format(
                     domain=DOMAIN, key=self._device.location
                 ).lower()
-                self._unregister_mqtt_handler = async_dispatcher_connect(
-                    self.hass, event, self._async_mqtt_handle
+                self._unregister_message_handler = async_dispatcher_connect(
+                    self.hass, event, self._async_message_handle
                 )
 
     async def async_will_remove_from_hass(self) -> None:
-        """Unregister MQTT handler."""
-        if self._unregister_mqtt_handler:
-            self._unregister_mqtt_handler()
+        """Unregister message handler."""
+        if self._unregister_message_handler:
+            self._unregister_message_handler()
 
     def _build_device_class(self):
         modeltype = self._device.modeltype
@@ -541,8 +545,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         ]
 
     @callback
-    async def _async_mqtt_handle(self, msg, topic, messagetype):
-        payload = json.loads(msg.payload)
+    async def _async_message_handle(self, payload, topic, messagetype):
         msgdate = get_message_date(payload)
         if msgdate < self._lastdate and messagetype not in [
             HomeLINKMessageType.MESSAGE_READING,
@@ -550,27 +553,28 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             return
         self._lastdate = msgdate
 
-        raise_device_event(self.hass, self.device_info, messagetype, topic, payload)
         if messagetype in [
             HomeLINKMessageType.MESSAGE_READING,
         ]:
-            self._process_reading(msg, topic, messagetype)
+            self._process_reading(payload, topic, messagetype)
             return
 
+        raise_device_event(self.hass, self.device_info, messagetype, topic, payload)
         if messagetype in [
             HomeLINKMessageType.MESSAGE_ALERT,
         ]:
             await self.coordinator.async_refresh()
 
-    def _process_reading(self, msg, topic, messagetype):
-        readingtype = _extract_classifier(topic, 3)
+    def _process_reading(self, payload, topic, messagetype):
+        # If msg is null then it is a webhook rather than a mqtt
+        readingtype = payload[WEBHOOK_READINGTYPEID].replace(".", "-")
 
         key = build_mqtt_device_key(
             self._device, f"{self._key}-{readingtype}", self._gateway_key
         )
 
         event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
-        dispatcher_send(self.hass, event, msg, topic, messagetype, readingtype)
+        dispatcher_send(self.hass, event, payload, topic, messagetype, readingtype)
 
 
 def _extract_classifier(topic, item):

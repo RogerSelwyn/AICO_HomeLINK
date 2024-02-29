@@ -24,6 +24,7 @@ ATTR_DESCRIPTION = "description"
 ATTR_DEVICE = "device"
 ATTR_DEVICE_INFO = "device_info"
 ATTR_EVENTTYPE = "eventtype"
+ATTR_EXTERNAL_URL = "external_url"
 ATTR_HOMELINK = "HomeLINK"
 ATTR_ID = "id"
 ATTR_INSIGHT_ROOM = "room_insight"
@@ -71,9 +72,13 @@ CONF_MQTT_ENABLE = "mqtt_enable"
 CONF_MQTT_HOMELINK = "mqtt_homelink"
 CONF_MQTT_TOPIC = "mqtt_topic"
 
+CONF_WEBHOOK_ENABLE = "webhook_enable"
+
+
 COORD_ALERTS = "alerts"
 COORD_CONFIG_ENTRY_OPTIONS = "config_entry_options"
 COORD_DATA_MQTT = "mqtt"
+COORD_DATA_WEBHOOK = "webhook"
 COORD_DEVICES = "devices"
 COORD_GATEWAY_KEY = "gateway_key"
 COORD_INSIGHTS = "insights"
@@ -146,6 +151,16 @@ RETRIEVAL_INTERVAL_READINGS = timedelta(minutes=5)
 
 STATUS_GOOD = "GOOD"
 STATUS_NOT_GOOD = "NOT_GOOD"
+
+WEBHOOK_ACTION = "action"
+WEBHOOK_DEVICECOUNT = "deviceCount"
+WEBHOOK_DEVICESERIALNUMBER = "deviceSerialNumber"
+WEBHOOK_NAME = "homelink"
+WEBHOOK_NOTIFICATIONID = "notificationId"
+WEBHOOK_PROPERTY_REFERENCE = "propertyReference"
+WEBHOOK_READINGTYPEID = "readingTypeId"
+WEBHOOK_REPLACEBYDATE = "replaceByDate"
+WEBHOOK_STATUSID = "statusId"
 
 
 class HomeLINKMessageType(StrEnum):
