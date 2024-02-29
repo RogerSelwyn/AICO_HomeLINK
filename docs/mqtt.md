@@ -19,7 +19,7 @@ You may feed the MQTT messages into the integration by two methods:
 ### HomeLINK MQTT
 
 All the information you need is in the MQTTX file that you should download. In the configuration:-
-* Turn on `Enable MQTT updates`
+* Turn on `Enable MQTT`
 * Turn on `Use HomeLINK MQTT broker`
 * Press `Next` and configure HomeLINK MQTT settings:-
   * Client ID - Use clientId
@@ -35,7 +35,7 @@ It is beyond the scope of this guide to define how you bridge the data onto your
 All the information you need is in the MQTTX file that you should download. Topic - The file provides 5 topics. Please just use the first level (your landlord reference) with `/#` on the end. e.g. `joe_bloggs/reading/#` should be entered as `joe_bloggs/#`
 
 Once you have the data available to Home Assistant on your MQTT broker, you can configure the options for the HomeLINK integration to enable MQTT. In the configuration:-
-* Turn on `Enable MQTT updates`
+* Turn on `Enable MQTT`
 * Turn off `Use HomeLINK MQTT broker`
 * Press `Next` and configure HA MQTT settings:-
   * Topic - Enter the same topic as above. If you have rewritten the topic to an alternative root, then please make sure you include this in the root field. For instance if `joe_bloggs/#` has been written to `homelink/joe_bloggs/#`, then enter the same value into the text box
@@ -111,4 +111,3 @@ context:
 Additionally:
 * If the message type is `reading` it will update the relevant sensors status and `readingdate` attribute.
 * If the message type is `alert`, `device` or `property` it will trigger an update to all entities to ensure they reflect current state.
-* It will set an `alertstatus` on the alert listed against a device showing what state it is in. This will show for example `FIRE_ALARM` in the initial state and `CANCEL` when the alarm has been silenced.
