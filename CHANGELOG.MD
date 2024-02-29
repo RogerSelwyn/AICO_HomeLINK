@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.4.0 (2024/02/29)
+### ✨ Enhancements
+- [Add Webhook support](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e0a116a4a04c5fb09d2ddba85287b8fc07b43383) - @RogerSelwyn
+
+### 📚 Documentation
+- [Update MQTT docs to remove non-working example](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0c5bbd1e69a1ef765afa58c1d6af0f2e8bd8ca3c) - @RogerSelwyn
+- [Correct MQTT docs](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2240114793477679a7773f973d6b07c89eee3fae) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.4.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/9b8cc088f26f25756c1aaa62ae6aaca91b3018dd) - @RogerSelwyn
+
 ## v1.3.8 (2024/02/21)
 ### 🐛 Fixes
 - [Fix issue where reading sensors would become unavailable](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/435b31c6437c008ef5af0baed0fbc0bee25508cd) - @RogerSelwyn
