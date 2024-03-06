@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.4.1 (2024/03/06)
+### 🧰 Maintenance
+- [Add 'single_config_entry' to manifest](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e622d22a90c77a248c3cdd2157a8072723a83b89) - @RogerSelwyn
+
+### 📚 Documentation
+- [Update index](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/237ee11078b5f78a92330df9cb44ccb28cd6ab9b) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.4.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/bfbf9b0763d759fa0f7d3ad0735c57cb2d863e6f) - @RogerSelwyn
+
 ## v1.4.0 (2024/02/29)
 ### ✨ Enhancements
 - [Add Webhook support](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e0a116a4a04c5fb09d2ddba85287b8fc07b43383) - @RogerSelwyn
