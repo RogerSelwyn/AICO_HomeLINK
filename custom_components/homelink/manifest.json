@@ -23,5 +23,6 @@
     "pyhomelink==0.1.9",
     "paho-mqtt==1.6.1"
   ],
+  "single_config_entry": true,
   "version": "v1.4.0"
 }

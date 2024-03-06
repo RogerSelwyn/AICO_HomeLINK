@@ -62,8 +62,6 @@ class OAuth2FlowHandler(
         """Create an entry for auth."""
         if self._reauth_config_entry:
             return self.async_abort(reason="oauth_error")
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
 
         try:
             async with asyncio.timeout(OAUTH_TOKEN_TIMEOUT_SEC):
