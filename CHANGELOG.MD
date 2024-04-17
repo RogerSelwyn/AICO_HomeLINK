@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.4.3 (2024/04/17)
+### 🐛 Fixes
+- [Fix issue with change in rest api serial number for Reading](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/765500cdd40caa4cd83b140819db225549b25c4b) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.4.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/23f4b9b75ad55dd6437563d1b1ccb93bb40024bd) - @RogerSelwyn
+
 ## v1.4.2 (2024/04/17)
 ### ⬆️ Dependencies
 - [Bump pyhomelink to 0.1.11](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/bf3a56c91e960bc654c0e6f0b9d7cc7fa41aae51) - @RogerSelwyn
