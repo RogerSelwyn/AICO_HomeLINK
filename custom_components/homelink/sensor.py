@@ -264,7 +264,10 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
             if reading.type != self._readingtype:
                 continue
             for device in reading.devices:
-                if device.serialnumber != self._key:
+                if (
+                    device.serialnumber.removeprefix(f"{self._gateway_key}-")
+                    != self._key
+                ):
                     continue
 
                 if self._readingdate is None:
