@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.4.2 (2024/04/17)
+### ⬆️ Dependencies
+- [Bump pyhomelink to 0.1.11](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/bf3a56c91e960bc654c0e6f0b9d7cc7fa41aae51) - @RogerSelwyn
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/fa9c97c577f8c34ceff59b130e8fa0fc1779f61a) - @actions-user
+
+### 🔖 Release
+- [Release v1.4.2](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/51f26fb45caf50010d2577e408c0d6ea64e9a673) - @RogerSelwyn
+
 ## v1.4.1 (2024/03/06)
 ### 🧰 Maintenance
 - [Add 'single_config_entry' to manifest](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e622d22a90c77a248c3cdd2157a8072723a83b89) - @RogerSelwyn
