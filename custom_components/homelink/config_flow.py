@@ -1,4 +1,5 @@
 """Config flow for HomeLINK integration."""
+
 from __future__ import annotations
 
 import asyncio
@@ -116,9 +117,10 @@ class OAuth2FlowHandler(
         """Create an entry for HomeLINK ."""
         existing_entry = await self.async_set_unique_id(DOMAIN)
         if existing_entry:
-            self.hass.config_entries.async_update_entry(existing_entry, data=data)
-            await self.hass.config_entries.async_reload(existing_entry.entry_id)
-            return self.async_abort(reason="reauth_successful")
+            return self.async_update_reload_and_abort(
+                existing_entry, data=data, unique_id=self.unique_id
+            )
+
         return await super().async_oauth_create_entry(data)
 
     @staticmethod
