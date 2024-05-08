@@ -1,6 +1,11 @@
 """Initialise the HomeLINK integration."""
 
+from dataclasses import dataclass
+from types import MappingProxyType
+from typing import Any
+
 import aiohttp
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_WEBHOOK_ID, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
@@ -15,12 +20,23 @@ from .const import (
     COORD_PROPERTIES,
 )
 from .helpers.api import AsyncConfigEntryAuth
-from .helpers.configdata import HLConfigEntry, HLData
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.mqtt import HAMQTT, HomeLINKMQTT
 from .helpers.webhook import HomeLINKWebhook
 
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.EVENT]
+
+HLConfigEntry = ConfigEntry["HLData"]
+
+
+@dataclass
+class HLData:
+    """Data previously stored in hass.data."""
+
+    coordinator: HomeLINKDataCoordinator
+    mqtt: any
+    webhook: HomeLINKWebhook
+    options: MappingProxyType[str, Any]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:

@@ -6,14 +6,14 @@ from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.const import CONF_ACCESS_TOKEN
 from homeassistant.core import HomeAssistant
 
-from .helpers.configdata import HLConfigEntry
+from . import HLConfigEntry
 
 TO_REDACT = {CONF_ACCESS_TOKEN}
 
 
 async def async_get_config_entry_diagnostics(
-    hass: HomeAssistant,
-    entry: HLConfigEntry,  # pylint: disable=unused-argument
+    hass: HomeAssistant,  # pylint: disable=unused-argument
+    entry: HLConfigEntry,
 ) -> dict:
     """Return diagnostics for a config entry."""
     return {
