@@ -25,7 +25,8 @@
     "error": {
       "invalid_credentials": "Client ID, Username and Password combination is invalid",
       "invalid_topic": "Topic invalid for given credentials",
-      "server_unavailable": "HomeLINK server unavailable"
+      "server_unavailable": "HomeLINK server unavailable",
+      "no_external_url": "External url that is required for Webhooks is not enabled on Home Assistant. Enable and retry."
     },
     "step": {
       "user": {

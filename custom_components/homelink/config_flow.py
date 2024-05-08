@@ -16,7 +16,7 @@ from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_WEBHOOK_ID
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import config_entry_oauth2_flow
-from homeassistant.helpers.network import get_url
+from homeassistant.helpers.network import NoURLAvailableError, get_url
 from homeassistant.helpers.selector import BooleanSelector, TextSelector
 
 from .const import (
@@ -160,6 +160,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_user(self, user_input=None) -> FlowResult:
         # sourcery skip: last-if-guard
         """Handle a flow initialized by the user."""
+        errors = {}
         if user_input is not None:
             self._insights_enable = user_input.get(CONF_INSIGHTS_ENABLE)
             self._mqtt_enable = user_input.get(CONF_MQTT_ENABLE)
@@ -169,14 +170,20 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             self._user_input = user_input
             if not self._webhook_enable:
                 user_input[CONF_WEBHOOK_ID] = None
-            if self._mqtt_enable:
-                if self._mqtt_homelink:
-                    return await self.async_step_homelink_mqtt()
-                return await self.async_step_ha_mqtt()
-            if self._webhook_enable:
-                return await self.async_step_homelink_webhook()
+            else:
+                try:
+                    get_url(self.hass, allow_internal=False)
+                except NoURLAvailableError:
+                    errors["base"] = "no_external_url"
+            if not errors:
+                if self._mqtt_enable:
+                    if self._mqtt_homelink:
+                        return await self.async_step_homelink_mqtt()
+                    return await self.async_step_ha_mqtt()
+                if self._webhook_enable:
+                    return await self.async_step_homelink_webhook()
 
-            return self.async_create_entry(title="", data=user_input)
+                return self.async_create_entry(title="", data=user_input)
 
         return self.async_show_form(
             step_id="user",
@@ -201,6 +208,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                 }
             ),
             last_step=False,
+            errors=errors,
         )
 
     async def async_step_ha_mqtt(self, user_input=None) -> FlowResult:
