@@ -1,6 +1,5 @@
 """Support for HomeLINK events."""
 
-
 from homeassistant.components.event import DOMAIN as EVENT_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -8,6 +7,7 @@ from homeassistant.helpers import entity_registry
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from . import HLConfigEntry
 from .const import (
     CONF_EVENT_ENABLE,
     CONF_MQTT_ENABLE,
@@ -15,7 +15,7 @@ from .const import (
     COORD_GATEWAY_KEY,
     COORD_LOOKUP_EVENTTYPE,
     COORD_PROPERTIES,
-    DOMAIN,
+    # DOMAIN,
     EVENTTYPE_INSIGHT,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
@@ -32,7 +32,7 @@ from .helpers.utils import (
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: HLConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """HomeLINK Sensor Setup."""
     if entry.options.get(CONF_MQTT_ENABLE) and entry.options.get(CONF_EVENT_ENABLE):
@@ -44,7 +44,7 @@ async def async_setup_entry(
 async def _async_create_entities(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ):
-    hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
+    hl_coordinator: HomeLINKDataCoordinator = entry.runtime_data.coordinator
     eventtypes_all = hl_coordinator.data[COORD_LOOKUP_EVENTTYPE]
     eventtypes = _filter_eventtypes(eventtypes_all, [])
     eventtypes_alarm = _filter_eventtypes(eventtypes_all, [EVENTTYPE_INSIGHT])

@@ -1,6 +1,6 @@
 """Initialise the HomeLINK integration."""
+
 import aiohttp
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_WEBHOOK_ID, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
@@ -12,13 +12,10 @@ from .const import (
     CONF_MQTT_ENABLE,
     CONF_MQTT_HOMELINK,
     CONF_WEBHOOK_ENABLE,
-    COORD_CONFIG_ENTRY_OPTIONS,
-    COORD_DATA_MQTT,
-    COORD_DATA_WEBHOOK,
     COORD_PROPERTIES,
-    DOMAIN,
 )
 from .helpers.api import AsyncConfigEntryAuth
+from .helpers.configdata import HLConfigEntry, HLData
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.mqtt import HAMQTT, HomeLINKMQTT
 from .helpers.webhook import HomeLINKWebhook
@@ -26,7 +23,7 @@ from .helpers.webhook import HomeLINKWebhook
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.EVENT]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:
     """Set up HomeLINK from a config entry."""
     implementation = (
         await config_entry_oauth2_flow.async_get_config_entry_implementation(
@@ -48,18 +45,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         AsyncConfigEntryAuth(aiohttp_client.async_get_clientsession(hass), session)
     )
 
+    entry.runtime_data = HLData(None, None, None, None)
     hl_coordinator = HomeLINKDataCoordinator(hass, hl_api, entry)
     await hl_coordinator.async_config_entry_first_refresh()
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = hl_coordinator
+    entry.runtime_data.coordinator = hl_coordinator
 
     if entry.options.get(CONF_MQTT_ENABLE):
-        hl_mqtt = await _async_start_mqtt(hass, entry, hl_coordinator)
-        hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT] = hl_mqtt
+        hl_mqtt = await _async_start_mqtt(hass, entry)
+        entry.runtime_data.mqtt = hl_mqtt
 
     if entry.options.get(CONF_WEBHOOK_ENABLE):
         hl_webhook = HomeLINKWebhook()
         hl_webhook.register_webhooks(hass, entry.options.get(CONF_WEBHOOK_ID))
-        hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_WEBHOOK] = hl_webhook
+        entry.runtime_data.webhook = hl_webhook
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -68,30 +66,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:
     """Unload a config entry."""
 
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        if hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_WEBHOOK]:
-            hl_webhook = hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_WEBHOOK]
+        if entry.runtime_data.webhook:
+            hl_webhook = entry.runtime_data.webhook
             hl_webhook.unregister_webhooks(hass, entry.options.get(CONF_WEBHOOK_ID))
-        if hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT]:
-            hl_mqtt = hass.data[DOMAIN][entry.entry_id].data[COORD_DATA_MQTT]
+        if entry.runtime_data.mqtt:
+            hl_mqtt = entry.runtime_data.mqtt
             await hl_mqtt.async_stop()
-        hass.data[DOMAIN].pop(entry.entry_id)
     return unload_ok
 
 
-async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Handle options update - only reload if the options have chnaged."""
-    if (
-        hass.data[DOMAIN][entry.entry_id].data[COORD_CONFIG_ENTRY_OPTIONS]
-        != entry.options
-    ):
+async def async_reload_entry(hass: HomeAssistant, entry: HLConfigEntry) -> None:
+    """Handle options update - only reload if the options have changed."""
+    if entry.runtime_data.options != entry.options:
         await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def _async_start_mqtt(hass: HomeAssistant, entry: ConfigEntry, hl_coordinator):
+async def _async_start_mqtt(hass: HomeAssistant, entry: HLConfigEntry):
+    hl_coordinator = entry.runtime_data.coordinator
     if entry.options.get(CONF_MQTT_HOMELINK):
         hl_mqtt = HomeLINKMQTT(
             hass,

@@ -1,4 +1,5 @@
 """Constants for HomeLINK integration."""
+
 from datetime import timedelta
 from enum import StrEnum
 

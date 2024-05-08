@@ -6,7 +6,8 @@ from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
 )
-from homeassistant.config_entries import ConfigEntry
+
+# from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry
@@ -14,6 +15,7 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect, dispatche
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import dt
 
+from . import HLConfigEntry
 from .const import (
     ALARMS_NONE,
     ALARMTYPE_ALARM,
@@ -84,10 +86,10 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: HLConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """HomeLINK Sensor Setup."""
-    hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
+    hl_coordinator: HomeLINKDataCoordinator = entry.runtime_data.coordinator
 
     @callback
     def async_add_property(hl_property):

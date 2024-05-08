@@ -12,7 +12,8 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.config_entries import ConfigEntry
+
+# from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONCENTRATION_PARTS_PER_MILLION,
     PERCENTAGE,
@@ -25,6 +26,7 @@ from homeassistant.helpers.typing import StateType
 
 from pyhomelink import HomeLINKReadingType
 
+from . import HLConfigEntry
 from .const import (
     ALARMTYPE_ENVIRONMENT,
     APPLIESTO_PROPERTY,
@@ -101,10 +103,10 @@ SENSOR_TYPES: tuple[HomeLINKEntityDescription, ...] = (
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: HLConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """HomeLINK Sensor Setup."""
-    hl_coordinator: HomeLINKDataCoordinator = hass.data[DOMAIN][entry.entry_id]
+    hl_coordinator: HomeLINKDataCoordinator = entry.runtime_data.coordinator
 
     @callback
     def async_add_sensor_property(hl_property):
