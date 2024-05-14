@@ -23,8 +23,6 @@ from ..const import (
     CONF_INSIGHTS_ENABLE,
     COORD_ALERTS,
     COORD_CONFIG_ENTRY_OPTIONS,
-    # COORD_DATA_MQTT,
-    # COORD_DATA_WEBHOOK,
     COORD_DEVICES,
     COORD_GATEWAY_KEY,
     COORD_INSIGHTS,
@@ -32,7 +30,6 @@ from ..const import (
     COORD_PROPERTIES,
     COORD_PROPERTY,
     COORD_READINGS,
-    # DOMAIN,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
     HOMELINK_LOOKUP_EVENTTYPE,
@@ -43,8 +40,6 @@ from ..const import (
     MODELTYPE_GATEWAY,
     RETRIEVAL_INTERVAL_READINGS,
 )
-
-# from .configdata import HLConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -164,7 +159,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             self._build_known_properties()
 
         known_properties = deepcopy(self._known_properties)
-        self._check_for_deletes(known_properties, coord_properties)
+        await self._async_check_for_deletes(known_properties, coord_properties)
         self._check_for_adds(known_properties, coord_properties)
 
     def _build_known_properties(self):
@@ -186,19 +181,21 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                     KNOWN_DEVICES_CHILDREN: children,
                 }
 
-    def _check_for_deletes(self, known_properties, coord_properties):
+    async def _async_check_for_deletes(self, known_properties, coord_properties):
         for known_property, device_key in known_properties.items():
             if known_property not in coord_properties:
                 for known_device, child_device in device_key[
                     KNOWN_DEVICES_CHILDREN
                 ].items():
-                    self._delete_device_and_entities(
+                    await self._async_delete_device_and_entities(
                         child_device[KNOWN_DEVICES_DEVICEID]
                     )
                     self._known_properties[known_property][KNOWN_DEVICES_CHILDREN].pop(
                         known_device
                     )
-                self._delete_device_and_entities(device_key[KNOWN_DEVICES_ID])
+                await self._async_delete_device_and_entities(
+                    device_key[KNOWN_DEVICES_ID]
+                )
                 self._known_properties.pop(known_property)
             else:
                 coord_property = coord_properties[known_property]
@@ -211,7 +208,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                     ):
                         continue
 
-                    self._delete_device_and_entities(
+                    await self._async_delete_device_and_entities(
                         child_device[KNOWN_DEVICES_DEVICEID]
                     )
                     self._known_properties[known_property][KNOWN_DEVICES_CHILDREN].pop(
@@ -247,7 +244,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
 
         self._first_refresh = False
 
-    def _delete_device_and_entities(self, device):
+    async def _async_delete_device_and_entities(self, device):
         ent_reg = entity_registry.async_get(self._hass)
         entities = entity_registry.async_entries_for_device(ent_reg, device, True)
         for entity in entities:
