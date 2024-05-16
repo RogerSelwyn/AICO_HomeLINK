@@ -7,21 +7,10 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  ruff:
-    name: "Ruff"
+  lint:
+    name: Lint
     runs-on: "ubuntu-latest"
     steps:
-        - name: "Checkout the repository"
-          uses: "actions/checkout@v4.1.4"
-
-        - name: "Set up Python"
-          uses: actions/setup-python@v5.1.0
-          with:
-            python-version: "3.12"
-            cache: "pip"
-
-        - name: "Install requirements"
-          run: python3 -m pip install -r requirements_release.txt
-
-        - name: "Run"
-          run: python3 -m ruff check .
+      - uses: "actions/checkout@v4"
+      - name: Lint
+        uses: "rogerselwyn/actions/lint@main"
