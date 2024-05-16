@@ -11,6 +11,17 @@ jobs:
     name: Lint
     runs-on: "ubuntu-latest"
     steps:
-      - uses: "actions/checkout@v4"
-      - name: Lint
-        uses: "rogerselwyn/actions/lint@main"
+        - name: "Checkout the repository"
+          uses: actions/checkout@v4
+
+        - name: "Set up Python"
+          uses: actions/setup-python@v5
+          with:
+            python-version: "3.12"
+            cache: "pip"
+
+        - name: "Install requirements"
+          run: python3 -m pip install -r requirements_release.txt
+
+        - name: "Run"
+          run: python3 -m ruff check .
