@@ -4,7 +4,7 @@ from homeassistant.components.event import EventEntity
 from homeassistant.core import callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.util import dt
+from homeassistant.util import dt as dt_util
 
 from ..const import (
     ATTR_ACTIONTIMESTAMP,
@@ -148,7 +148,7 @@ class HomeLINKEventEntity(EventEntity):
         self._entry = entry
         self._mqtt_key = mqtt_key
         self._unregister_event_handler = None
-        self._lastdate = dt.utcnow()
+        self._lastdate = dt_util.utcnow()
 
     @property
     def unique_id(self) -> str:
