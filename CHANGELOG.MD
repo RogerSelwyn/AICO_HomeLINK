@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.4.4 (2024/06/06)
+### 🐛 Fixes
+- [Gracefully handle situation where external url not set on HA for webhooks](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/966b4a17d89dc84759f8a256cc7b7283dcfa5a7f) - @RogerSelwyn
+
+### 🧰 Maintenance
+- [Migrate to new reauth method](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7e67faecae9f624dda8cd95dd01249680ffe822c) - @RogerSelwyn
+- [Change to store runtime data in the config entry](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c1d27c90610257e5b62eea96334c672b91ca98ad) - @RogerSelwyn
+- [Re-organise config data](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2726c4992fca3f74754f7490dfb839d1c0bed0e7) - @RogerSelwyn
+- [Move calls to async_remove outside the thread](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f9d605c34facc530515c90e83b151a5bb158fa7d) - @RogerSelwyn
+- [Import HA.util.dt as dt_util](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e1371139ec43fd9cdd811031a3d70a6121109cb2) - @RogerSelwyn
+
+### 📚 Documentation
+- [Update CHANGELOG.MD](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/831094222189f44f39818466d04336278485438a) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.4.4](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2458e5fa6115b8efb0ec5c0c44d448713b8a8464) - @RogerSelwyn
+
 ## v1.4.3 (2024/04/17)
 ### 🐛 Fixes
 - [Fix issue with change in rest api serial number for Reading](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/765500cdd40caa4cd83b140819db225549b25c4b) - @RogerSelwyn
