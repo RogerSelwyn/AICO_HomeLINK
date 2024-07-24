@@ -1,13 +1,7 @@
 """HomeLINK utilities."""
+
 from dateutil import parser
-from homeassistant.const import (
-    ATTR_CONFIGURATION_URL,
-    ATTR_IDENTIFIERS,
-    ATTR_MANUFACTURER,
-    ATTR_MODEL,
-    ATTR_NAME,
-    ATTR_VIA_DEVICE,
-)
+from homeassistant.helpers.device_registry import DeviceInfo
 
 from ..const import (
     ATTR_ALARM,
@@ -38,32 +32,33 @@ def get_message_date(payload):
 
 def property_device_info(key):
     """Property device information"""
-    return {
-        ATTR_IDENTIFIERS: {(DOMAIN, ATTR_PROPERTY, key)},
-        ATTR_NAME: key,
-        ATTR_MANUFACTURER: ATTR_HOMELINK,
-        ATTR_MODEL: ATTR_PROPERTY.capitalize(),
-        ATTR_CONFIGURATION_URL: DASHBOARD_URL,
-    }
+    return DeviceInfo(
+        identifiers={(DOMAIN, ATTR_PROPERTY, key)},
+        name=key,
+        manufacturer=ATTR_HOMELINK,
+        model=ATTR_PROPERTY.capitalize(),
+        configuration_url=DASHBOARD_URL,
+    )
 
 
 def alarm_device_info(key, alarm_type):
     """Property device information"""
-    return {
-        ATTR_IDENTIFIERS: {(DOMAIN, ATTR_ALARM, f"{key} {alarm_type}")},
-        ATTR_NAME: f"{key} {alarm_type}",
-        ATTR_VIA_DEVICE: (DOMAIN, ATTR_PROPERTY, key),
-        ATTR_MANUFACTURER: ATTR_HOMELINK,
-        ATTR_MODEL: ATTR_ALARM.capitalize(),
-    }
+    return DeviceInfo(
+        identifiers={(DOMAIN, ATTR_ALARM, f"{key} {alarm_type}")},
+        name=f"{key} {alarm_type}",
+        via_device=(DOMAIN, ATTR_PROPERTY, key),
+        manufacturer=ATTR_HOMELINK,
+        model=ATTR_ALARM.capitalize(),
+    )
 
 
 def device_device_info(identifiers, parent_key, device):
     """Device device information."""
-    return {
-        ATTR_IDENTIFIERS: identifiers,
-        ATTR_NAME: f"{parent_key} {device.location} {device.modeltype}",
-        ATTR_VIA_DEVICE: (DOMAIN, ATTR_PROPERTY, parent_key),
-        ATTR_MANUFACTURER: device.manufacturer,
-        ATTR_MODEL: f"{device.model} ({device.modeltype})",
-    }
+    return DeviceInfo(
+        identifiers=identifiers,
+        name=f"{parent_key} {device.location} {device.modeltype}",
+        via_device=(DOMAIN, ATTR_PROPERTY, parent_key),
+        manufacturer=device.manufacturer,
+        model=device.modeltype,
+        model_id=device.model,
+    )
