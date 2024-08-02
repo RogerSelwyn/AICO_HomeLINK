@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.4.5 (2024/08/02)
+### 🐛 Fixes
+- [Handle situation where no existing readingdate](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/964418363aa797d93266cfa12b122de24b6fd7e8) - @RogerSelwyn
+
+### 🧰 Maintenance
+- [Add model_id to DeviceInfo](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/32b1f62c6cda1863956150d6af02bcc346f74e3a) - @RogerSelwyn
+- [Bump minimum HA to 2024.8.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a49b1905896dd3c2f03ed70d2a80a91896d52242) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.4.5](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/24bc00a32d49fd192f2aba95badd6972b89100a9) - @RogerSelwyn
+
+
 ## v1.4.4 (2024/06/06)
 ### 🐛 Fixes
 - [Gracefully handle situation where external url not set on HA for webhooks](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/966b4a17d89dc84759f8a256cc7b7283dcfa5a7f) - @RogerSelwyn
