@@ -12,7 +12,6 @@ from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import Throttle
-
 from pyhomelink import HomeLINKApi
 from pyhomelink.exceptions import ApiException, AuthException
 

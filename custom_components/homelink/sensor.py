@@ -23,7 +23,6 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
-
 from pyhomelink import HomeLINKReadingType
 
 from . import HLConfigEntry
@@ -310,7 +309,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
     async def _async_message_handle(self, payload, topic, messagetype, readingtype):
         readingdate = parser.parse(payload[MQTT_READINGDATE])
 
-        if readingdate > self._readingdate:
+        if not self._readingdate or readingdate > self._readingdate:
             raise_reading_event(self.hass, messagetype, readingtype, topic, payload)
             self._state = payload[MQTT_VALUE]
             self._readingdate = readingdate
