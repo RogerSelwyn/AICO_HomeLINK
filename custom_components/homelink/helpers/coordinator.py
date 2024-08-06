@@ -66,14 +66,14 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._eventtypes = []
         self._error = False
 
+    async def _async_setup(self) -> None:
+        await self._async_get_eventtypes_lookup()
+
     async def _async_update_data(self):
         """Fetch data from API endpoint."""
 
         try:
             async with asyncio.timeout(10):
-                if not self._eventtypes:
-                    await self._async_get_eventtypes_lookup()
-
                 coord_properties = await self._async_get_core_data()
 
                 await self._async_check_for_changes(coord_properties)
