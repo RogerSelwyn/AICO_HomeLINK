@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.4.6 (2024/08/08)
+### 🧰 Maintenance
+- [Move coordinator setup code to new _async_setup method](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d63c2db854b23678c8958531e41f92e9db08b99d) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.4.6](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/639ab982d9acebbbfb2c9c78bdcec8657dfa170c) - @RogerSelwyn
+
 ## v1.4.5 (2024/08/02)
 ### 🐛 Fixes
 - [Handle situation where no existing readingdate](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/964418363aa797d93266cfa12b122de24b6fd7e8) - @RogerSelwyn
