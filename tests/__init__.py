@@ -1,8 +1,9 @@
 """Tests for AICO HomeLINK."""
 
+from pytest_homeassistant_custom_component.common import MockConfigEntry
+
 from homeassistant.config import async_process_ha_core_config
 from homeassistant.core import HomeAssistant
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 
 async def setup_integration(hass: HomeAssistant, config_entry: MockConfigEntry) -> None:
@@ -11,7 +12,7 @@ async def setup_integration(hass: HomeAssistant, config_entry: MockConfigEntry) 
 
     await async_process_ha_core_config(
         hass,
-        {"external_url": "https://example.com"}, 
+        {"external_url": "https://example.com"},
     )
 
     await hass.config_entries.async_setup(config_entry.entry_id)
