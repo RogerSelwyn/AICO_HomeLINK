@@ -1,4 +1,5 @@
 """MQTT client for HomeLINK."""
+
 import json
 import logging
 import queue
@@ -70,7 +71,7 @@ class HomeLINKMQTT:
         self._client.loop_start()
         try:
             self._result.get(timeout=MQTT_TIMEOUT)
-            return None
+            return None  # noqa: TRY300
         except queue.Empty:
             if not self._socket_open:
                 return CONF_ERROR_UNAVAILABLE
@@ -91,7 +92,7 @@ class HomeLINKMQTT:
         self._client.loop_start()
         try:
             self._result.get(timeout=MQTT_TIMEOUT)
-            return None
+            return None  # noqa: TRY300
         except queue.Empty:
             if not self._socket_open:
                 return CONF_ERROR_UNAVAILABLE
@@ -271,7 +272,7 @@ async def _async_property_device_update_message(hass, key, topic, payload, messa
 
 
 async def _async_event_message(hass, key, payload):
-    if MQTT_DEVICESERIALNUMBER in payload and payload[MQTT_DEVICESERIALNUMBER]:
+    if MQTT_DEVICESERIALNUMBER in payload and payload[MQTT_DEVICESERIALNUMBER]:  # noqa: RUF019
         event = HOMELINK_MESSAGE_EVENT.format(
             domain=DOMAIN, key=payload[MQTT_DEVICESERIALNUMBER]
         ).lower()

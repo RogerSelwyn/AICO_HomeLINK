@@ -186,6 +186,7 @@ class HomeLINKSensor(HomeLINKDeviceEntity, SensorEntity):
 
     @property
     def native_value(self) -> Any:
+        """Return native value."""
         return self.entity_description.value_fn(self._device)
 
     def _update_attributes(self):
@@ -216,7 +217,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         device_key,
         readingtype,
     ) -> None:
-        """Reading entity object for HomeLINK sensor."""
+        """Entity object - Reading - for HomeLINK sensor."""
         self._readingtype = readingtype
         self._state = None
         self._readingdate = None
@@ -238,6 +239,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
 
     @property
     def native_value(self) -> Any:
+        """Return native value."""
         return self._state
 
     @property
@@ -336,10 +338,12 @@ class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
 
     @property
     def name(self) -> Any:
+        """Return name."""
         return self._insight.hl_type.capitalize()
 
     @property
     def native_value(self) -> Any:
+        """Return native value."""
         return self._insight.value
 
     @property
@@ -399,10 +403,12 @@ class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
 
     @property
     def name(self) -> Any:
+        """Return name."""
         return self._insight.hl_type.capitalize()
 
     @property
     def native_value(self) -> Any:
+        """Return native value."""
         return self._insight.value
 
     @property

@@ -35,7 +35,7 @@ class HomeLINKWebhook:
         """Initialise the webhooks."""
 
     def register_webhooks(self, hass, webhook_id):
-        """Register the required webhooks with Home Assistant"""
+        """Register the required webhooks with Home Assistant."""
 
         webhook.async_register(
             hass,
@@ -48,7 +48,7 @@ class HomeLINKWebhook:
         _LOGGER.debug("HomeLINK Webhook registered")
 
     def unregister_webhooks(self, hass, webhook_id):
-        """Unregister the required webhooks with Home Assistant"""
+        """Unregister the required webhooks with Home Assistant."""
         webhook.async_unregister(hass, webhook_id)
         _LOGGER.debug("HomeLINK Webhook unregistered")
 

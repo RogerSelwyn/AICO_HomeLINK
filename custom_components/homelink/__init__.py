@@ -121,7 +121,7 @@ async def _async_start_mqtt(hass: HomeAssistant, entry: HLConfigEntry):
             raise ConfigEntryNotReady(
                 "HomeLink MQTT credentials/topic are invalid. Please reconfigure"
             )
-        return hl_mqtt
+        return hl_mqtt  # noqa: TRY300
 
     except ConnectionRefusedError as err:
         raise ConfigEntryNotReady("HomeLink MQTT server not available") from err

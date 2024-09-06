@@ -16,7 +16,7 @@ from ..const import (
 
 
 def build_device_identifiers(device_id):
-    """Build device identifiers"""
+    """Build device identifiers."""
     return {(DOMAIN, ATTR_DEVICE, device_id.upper())}
 
 
@@ -26,12 +26,12 @@ def build_mqtt_device_key(device, key, gateway_key):
 
 
 def get_message_date(payload):
-    """Get the action timestamp from the message"""
+    """Get the action timestamp from the message."""
     return parser.parse(payload[MQTT_ACTIONTIMESTAMP])
 
 
 def property_device_info(key):
-    """Property device information"""
+    """Property device information."""
     return DeviceInfo(
         identifiers={(DOMAIN, ATTR_PROPERTY, key)},
         name=key,
@@ -42,7 +42,7 @@ def property_device_info(key):
 
 
 def alarm_device_info(key, alarm_type):
-    """Property device information"""
+    """Property device information."""
     return DeviceInfo(
         identifiers={(DOMAIN, ATTR_ALARM, f"{key} {alarm_type}")},
         name=f"{key} {alarm_type}",
