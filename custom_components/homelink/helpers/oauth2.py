@@ -1,4 +1,5 @@
 """API access for HomeLINK service."""
+
 from typing import Any, cast
 
 from homeassistant.components.application_credentials import (
