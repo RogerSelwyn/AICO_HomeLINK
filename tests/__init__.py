@@ -11,7 +11,7 @@ async def setup_integration(hass: HomeAssistant, config_entry: MockConfigEntry) 
 
     await async_process_ha_core_config(
         hass,
-        {"external_url": "https://example.com"},
+        {"external_url": "https://example.com"}, 
     )
 
     await hass.config_entries.async_setup(config_entry.entry_id)

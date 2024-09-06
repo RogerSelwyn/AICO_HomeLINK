@@ -1,19 +1,15 @@
 """Test the HomeLINK config flow.""" 
 # Note that MQTT config is not tested
-from unittest.mock import AsyncMock, patch
 
 import pytest
-from homeassistant import components, config_entries
+from homeassistant import config_entries
 from homeassistant.components.application_credentials import (
     ClientCredential, async_import_client_credential)
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-from homeassistant.helpers import config_entry_oauth2_flow
-from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import \
     AiohttpClientMocker
-from pytest_homeassistant_custom_component.typing import ClientSessionGenerator
 
 from custom_components.homelink.const import (CONF_INSIGHTS_ENABLE,
                                               CONF_MQTT_ENABLE,
@@ -31,12 +27,12 @@ async def test_config_flow_no_credentials(hass: HomeAssistant) -> None:
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
     assert result.get("type") is FlowResultType.ABORT
-    assert result.get("reason") == "missing_credentials"  
+    assert result.get("reason") == "missing_credentials"
 
 async def test_config_flow_invalid_credentials(
     hass: HomeAssistant,
     aioclient_mock: AiohttpClientMocker,
-    setup_credentials: None,
+    setup_credentials: None, # pylint: disable=unused-argument
 ) -> None:
     """Check for invalid credentials."""
 
@@ -55,7 +51,7 @@ async def test_config_flow_invalid_credentials(
 async def test_full_flow(
     hass: HomeAssistant,
     aioclient_mock: AiohttpClientMocker,
-    setup_credentials: None,
+    setup_credentials: None, # pylint: disable=unused-argument
 ) -> None:
     """Check full flow."""
 
@@ -76,12 +72,12 @@ async def test_full_flow(
     assert result["result"].unique_id == DOMAIN
     assert "token" in result["result"].data
     assert result["result"].data["token"]["access_token"] == TOKEN
-    assert result["result"].data["token"]["refresh_token"] == None
+    assert result["result"].data["token"]["refresh_token"] is None
 
 async def test_config_flow_second_instance(
     hass: HomeAssistant,
     aioclient_mock: AiohttpClientMocker,
-    setup_credentials: None,
+    setup_credentials: None, # pylint: disable=unused-argument
 ) -> None:
     """Check for second installation of integration."""
 
@@ -103,9 +99,9 @@ async def test_reauth(
     hass: HomeAssistant,
     aioclient_mock: AiohttpClientMocker,
     polling_config_entry: MockConfigEntry,
-    setup_credentials: None,
+    setup_credentials: None, # pylint: disable=unused-argument
 ) -> None:
-    """Test reauth an existing profile reauthenticates the config entry."""
+    """Test reauth an existing profile reauthenticates the config entry.""" 
 
     aioclient_mock.get(
         f"{BASE_AUTH_URL}/oauth2?client={CLIENT_ID}&secret={CLIENT_SECRET}",
@@ -129,15 +125,14 @@ async def test_reauth(
         result["flow_id"], user_input={"confirm": True}
     )
     assert result["type"] is FlowResultType.ABORT
-    assert result["reason"] is "reauth_successful"
+    assert result["reason"] == "reauth_successful"
 
 
 @pytest.mark.usefixtures("current_request_with_host")
 async def test_options_flow(
     hass: HomeAssistant,
-    aioclient_mock: AiohttpClientMocker,
     polling_config_entry: MockConfigEntry,
-    setup_credentials: None,
+    setup_credentials: None, # pylint: disable=unused-argument
 ) -> None:
     """Test options config flow for a V1 bridge."""
     await setup_integration(hass, polling_config_entry)
@@ -151,19 +146,19 @@ async def test_options_flow(
     schema = result["data_schema"].schema
     assert (
         _get_schema_default(schema, CONF_INSIGHTS_ENABLE)
-        == False
+        is False
     )
     assert (
         _get_schema_default(schema, CONF_MQTT_ENABLE)
-        == False
+        is False
     )
     assert (
         _get_schema_default(schema, CONF_MQTT_HOMELINK)
-        == True
+        is True
     )
     assert (
         _get_schema_default(schema, CONF_WEBHOOK_ENABLE)
-        == False
+        is False
     )
 
     result = await hass.config_entries.options.async_configure(

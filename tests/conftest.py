@@ -40,7 +40,7 @@ def auto_enable_custom_integrations(enable_custom_integrations): # pylint: disab
     return
 
 @pytest.fixture(autouse=True)
-async def request_setup(current_request_with_host: None) -> None:
+async def request_setup(current_request_with_host: None) -> None: # pylint: disable=unused-argument
     """Request setup."""
 
 # This fixture is used to prevent HomeAssistant from attempting to create and dismiss persistent
