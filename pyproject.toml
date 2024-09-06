@@ -333,7 +333,7 @@ max-line-length-suggestions = 72
 
 
 [tool.ruff]
-required-version = ">=0.5.8"
+required-version = ">=0.5.5"
 
 [tool.ruff.lint]
 select = [
