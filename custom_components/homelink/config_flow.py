@@ -61,8 +61,9 @@ class OAuth2FlowHandler(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Create an entry for auth."""
-        if self._reauth_config_entry:
-            return self.async_abort(reason="oauth_error")
+        # Need to re-validate re-auth
+        # if self._reauth_config_entry:
+        #     return self.async_abort(reason="oauth_error")
 
         try:
             async with asyncio.timeout(OAUTH_TOKEN_TIMEOUT_SEC):
