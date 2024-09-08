@@ -1,0 +1,821 @@
+[
+    {
+        "id": "ABANDONMENT_RISK_HIGH",
+        "code": "ABANDONMENT_RISK_HIGH",
+        "name": "Void Risk High",
+        "description": "This property is at high risk of being void",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "ABANDONMENT_RISK_LOW",
+        "code": "ABANDONMENT_RISK_LOW",
+        "name": "Void Risk Low",
+        "description": "This property is at low risk of being void",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "ABANDONMENT_RISK_MEDIUM",
+        "code": "ABANDONMENT_RISK_MEDIUM",
+        "name": "Void Risk Medium",
+        "description": "This property is at medium risk of being void",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "ABANDONMENT_RISK_PENDING",
+        "code": "ABANDONMENT_RISK_PENDING",
+        "name": "Void Risk Pending",
+        "description": "Void risk pending",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "AIRQUALITY_HIGH",
+        "code": "AIRQUALITY_HIGH",
+        "name": "Poor Air Quality Risk High",
+        "description": "This property or room is at high risk of having poor air quality",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "AIRQUALITY_LOW",
+        "code": "AIRQUALITY_LOW",
+        "name": "Poor Air Quality Risk Low",
+        "description": "This property or room is at low risk of having poor air quality",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "AIRQUALITY_MEDIUM",
+        "code": "AIRQUALITY_MEDIUM",
+        "name": "Poor Air Quality Risk Medium",
+        "description": "This property or room is at medium risk of having poor air quality",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "AIRQUALITY_PENDING",
+        "code": "AIRQUALITY_PENDING",
+        "name": "Poor Air Quality Risk Pending",
+        "description": "Air quality detection is pending",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "ALLERGENS_HIGH",
+        "code": "ALLERGENS_HIGH",
+        "name": "Dust Mite Allergens Risk High",
+        "description": "This property or room is at high risk of having dust mite allergens",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "ALLERGENS_LOW",
+        "code": "ALLERGENS_LOW",
+        "name": "Dust Mite Allergens Risk Low",
+        "description": "This property or room is at low risk of having dust mite allergens",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "ALLERGENS_MEDIUM",
+        "code": "ALLERGENS_MEDIUM",
+        "name": "Dust Mite Allergens Risk Medium",
+        "description": "This property or room is at medium risk of having dust mite allergens",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "ALLERGENS_PENDING",
+        "code": "ALLERGENS_PENDING",
+        "name": "Dust Mite Risk Pending",
+        "description": "Dust mites allergens detection is pending.",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "BUTTON_TEST",
+        "code": "BUTTON_TEST",
+        "name": "Device tested via button",
+        "description": "Device has been tested by pressing a button on the unit",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "CANCEL",
+        "code": "CANCEL",
+        "name": "Cancel",
+        "description": "Cancel",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "CO2_HIGH",
+        "code": "CO2_HIGH",
+        "name": "CO2 High Risk",
+        "description": "CO2 High Risk - Above 1500ppm",
+        "eventCategoryId": "PRIORITY_MAINTENANCE",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "CO2_HIGH_PROLONGED",
+        "code": "CO2_HIGH_PROLONGED",
+        "name": "Prolonged CO2 High Risk",
+        "description": "Prolonged CO2 High Risk - Above 1500ppm",
+        "eventCategoryId": "PRIORITY_MAINTENANCE",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "CO2_LOW",
+        "code": "CO2_LOW",
+        "name": "CO2 Low Risk",
+        "description": "CO2 Low Risk - Less than 800ppm",
+        "eventCategoryId": "READING",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "CO2_LOW_PROLONGED",
+        "code": "CO2_LOW_PROLONGED",
+        "name": "Prolonged CO2 Low Risk",
+        "description": "Prolonged CO2 Low Risk - Less than 800ppm",
+        "eventCategoryId": "READING",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "CO2_MEDIUM",
+        "code": "CO2_MEDIUM",
+        "name": "CO2 Medium Risk",
+        "description": "CO2 Medium Risk - Above 800ppm",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "CO2_MEDIUM_PROLONGED",
+        "code": "CO2_MEDIUM_PROLONGED",
+        "name": "Prolonged CO2 Medium Risk",
+        "description": "Prolonged CO2 Medium Risk - Above 800ppm",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "CO2_VERY_HIGH",
+        "code": "CO2_VERY_HIGH",
+        "name": "CO2 Very High Risk",
+        "description": "CO2 Very High Risk - Above 2800ppm",
+        "eventCategoryId": "ALARM",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "CO2_VERY_HIGH_PROLONGED",
+        "code": "CO2_VERY_HIGH_PROLONGED",
+        "name": "Prolonged CO2 Very High Risk",
+        "description": "Prolonged CO2 Very High Risk - Above 2800ppm",
+        "eventCategoryId": "ALARM",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "COLDHOMES_HIGH",
+        "code": "COLDHOMES_HIGH",
+        "name": "Cold Homes High Risk",
+        "description": "This property is at high risk of being excessively cold",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "COLDHOMES_LOW",
+        "code": "COLDHOMES_LOW",
+        "name": "Cold Homes Low Risk",
+        "description": "This property is at low risk of being excessively cold",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "COLDHOMES_MEDIUM",
+        "code": "COLDHOMES_MEDIUM",
+        "name": "Cold Homes Medium Risk",
+        "description": "This property is at medium risk of being excessively cold",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "COLDHOMES_PENDING",
+        "code": "COLDHOMES_PENDING",
+        "name": "Cold Homes Risk Pending",
+        "description": "Cold homes risk pending",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "CO_ALARM",
+        "code": "CO_ALARM",
+        "name": "CO alarm activated",
+        "description": "A carbon monoxide alarm has been activated",
+        "eventCategoryId": "ALARM",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "CO_ALARM_STOP",
+        "code": "CO_ALARM_STOP",
+        "name": "CO alarm stopped",
+        "description": "A carbon monoxide is no longer activated",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "CO_HIGH_LEVEL_ALARM",
+        "code": "CO_HIGH_LEVEL_ALARM",
+        "name": "High level CO detected",
+        "description": "A high level of carbon monoxide has been detected",
+        "eventCategoryId": "ALARM",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "CO_LOW_LEVEL_ALARM",
+        "code": "CO_LOW_LEVEL_ALARM",
+        "name": "Low level CO detected",
+        "description": "A low level of carbon monoxide has been detected",
+        "eventCategoryId": "ALARM",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "CO_LOW_LEVEL_ALARM_STOP",
+        "code": "CO_LOW_LEVEL_ALARM_STOP",
+        "name": "Low level CO stop",
+        "description": "A low level of carbon monoxide is no longer detectable",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "CO_MEDIUM_LEVEL_ALARM",
+        "code": "CO_MEDIUM_LEVEL_ALARM",
+        "name": "Medium level CO detected",
+        "description": "A medium level of carbon monoxide has been detected",
+        "eventCategoryId": "ALARM",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "DAMPMOULD_RISK_HIGH",
+        "code": "DAMPMOULD_RISK_HIGH",
+        "name": "Damp and Mould Risk High",
+        "description": "This property or room is at high risk of having damp and mould",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "DAMPMOULD_RISK_LOW",
+        "code": "DAMPMOULD_RISK_LOW",
+        "name": "Damp and Mould Risk Low",
+        "description": "This property or room is at low risk of having damp and mould",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "DAMPMOULD_RISK_MEDIUM",
+        "code": "DAMPMOULD_RISK_MEDIUM",
+        "name": "Damp and Mould Risk Medium",
+        "description": "This property or room is at medium risk of having damp and mould",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "DAMPMOULD_RISK_PENDING",
+        "code": "DAMPMOULD_RISK_PENDING",
+        "name": "Damp and Mould Risk Pending",
+        "description": "Damp and mould risk detection is pending",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "END_OF_LIFE",
+        "code": "END_OF_LIFE",
+        "name": "End of Life",
+        "description": "Device is at the end of its life",
+        "eventCategoryId": "PRIORITY_MAINTENANCE",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "EXCESSHEAT_HIGH",
+        "code": "EXCESSHEAT_HIGH",
+        "name": "Excess heat High",
+        "description": "This property is at high risk of being excessively hot",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "EXCESSHEAT_LOW",
+        "code": "EXCESSHEAT_LOW",
+        "name": "Excess heat Low",
+        "description": "This property is at low risk of being excessively hot",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "EXCESSHEAT_MEDIUM",
+        "code": "EXCESSHEAT_MEDIUM",
+        "name": "Excess heat Medium",
+        "description": "This property is at medium risk of being excessively hot",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "EXCESSHEAT_PENDING",
+        "code": "EXCESSHEAT_PENDING",
+        "name": "Excess heat Pending",
+        "description": "Risk of overheating detection pending",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "FIRE_ALARM",
+        "code": "FIRE_ALARM",
+        "name": "Fire alarm activated",
+        "description": "A fire alarm has been activated.",
+        "eventCategoryId": "ALARM",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "FIRE_ALARM_STOP",
+        "code": "FIRE_ALARM_STOP",
+        "name": "Fire alarm stopped",
+        "description": "A fire alarm is no longer activated",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "FUELPOVERTY_RISK_HIGH",
+        "code": "FUELPOVERTY_RISK_HIGH",
+        "name": "Fuel Poverty Risk High",
+        "description": "This property is at high risk of being in fuel poverty",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "FUELPOVERTY_RISK_LOW",
+        "code": "FUELPOVERTY_RISK_LOW",
+        "name": "Fuel Poverty Risk Low",
+        "description": "This property is at low risk of being in fuel poverty",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "FUELPOVERTY_RISK_MEDIUM",
+        "code": "FUELPOVERTY_RISK_MEDIUM",
+        "name": "Fuel Poverty Risk Medium",
+        "description": "This property is at medium risk of being in fuel poverty",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "FUELPOVERTY_RISK_PENDING",
+        "code": "FUELPOVERTY_RISK_PENDING",
+        "name": "Fuel Poverty Risk Pending",
+        "description": "Fuel poverty detection is pending",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "GATEWAY_BATTERY_DISCONNECTED",
+        "code": "GATEWAY_BATTERY_DISCONNECTED",
+        "name": "Gateway battery disconnected",
+        "description": "The gateway battery backup has been disconnected",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "GATEWAY_CHECK_IN",
+        "code": "GATEWAY_CHECK_IN",
+        "name": "Gateway Check In",
+        "description": "A gateway has checked in",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "GATEWAY_MAINS_ABSENT",
+        "code": "GATEWAY_MAINS_ABSENT",
+        "name": "Gateway mains absent",
+        "description": "Gateway mains power supply is absent",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "GATEWAY_MAINS_ABSENT_STOP",
+        "code": "GATEWAY_MAINS_ABSENT_STOP",
+        "name": "Gateway mains present",
+        "description": "Gateway mains power supply in now present",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "GATEWAY_POWERED_DOWN",
+        "code": "GATEWAY_POWERED_DOWN",
+        "name": "Gateway powered down",
+        "description": "Gateway powered down",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "GATEWAY_POWER_UP",
+        "code": "GATEWAY_POWER_UP",
+        "name": "Gateway Power Up",
+        "description": "A gateway has powered up",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "GATEWAY_RF_FAULT",
+        "code": "GATEWAY_RF_FAULT",
+        "name": "Gateway RF fault",
+        "description": "A gateway RF fault has been detected",
+        "eventCategoryId": "FAULT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "GATEWAY_RF_OK",
+        "code": "GATEWAY_RF_OK",
+        "name": "Gateway RF OK",
+        "description": "Gateway RF is functioning nomally",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "GATEWAY_SIGNAL_LOST",
+        "code": "GATEWAY_SIGNAL_LOST",
+        "name": "Gateway signal lost",
+        "description": "Gateway signal lost",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "HARDWIRE_ALARM_STOP",
+        "code": "HARDWIRE_ALARM_STOP",
+        "name": "Hard wired alarm stopped",
+        "description": "An alarm triggered by a hardwire interconnect is no longer active",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "HARDWIRE_INTERCONNECT",
+        "code": "HARDWIRE_INTERCONNECT",
+        "name": "Hardwire Interconnect alarm activated",
+        "description": "Hardwire Interconnect alarm has been activated",
+        "eventCategoryId": "ALARM",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "HEAD_OK",
+        "code": "HEAD_OK",
+        "name": "Head OK",
+        "description": "Head OK",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "HEAD_REMOVED",
+        "code": "HEAD_REMOVED",
+        "name": "Head removed",
+        "description": "The head has been removed from the baseplate",
+        "eventCategoryId": "PRIORITY_MAINTENANCE",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "HEATLOSS_HIGH",
+        "code": "HEATLOSS_HIGH",
+        "name": "Heat Loss Risk High",
+        "description": "This property or room is at high risk of having excessive heat loss",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "HEATLOSS_LOW",
+        "code": "HEATLOSS_LOW",
+        "name": "Heat Loss Risk Low",
+        "description": "This property or room is at low risk of having excessive heat loss",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "HEATLOSS_MEDIUM",
+        "code": "HEATLOSS_MEDIUM",
+        "name": "Heat Loss Risk Medium",
+        "description": "This property or room is at medium risk of having excessive heat loss",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "HEATLOSS_PENDING",
+        "code": "HEATLOSS_PENDING",
+        "name": "Heat Loss Risk Pending",
+        "description": "Heat loss risk detection is pending",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "HUSH",
+        "code": "HUSH",
+        "name": "Hush",
+        "description": "Hush",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "LOCATE",
+        "code": "LOCATE",
+        "name": "Locate",
+        "description": "Locate",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "LOW_BATTERY_GATEWAY",
+        "code": "LOW_BATTERY_GATEWAY",
+        "name": "Gateway battery low",
+        "description": "A gateway has a low battery",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "LOW_BATTERY_GATEWAY_STOP",
+        "code": "LOW_BATTERY_GATEWAY_STOP",
+        "name": "Gateway battery OK",
+        "description": "A gateway battery is now OK",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "LOW_BATTERY_GENERIC",
+        "code": "LOW_BATTERY_GENERIC",
+        "name": "Battery low",
+        "description": "The device has a low battery",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "LOW_BATTERY_HEAD",
+        "code": "LOW_BATTERY_HEAD",
+        "name": "Head battery low",
+        "description": "A units head has a low battery",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "LOW_BATTERY_MODULE",
+        "code": "LOW_BATTERY_MODULE",
+        "name": "Module battery low",
+        "description": "A units module has a low battery",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "LOW_BATTERY_STOP",
+        "code": "LOW_BATTERY_STOP",
+        "name": "Battery OK",
+        "description": "The device's battery is now OK",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "MAINS_ABSENT",
+        "code": "MAINS_ABSENT",
+        "name": "Mains Absent",
+        "description": "Mains Power is absent",
+        "eventCategoryId": "MAINTENANCE",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "MAINS_ABSENT_STOP",
+        "code": "MAINS_ABSENT_STOP",
+        "name": "Mains present",
+        "description": "Mains power supply in now present",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "POWER_UP",
+        "code": "POWER_UP",
+        "name": "Power-Up",
+        "description": "Device Powered-Up",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "RADIOLINK2_DEVICE_LOCATED",
+        "code": "RADIOLINK2_DEVICE_LOCATED",
+        "name": "RadioLINK2 device located",
+        "description": "RadioLINK2 device located",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "RADIOLINK2_MESSAGE_RECEIVED",
+        "code": "RADIOLINK2_MESSAGE_RECEIVED",
+        "name": "RadioLINK2 message received",
+        "description": "RadioLINK2 message received",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "RADIOLINK2_STATUS_MESSAGE",
+        "code": "RADIOLINK2_STATUS_MESSAGE",
+        "name": "RadioLINK2 Status Message",
+        "description": "RadioLINK2 Status Message",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "RADIOLINK2_TABLE_LOADED",
+        "code": "RADIOLINK2_TABLE_LOADED",
+        "name": "RadioLINK2 Table Loaded",
+        "description": "RadioLINK2 table loaded",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "REMOTE_TEST",
+        "code": "REMOTE_TEST",
+        "name": "Device tested remotely",
+        "description": "Device has been tested remotely",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "RF_FAULT",
+        "code": "RF_FAULT",
+        "name": "RF Fault",
+        "description": "RF Fault",
+        "eventCategoryId": "FAULT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "SENSOR_FAULT",
+        "code": "SENSOR_FAULT",
+        "name": "Sensor Fault",
+        "description": "Sensor Fault",
+        "eventCategoryId": "PRIORITY_MAINTENANCE",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "SENSOR_FAULT_STOP",
+        "code": "SENSOR_FAULT_STOP",
+        "name": "Sensor Fault Stopped",
+        "description": "Sensor Fault has stopped",
+        "eventCategoryId": "INFO",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "THERMAL_HIGH",
+        "code": "THERMAL_HIGH",
+        "name": "Thermal Efficiency High",
+        "description": "Thermal efficiency high",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "THERMAL_LOW",
+        "code": "THERMAL_LOW",
+        "name": "Thermal Efficiency Low",
+        "description": "Thermal efficiency low",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "THERMAL_MEDIUM",
+        "code": "THERMAL_MEDIUM",
+        "name": "Thermal Efficiency Medium",
+        "description": "Thermal efficiency medium",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "THERMAL_PENDING",
+        "code": "THERMAL_PENDING",
+        "name": "Thermal Efficiency Pending",
+        "description": "Thermal efficiency pending",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "VENTILATION_HIGH",
+        "code": "VENTILATION_HIGH",
+        "name": "Draught Risk High",
+        "description": "This property or room is at high risk of being a draughty home",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "HIGH",
+        "active": true
+    },
+    {
+        "id": "VENTILATION_LOW",
+        "code": "VENTILATION_LOW",
+        "name": "Draught Risk Low",
+        "description": "This property or room is at low risk of being a draughty home",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    },
+    {
+        "id": "VENTILATION_MEDIUM",
+        "code": "VENTILATION_MEDIUM",
+        "name": "Draught Risk Medium",
+        "description": "This property or room is at medium risk of being a draughty home",
+        "eventCategoryId": "INSIGHT",
+        "severityId": "MEDIUM",
+        "active": true
+    },
+    {
+        "id": "VENTILATION_PENDING",
+        "code": "VENTILATION_PENDING",
+        "name": "Draught Risk Pending",
+        "description": "Draught detection is pending.",
+        "eventCategoryId": "INSIGHT",
+        "severityId": null,
+        "active": true
+    }
+]

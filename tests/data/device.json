@@ -1,0 +1,181 @@
+{
+    "count": 9,
+    "page": 1,
+    "limit": 50,
+    "results": [
+        {
+            "serialNumber": "D8EAF0D0",
+            "model": "Ei3016",
+            "modelType": "FIREALARM",
+            "location": "LIVINGROOM",
+            "locationNickname": null,
+            "manufacturer": "Ei",
+            "installationDate": "2023-09-05T00:00:00.000Z",
+            "installedBy": "Dummy User",
+            "replaceDate": "2034-06-26T00:00:00.000Z",
+            "createdAt": "2023-09-05T14:46:29.046Z",
+            "updatedAt": "2024-09-06T09:05:55.904Z",
+            "metadata": {
+                "signalStrength": -50,
+                "lastSeenDate": "2024-08-11T09:30:24.840Z",
+                "connectivityType": "EIRF868"
+            },
+            "status": {
+                "operationalStatus": "GOOD",
+                "lastTestedDate": "2024-09-06T09:05:16.000Z",
+                "dataCollectionStatus": "ACTIVE"
+            },
+            "_rel": {
+                "_self": "device/D8EAF0D0",
+                "property": "property/DUMMY_USER_My_House",
+                "alerts": "device/D8EAF0D0/alerts"
+            }
+        },
+        {
+            "serialNumber": "D8F7C0E8",
+            "model": "Ei450",
+            "modelType": "EIACCESSORY",
+            "location": "HALLWAY1",
+            "locationNickname": null,
+            "manufacturer": "Ei",
+            "installationDate": "2023-09-05T00:00:00.000Z",
+            "installedBy": "Dummy User",
+            "replaceDate": "2034-07-03T00:00:00.000Z",
+            "createdAt": "2023-09-05T14:52:22.101Z",
+            "updatedAt": "2024-09-06T09:05:55.904Z",
+            "metadata": {
+                "signalStrength": -53,
+                "lastSeenDate": "2024-09-06T09:09:41.473Z",
+                "connectivityType": "EIRF868"
+            },
+            "status": {
+                "operationalStatus": "GOOD",
+                "lastTestedDate": "2024-09-06T09:05:16.000Z",
+                "dataCollectionStatus": "ACTIVE"
+            },
+            "_rel": {
+                "_self": "device/D8F7C0E8",
+                "property": "property/DUMMY_USER_My_House",
+                "alerts": "device/D8F7C0E8/alerts"
+            }
+        },
+        {
+            "serialNumber": "C3CEC7FB",
+            "model": "Ei1000G",
+            "modelType": "GATEWAY",
+            "location": "KITCHEN",
+            "locationNickname": null,
+            "manufacturer": "Ei",
+            "installationDate": "2023-09-05T00:00:00.000Z",
+            "installedBy": "Dummy User",
+            "replaceDate": "2034-04-24T00:00:00.000Z",
+            "createdAt": "2023-09-05T14:46:29.023Z",
+            "updatedAt": "2023-12-06T10:41:06.559Z",
+            "metadata": {
+                "signalStrength": -79,
+                "lastSeenDate": "2024-09-07T09:24:19.466Z",
+                "connectivityType": "GSM"
+            },
+            "status": {
+                "operationalStatus": "GOOD",
+                "lastTestedDate": null,
+                "dataCollectionStatus": "ACTIVE"
+            },
+            "_rel": {
+                "_self": "device/C3CEC7FB",
+                "property": "property/DUMMY_USER_My_House",
+                "alerts": "device/C3CEC7FB/alerts"
+            }
+        },
+        {
+            "serialNumber": "001FD75F",
+            "model": "Ei1025",
+            "modelType": "ENVCO2SENSOR",
+            "location": "HALLWAY1",
+            "locationNickname": null,
+            "manufacturer": "Ei",
+            "installationDate": "2023-11-16T15:48:30.627Z",
+            "installedBy": "Dummy User",
+            "replaceDate": "2033-08-15T00:00:00.000Z",
+            "createdAt": "2023-11-16T15:48:32.442Z",
+            "updatedAt": "2023-11-16T15:48:32.442Z",
+            "metadata": {
+                "signalStrength": -54,
+                "lastSeenDate": "2024-09-07T09:24:19.471Z",
+                "connectivityType": "EIRF868"
+            },
+            "status": {
+                "operationalStatus": "GOOD",
+                "lastTestedDate": null,
+                "dataCollectionStatus": "ACTIVE"
+            },
+            "_rel": {
+                "_self": "device/001FD75F",
+                "property": "property/DUMMY_USER_My_House",
+                "alerts": "device/001FD75F/alerts",
+                "readings": {
+                    "temperatureReadings": "device/001FD75F/readings/environment-temperature-indoor",
+                    "humidityReadings": "device/001FD75F/readings/environment-humidity-indoor",
+                    "co2Readings": "device/001FD75F/readings/environment-co2-indoor"
+                }
+            }
+        },
+        {
+            "serialNumber": "D6F7C1DC",
+            "model": "Ei3014",
+            "modelType": "FIREALARM",
+            "location": "KITCHEN",
+            "locationNickname": null,
+            "manufacturer": "Ei",
+            "installationDate": "2023-09-05T00:00:00.000Z",
+            "installedBy": "Dummy User",
+            "replaceDate": "2034-05-08T00:00:00.000Z",
+            "createdAt": "2023-09-05T14:46:29.058Z",
+            "updatedAt": "2024-09-06T09:05:55.904Z",
+            "metadata": {
+                "signalStrength": -50,
+                "lastSeenDate": "2024-08-10T18:12:11.460Z",
+                "connectivityType": "EIRF868"
+            },
+            "status": {
+                "operationalStatus": "GOOD",
+                "lastTestedDate": "2024-09-06T09:05:16.000Z",
+                "dataCollectionStatus": "ACTIVE"
+            },
+            "_rel": {
+                "_self": "device/D6F7C1DC",
+                "property": "property/DUMMY_USER_My_House",
+                "alerts": "device/D6F7C1DC/alerts"
+            }
+        },
+        {
+            "serialNumber": "D6FCD4F0",
+            "model": "Ei3028",
+            "modelType": "FIRECOALARM",
+            "location": "UTILITY",
+            "locationNickname": null,
+            "manufacturer": "Ei",
+            "installationDate": "2023-09-05T00:00:00.000Z",
+            "installedBy": "Dummy User",
+            "replaceDate": "2034-05-29T00:00:00.000Z",
+            "createdAt": "2023-09-05T14:46:29.017Z",
+            "updatedAt": "2024-09-06T09:05:55.904Z",
+            "metadata": {
+                "signalStrength": -50,
+                "lastSeenDate": "2024-08-10T12:11:07.460Z",
+                "connectivityType": "EIRF868"
+            },
+            "status": {
+                "operationalStatus": "GOOD",
+                "lastTestedDate": "2024-09-06T09:05:16.000Z",
+                "dataCollectionStatus": "ACTIVE"
+            },
+            "_rel": {
+                "_self": "device/D6FCD4F0",
+                "property": "property/DUMMY_USER_My_House",
+                "alerts": "device/D6FCD4F0/alerts"
+            }
+        }
+    ],
+    "totalPages": 1
+}

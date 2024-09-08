@@ -1,8 +1,7 @@
 """Test the HomeLINK config flow."""
-# Note that MQTT config is not tested
 
+# Note that MQTT config setup is not tested as yet
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.homelink.const import (
@@ -21,7 +20,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
 from . import setup_integration
-from .conftest import BASE_AUTH_URL, CLIENT_ID, CLIENT_SECRET, TOKEN
+from .conftest import (
+    BASE_AUTH_URL,
+    CLIENT_ID,
+    CLIENT_SECRET,
+    TOKEN,
+    HomelinkMockConfigEntry,
+)
 
 pytestmark = pytest.mark.usefixtures("mock_setup_entry")
 
@@ -107,7 +112,7 @@ async def test_config_flow_second_instance(
 async def test_reauth(
     hass: HomeAssistant,
     aioclient_mock: AiohttpClientMocker,
-    polling_config_entry: MockConfigEntry,
+    base_config_entry: HomelinkMockConfigEntry,
     setup_credentials: None,  # pylint: disable=unused-argument
 ) -> None:
     """Test reauth an existing profile reauthenticates the config entry."""
@@ -117,15 +122,15 @@ async def test_reauth(
         json={"accessToken": TOKEN},
     )
 
-    await setup_integration(hass, polling_config_entry)
+    await setup_integration(hass, aioclient_mock, base_config_entry)
 
     result = await hass.config_entries.flow.async_init(
         DOMAIN,
         context={
             "source": config_entries.SOURCE_REAUTH,
-            "entry_id": polling_config_entry.entry_id,
+            "entry_id": base_config_entry.entry_id,
         },
-        data=polling_config_entry.data,
+        data=base_config_entry.data,
     )
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "reauth_confirm"
@@ -140,15 +145,16 @@ async def test_reauth(
 @pytest.mark.usefixtures("current_request_with_host")
 async def test_options_flow(
     hass: HomeAssistant,
-    polling_config_entry: MockConfigEntry,
+    aioclient_mock: AiohttpClientMocker,
+    base_config_entry: HomelinkMockConfigEntry,
     setup_credentials: None,  # pylint: disable=unused-argument
 ) -> None:
     """Test options config flow for a V1 bridge."""
-    await setup_integration(hass, polling_config_entry)
+    await setup_integration(hass, aioclient_mock, base_config_entry)
 
     # polling_config_entry.add_to_hass(hass)
 
-    result = await hass.config_entries.options.async_init(polling_config_entry.entry_id)
+    result = await hass.config_entries.options.async_init(base_config_entry.entry_id)
 
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "user"

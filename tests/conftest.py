@@ -2,11 +2,14 @@
 """Global fixtures for integration."""
 
 from collections.abc import Generator
+from datetime import date
+import pathlib
 import time
 from unittest.mock import AsyncMock, patch
 
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.homelink import HLData
 from custom_components.homelink.const import DOMAIN
@@ -14,6 +17,7 @@ from homeassistant.components.application_credentials import (
     ClientCredential,
     async_import_client_credential,
 )
+from homeassistant.config import async_process_ha_core_config
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 
@@ -21,8 +25,20 @@ CLIENT_ID = "1234"
 CLIENT_SECRET = "5678"
 # REDIRECT_URI = "https://example.com/auth/external/callback"
 BASE_AUTH_URL = "https://auth.live.homelync.io"
+BASE_API_URL = "https://frontier.live.homelync.io/v1"
 TOKEN = "longtoken"
 TITLE = "mock"
+BASE_CONFIG_ENTRY = {
+    "auth_implementation": DOMAIN,
+    "token": {
+        "access_token": TOKEN,
+        "refresh_token": None,
+        "scope": "standard",
+        "token_type": "bearer",
+        "expires_in": 72000,
+        "expires_at": time.time() + (20 * 60 * 60),
+    },
+}
 
 pytest_plugins = "pytest_homeassistant_custom_component"  # pylint: disable=invalid-name
 
@@ -88,23 +104,54 @@ def expires_at() -> int:
 
 
 @pytest.fixture
-def polling_config_entry(expires_at: int) -> HomelinkMockConfigEntry:
-    """Create Monzo entry in Home Assistant."""
+def base_config_entry(expires_at: int) -> HomelinkMockConfigEntry:
+    """Create HomeLINK entry in Home Assistant."""
+    data = BASE_CONFIG_ENTRY
+    data["expires_at"] = expires_at
     entry = HomelinkMockConfigEntry(
         domain=DOMAIN,
         title=TITLE,
         unique_id=DOMAIN,
-        data={
-            "auth_implementation": DOMAIN,
-            "token": {
-                "access_token": TOKEN,
-                "refresh_token": None,
-                "scope": "standard",
-                "token_type": "bearer",
-                "expires_in": 72000,
-                "expires_at": expires_at,
-            },
-        },
+        data=data,
     )
     entry.runtime_data = None
     return entry
+
+
+@pytest.fixture
+async def setup_integration(
+    hass,
+    aioclient_mock: AiohttpClientMocker,
+    setup_credentials: None,
+    base_config_entry: HomelinkMockConfigEntry,
+) -> None:
+    """Fixture for setting up the component."""
+
+    create_mock(aioclient_mock, "/lookup/eventType", "lookup.json")
+    create_mock(aioclient_mock, "/property", "property.json")
+    create_mock(aioclient_mock, "/device", "device.json")
+    create_mock(aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "alerts.json")
+    url = f"/property/DUMMY_USER_My_House/readings?date={date.today()}"
+    create_mock(aioclient_mock, url, "readings.json")
+
+    base_config_entry.add_to_hass(hass)
+
+    await async_process_ha_core_config(
+        hass,
+        {"external_url": "https://example.com"},
+    )
+
+    await hass.config_entries.async_setup(base_config_entry.entry_id)
+
+
+def create_mock(aioclient_mock, url, filename):
+    """Create a mock."""
+    aioclient_mock.get(
+        f"{BASE_API_URL}{url}",
+        text=_load_json(f"data/{filename}"),
+    )
+
+
+def _load_json(filename):
+    """Load a json file."""
+    return pathlib.Path(__file__).parent.joinpath(filename).read_text(encoding="utf8")
