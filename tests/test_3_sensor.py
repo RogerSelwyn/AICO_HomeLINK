@@ -2,8 +2,8 @@
 
 from homeassistant.helpers import device_registry as dr
 
-from . import check_entity_state
 from .conftest import HomelinkMockConfigEntry
+from .helpers.utils import async_check_sensor, check_entity_state
 from .state.core_state import ALARM_GOOD, ENVIRONMENT_GOOD, HOME_GOOD
 from .state.device_state import (
     HALLWAY1_EIACCESSORY_GOOD,
@@ -49,7 +49,7 @@ async def test_ei3016(
 ):
     """Test HomeLINK ei3016."""
 
-    await _async_check_sensor(
+    await async_check_sensor(
         hass,
         "livingroom_firealarm",
         "off",
@@ -65,7 +65,7 @@ async def test_ei450(
 ):
     """Test HomeLINK ei450."""
 
-    await _async_check_sensor(
+    await async_check_sensor(
         hass,
         "hallway1_eiaccessory",
         "off",
@@ -81,7 +81,7 @@ async def test_ei1000g(
 ):
     """Test HomeLINK ei1000g."""
 
-    await _async_check_sensor(
+    await async_check_sensor(
         hass,
         "kitchen_gateway",
         "off",
@@ -97,7 +97,7 @@ async def test_ei1025(
 ):
     """Test HomeLINK ei1025."""
 
-    await _async_check_sensor(
+    await async_check_sensor(
         hass,
         "hallway1_envco2sensor",
         "off",
@@ -113,7 +113,7 @@ async def test_ei3014(
 ):
     """Test HomeLINK ei3014."""
 
-    await _async_check_sensor(
+    await async_check_sensor(
         hass,
         "kitchen_firealarm",
         "off",
@@ -129,37 +129,11 @@ async def test_ei3028(
 ):
     """Test HomeLINK ei3028."""
 
-    await _async_check_sensor(
+    await async_check_sensor(
         hass,
         "utility_firecoalarm",
         "off",
         UTILITY_FIRECOALARM_GOOD,
         "2024-09-06T09:05:16+00:00",
         "2034-05-29",
-    )
-
-
-async def _async_check_sensor(
-    hass,
-    device_name,
-    entity_state,
-    entity_attributes,
-    last_tested_date,
-    replace_by_date,
-):
-    check_entity_state(
-        hass,
-        f"binary_sensor.dummy_user_my_house_{device_name}",
-        entity_state,
-        entity_attributes,
-    )
-    check_entity_state(
-        hass,
-        f"sensor.dummy_user_my_house_{device_name}_last_tested_date",
-        last_tested_date,
-    )
-    check_entity_state(
-        hass,
-        f"sensor.dummy_user_my_house_{device_name}_replace_by_date",
-        replace_by_date,
     )

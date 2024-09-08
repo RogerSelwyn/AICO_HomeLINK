@@ -3,7 +3,7 @@
 
 from collections.abc import Generator
 from datetime import date
-import pathlib
+import sys
 import time
 from unittest.mock import AsyncMock, patch
 
@@ -21,26 +21,11 @@ from homeassistant.config import async_process_ha_core_config
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 
-CLIENT_ID = "1234"
-CLIENT_SECRET = "5678"
-# REDIRECT_URI = "https://example.com/auth/external/callback"
-BASE_AUTH_URL = "https://auth.live.homelync.io"
-BASE_API_URL = "https://frontier.live.homelync.io/v1"
-TOKEN = "longtoken"
-TITLE = "mock"
-BASE_CONFIG_ENTRY = {
-    "auth_implementation": DOMAIN,
-    "token": {
-        "access_token": TOKEN,
-        "refresh_token": None,
-        "scope": "standard",
-        "token_type": "bearer",
-        "expires_in": 72000,
-        "expires_at": time.time() + (20 * 60 * 60),
-    },
-}
+from .helpers.const import BASE_CONFIG_ENTRY, CLIENT_ID, CLIENT_SECRET, TITLE
+from .helpers.utils import create_mock
 
 pytest_plugins = "pytest_homeassistant_custom_component"  # pylint: disable=invalid-name
+THIS_MODULE = sys.modules[__name__]
 
 
 class HomelinkMockConfigEntry(MockConfigEntry):
@@ -104,7 +89,7 @@ def expires_at() -> int:
 
 
 @pytest.fixture
-def base_config_entry(expires_at: int) -> HomelinkMockConfigEntry:
+def base_config_entry(hass: HomeAssistant, expires_at: int) -> HomelinkMockConfigEntry:
     """Create HomeLINK entry in Home Assistant."""
     data = BASE_CONFIG_ENTRY
     data["expires_at"] = expires_at
@@ -120,19 +105,20 @@ def base_config_entry(expires_at: int) -> HomelinkMockConfigEntry:
 
 @pytest.fixture
 async def setup_integration(
+    request,
     hass,
     aioclient_mock: AiohttpClientMocker,
     setup_credentials: None,
     base_config_entry: HomelinkMockConfigEntry,
 ) -> None:
     """Fixture for setting up the component."""
+    if hasattr(request, "param"):
+        method_name = request.param
+    else:
+        method_name = "standard_mocks"
 
-    create_mock(aioclient_mock, "/lookup/eventType", "lookup.json")
-    create_mock(aioclient_mock, "/property", "property.json")
-    create_mock(aioclient_mock, "/device", "device.json")
-    create_mock(aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "alerts.json")
-    url = f"/property/DUMMY_USER_My_House/readings?date={date.today()}"
-    create_mock(aioclient_mock, url, "readings.json")
+    mock_method = getattr(THIS_MODULE, method_name)
+    mock_method(aioclient_mock)
 
     base_config_entry.add_to_hass(hass)
 
@@ -144,14 +130,45 @@ async def setup_integration(
     await hass.config_entries.async_setup(base_config_entry.entry_id)
 
 
-def create_mock(aioclient_mock, url, filename):
-    """Create a mock."""
-    aioclient_mock.get(
-        f"{BASE_API_URL}{url}",
-        text=_load_json(f"data/{filename}"),
+def standard_mocks(
+    aioclient_mock: AiohttpClientMocker,
+):
+    """Specific standard mocks."""
+    create_mock(aioclient_mock, "/lookup/eventType", "lookup.json")
+    create_mock(aioclient_mock, "/property", "property.json")
+    create_mock(aioclient_mock, "/device", "device.json")
+    create_mock(aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "alerts.json")
+    url = f"/property/DUMMY_USER_My_House/readings?date={date.today()}"
+    create_mock(aioclient_mock, url, "readings.json")
+
+
+def environment_alert_mocks(
+    aioclient_mock: AiohttpClientMocker,
+):
+    """Alert mocks."""
+    create_mock(aioclient_mock, "/lookup/eventType", "lookup.json")
+    create_mock(aioclient_mock, "/property", "property.json")
+    create_mock(aioclient_mock, "/device", "device.json")
+    create_mock(
+        aioclient_mock,
+        "/property/DUMMY_USER_My_House/alerts",
+        "alerts_environment.json",
     )
+    url = f"/property/DUMMY_USER_My_House/readings?date={date.today()}"
+    create_mock(aioclient_mock, url, "readings.json")
 
 
-def _load_json(filename):
-    """Load a json file."""
-    return pathlib.Path(__file__).parent.joinpath(filename).read_text(encoding="utf8")
+def alarm_alert_mocks(
+    aioclient_mock: AiohttpClientMocker,
+):
+    """Alert mocks."""
+    create_mock(aioclient_mock, "/lookup/eventType", "lookup.json")
+    create_mock(aioclient_mock, "/property", "property.json")
+    create_mock(aioclient_mock, "/device", "device.json")
+    create_mock(
+        aioclient_mock,
+        "/property/DUMMY_USER_My_House/alerts",
+        "alerts_alarm.json",
+    )
+    url = f"/property/DUMMY_USER_My_House/readings?date={date.today()}"
+    create_mock(aioclient_mock, url, "readings.json")

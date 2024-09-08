@@ -19,14 +19,8 @@ from homeassistant.components.application_credentials import (
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
-from . import setup_integration
-from .conftest import (
-    BASE_AUTH_URL,
-    CLIENT_ID,
-    CLIENT_SECRET,
-    TOKEN,
-    HomelinkMockConfigEntry,
-)
+from .conftest import HomelinkMockConfigEntry
+from .helpers.const import BASE_AUTH_URL, CLIENT_ID, CLIENT_SECRET, TOKEN
 
 pytestmark = pytest.mark.usefixtures("mock_setup_entry")
 
@@ -113,7 +107,7 @@ async def test_reauth(
     hass: HomeAssistant,
     aioclient_mock: AiohttpClientMocker,
     base_config_entry: HomelinkMockConfigEntry,
-    setup_credentials: None,  # pylint: disable=unused-argument
+    setup_integration: None,
 ) -> None:
     """Test reauth an existing profile reauthenticates the config entry."""
 
@@ -121,8 +115,6 @@ async def test_reauth(
         f"{BASE_AUTH_URL}/oauth2?client={CLIENT_ID}&secret={CLIENT_SECRET}",
         json={"accessToken": TOKEN},
     )
-
-    await setup_integration(hass, aioclient_mock, base_config_entry)
 
     result = await hass.config_entries.flow.async_init(
         DOMAIN,
@@ -145,14 +137,10 @@ async def test_reauth(
 @pytest.mark.usefixtures("current_request_with_host")
 async def test_options_flow(
     hass: HomeAssistant,
-    aioclient_mock: AiohttpClientMocker,
     base_config_entry: HomelinkMockConfigEntry,
-    setup_credentials: None,  # pylint: disable=unused-argument
+    setup_integration: None,
 ) -> None:
     """Test options config flow for a V1 bridge."""
-    await setup_integration(hass, aioclient_mock, base_config_entry)
-
-    # polling_config_entry.add_to_hass(hass)
 
     result = await hass.config_entries.options.async_init(base_config_entry.entry_id)
 

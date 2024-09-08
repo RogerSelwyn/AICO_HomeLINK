@@ -1,0 +1,93 @@
+{
+    "count": 4,
+    "results": [
+        {
+            "id": "5f564e4f-2a47-431f-a470-134312f597fc",
+            "serialNumber": null,
+            "description": "Airquality calculated as medium",
+            "eventType": "AIRQUALITY_MEDIUM",
+            "propertyReference": "DUMMY_USER_My_House",
+            "model": "AIRQUALITY",
+            "modelType": "INSIGHT",
+            "location": null,
+            "locationNickname": null,
+            "insightId": "545e0647-84dc-11ee-a965-0a9f836b4814",
+            "raisedDate": "2024-09-01T23:00:00.000Z",
+            "severity": "MEDIUM",
+            "category": "INSIGHT",
+            "type": "INSIGHT",
+            "status": "ACTIVE",
+            "_rel": {
+                "property": "property/DUMMY_USER_My_House",
+                "_self": "alert/5f564e4f-2a47-431f-a470-134312f597fc",
+                "insight": "insight/545e0647-84dc-11ee-a965-0a9f836b4814"
+            }
+        },
+        {
+            "id": "ed124466-ed7d-44cb-a63f-0fadbdb46742",
+            "serialNumber": null,
+            "description": "Airquality calculated as medium",
+            "eventType": "AIRQUALITY_MEDIUM",
+            "propertyReference": "DUMMY_USER_My_House",
+            "model": "AIRQUALITY",
+            "modelType": "INSIGHT",
+            "location": "HALLWAY1",
+            "locationNickname": null,
+            "insightId": "c85d57a6-acfa-46f1-905d-2bca12997c92",
+            "raisedDate": "2024-09-01T23:00:00.000Z",
+            "severity": "MEDIUM",
+            "category": "INSIGHT",
+            "type": "INSIGHT",
+            "status": "ACTIVE",
+            "_rel": {
+                "property": "property/DUMMY_USER_My_House",
+                "_self": "alert/ed124466-ed7d-44cb-a63f-0fadbdb46742",
+                "insight": "insight/c85d57a6-acfa-46f1-905d-2bca12997c92"
+            }
+        },
+        {
+            "id": "37d39a93-b631-4e40-befe-80b568505f02",
+            "serialNumber": null,
+            "description": "Dampmould calculated as high",
+            "eventType": "DAMPMOULD_RISK_HIGH",
+            "propertyReference": "DUMMY_USER_My_House",
+            "model": "MOULD",
+            "modelType": "INSIGHT",
+            "location": null,
+            "locationNickname": null,
+            "insightId": "80c1c3a3-85a5-11ee-a965-0a9f836b4814",
+            "raisedDate": "2024-07-12T23:00:00.000Z",
+            "severity": "HIGH",
+            "category": "INSIGHT",
+            "type": "INSIGHT",
+            "status": "ACTIVE",
+            "_rel": {
+                "property": "property/DUMMY_USER_My_House",
+                "_self": "alert/37d39a93-b631-4e40-befe-80b568505f02",
+                "insight": "insight/80c1c3a3-85a5-11ee-a965-0a9f836b4814"
+            }
+        },
+        {
+            "id": "2619386f-a435-45a8-969e-a7f5b110bc9f",
+            "serialNumber": null,
+            "description": "Dampmould calculated as high",
+            "eventType": "DAMPMOULD_RISK_HIGH",
+            "propertyReference": "DUMMY_USER_My_House",
+            "model": "MOULD",
+            "modelType": "INSIGHT",
+            "location": "HALLWAY1",
+            "locationNickname": null,
+            "insightId": "2fba2afd-95e9-4c93-b10b-93e74f41a67a",
+            "raisedDate": "2024-07-12T23:00:00.000Z",
+            "severity": "HIGH",
+            "category": "INSIGHT",
+            "type": "INSIGHT",
+            "status": "ACTIVE",
+            "_rel": {
+                "property": "property/DUMMY_USER_My_House",
+                "_self": "alert/2619386f-a435-45a8-969e-a7f5b110bc9f",
+                "insight": "insight/2fba2afd-95e9-4c93-b10b-93e74f41a67a"
+            }
+        }
+    ]
+}

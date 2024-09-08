@@ -1,0 +1,28 @@
+{
+    "count": 1,
+    "results": [
+        {
+            "id": "d86fa724-a982-4980-88d9-9fa5e4c57d0d",
+            "serialNumber": "D8EAF0D0",
+            "description": "D8EAF0D0 in location Living Room: Head Removed",
+            "eventType": "HEAD_REMOVED",
+            "propertyReference": "DUMMY_USER_My_House",
+            "model": "Ei3016",
+            "modelType": "FIREALARM",
+            "location": "LIVINGROOM",
+            "locationNickname": null,
+            "insightId": null,
+            "raisedDate": "2023-10-13T17:08:52.000Z",
+            "severity": "MEDIUM",
+            "category": "PRIORITY_MAINTENANCE",
+            "type": "DEVICE",
+            "status": "ACTIVE",
+            "_rel": {
+                "property": "property/DUMMY_USER_My_House",
+                "_self": "alert/d86fa724-a982-4980-88d9-9fa5e4c57d0d",
+                "device": "device/D8EAF0D0"
+            }
+
+        }
+    ]
+}
