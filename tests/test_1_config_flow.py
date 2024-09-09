@@ -2,7 +2,6 @@
 
 # Note that MQTT config setup is not tested as yet
 from asyncio import TimeoutError
-from dataclasses import dataclass
 from unittest.mock import Mock, patch
 
 from aiohttp import ClientConnectorError, ClientResponseError

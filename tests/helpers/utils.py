@@ -1,5 +1,6 @@
 """Utilities for HomeLINK testing."""
 
+import json
 import pathlib
 
 from .const import BASE_API_URL
@@ -20,13 +21,20 @@ def create_mock(aioclient_mock, url, filename):
     """Create a mock."""
     aioclient_mock.get(
         f"{BASE_API_URL}{url}",
-        text=_load_json(f"../data/{filename}"),
+        text=load_json_txt(f"../data/{filename}"),
     )
 
 
-def _load_json(filename):
-    """Load a json file."""
+def load_json_txt(filename):
+    """Load a json file as string."""
     return pathlib.Path(__file__).parent.joinpath(filename).read_text(encoding="utf8")
+
+
+def load_json(filename):
+    """Load a json file."""
+    return json.load(
+        open(pathlib.Path(__file__).parent.joinpath(filename), encoding="utf8")
+    )
 
 
 async def async_check_sensor(
