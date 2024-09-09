@@ -76,15 +76,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             async with asyncio.timeout(10):
                 coord_properties = await self._async_get_core_data()
 
-                await self._async_check_for_changes(coord_properties)
-                config_entry = self._entry.options
-
-                self._error = False
-                return {
-                    COORD_PROPERTIES: coord_properties,
-                    COORD_LOOKUP_EVENTTYPE: self._eventtypes,
-                    COORD_CONFIG_ENTRY_OPTIONS: config_entry,
-                }
         except AuthException as auth_err:
             if not self._error:
                 _LOGGER.warning("Error authenticating with HL API: %s", auth_err)
@@ -97,6 +88,16 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             raise UpdateFailed(
                 f"Error communicating with HL API: {api_err}"
             ) from api_err
+
+        await self._async_check_for_changes(coord_properties)
+        config_entry = self._entry.options
+
+        self._error = False
+        return {
+            COORD_PROPERTIES: coord_properties,
+            COORD_LOOKUP_EVENTTYPE: self._eventtypes,
+            COORD_CONFIG_ENTRY_OPTIONS: config_entry,
+        }
 
     async def _async_get_core_data(self):
         properties = await self._hl_api.async_get_properties()
