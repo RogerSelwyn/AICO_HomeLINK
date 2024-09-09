@@ -1,0 +1,204 @@
+{
+    "count": 14,
+    "page": 1,
+    "limit": 50,
+    "results": [
+        {
+            "id": "2fba2afd-95e9-4c93-b10b-93e74f41a67a",
+            "type": "MOULD",
+            "riskLevel": "HIGH",
+            "location": "HALLWAY1",
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 93.3339,
+            "appliesTo": "ROOM",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/2fba2afd-95e9-4c93-b10b-93e74f41a67a",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "531cbc96-84dc-11ee-a965-0a9f836b4814",
+            "type": "HEATLOSS",
+            "riskLevel": "LOW",
+            "location": null,
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 28.1923,
+            "appliesTo": "PROPERTY",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/531cbc96-84dc-11ee-a965-0a9f836b4814",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "53ddd037-84dc-11ee-a965-0a9f836b4814",
+            "type": "VENTILATION",
+            "riskLevel": "LOW",
+            "location": null,
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 20.3674,
+            "appliesTo": "PROPERTY",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/53ddd037-84dc-11ee-a965-0a9f836b4814",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "541d4593-84dc-11ee-a965-0a9f836b4814",
+            "type": "ABANDONMENT",
+            "riskLevel": "LOW",
+            "location": null,
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 0,
+            "appliesTo": "PROPERTY",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/541d4593-84dc-11ee-a965-0a9f836b4814",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "545e0647-84dc-11ee-a965-0a9f836b4814",
+            "type": "AIRQUALITY",
+            "riskLevel": "MEDIUM",
+            "location": null,
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 63.7191,
+            "appliesTo": "PROPERTY",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/545e0647-84dc-11ee-a965-0a9f836b4814",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "5535e0c9-84dc-11ee-a965-0a9f836b4814",
+            "type": "COLDHOMES",
+            "riskLevel": "LOW",
+            "location": null,
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 0.0282,
+            "appliesTo": "PROPERTY",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/5535e0c9-84dc-11ee-a965-0a9f836b4814",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "55e68493-84dc-11ee-a965-0a9f836b4814",
+            "type": "EXCESSHEAT",
+            "riskLevel": "LOW",
+            "location": null,
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 0,
+            "appliesTo": "PROPERTY",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/55e68493-84dc-11ee-a965-0a9f836b4814",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "80c1c3a3-85a5-11ee-a965-0a9f836b4814",
+            "type": "MOULD",
+            "riskLevel": "HIGH",
+            "location": null,
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 93.3339,
+            "appliesTo": "PROPERTY",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/80c1c3a3-85a5-11ee-a965-0a9f836b4814",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "9d5cf56b-3a59-4f2d-9389-2d2f5eb0b900",
+            "type": "HEATLOSS",
+            "riskLevel": "LOW",
+            "location": "HALLWAY1",
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 28.1923,
+            "appliesTo": "ROOM",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/9d5cf56b-3a59-4f2d-9389-2d2f5eb0b900",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "ad17c1ad-fecd-4f3c-bef1-7b373b7d7e0a",
+            "type": "ABANDONMENT",
+            "riskLevel": "LOW",
+            "location": "HALLWAY1",
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 0,
+            "appliesTo": "ROOM",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/ad17c1ad-fecd-4f3c-bef1-7b373b7d7e0a",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "b62df70f-d407-442f-9289-ff4f3fec2978",
+            "type": "EXCESSHEAT",
+            "riskLevel": "LOW",
+            "location": "HALLWAY1",
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 0,
+            "appliesTo": "ROOM",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/b62df70f-d407-442f-9289-ff4f3fec2978",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "c6e32e75-39c9-462f-85bf-f6b3d2826d75",
+            "type": "COLDHOMES",
+            "riskLevel": "LOW",
+            "location": "HALLWAY1",
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 0.0282,
+            "appliesTo": "ROOM",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/c6e32e75-39c9-462f-85bf-f6b3d2826d75",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "c85d57a6-acfa-46f1-905d-2bca12997c92",
+            "type": "AIRQUALITY",
+            "riskLevel": "MEDIUM",
+            "location": "HALLWAY1",
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 63.7191,
+            "appliesTo": "ROOM",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/c85d57a6-acfa-46f1-905d-2bca12997c92",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        },
+        {
+            "id": "ffc4875e-38e6-4bc5-b635-a757f92d0255",
+            "type": "VENTILATION",
+            "riskLevel": "LOW",
+            "location": "HALLWAY1",
+            "calculatedAt": "2024-09-08T23:00:00.000Z",
+            "value": 20.3674,
+            "appliesTo": "ROOM",
+            "propertyReference": "DUMMY_USER_My_House",
+            "_rel": {
+                "_self": "insight/ffc4875e-38e6-4bc5-b635-a757f92d0255",
+                "property": "property/DUMMY_USER_My_House"
+            }
+        }
+    ],
+    "totalPages": 1
+}

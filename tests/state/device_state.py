@@ -215,3 +215,30 @@ LIVINGROOM_FIREALARM_BAD = {
     "device_class": "smoke",
     "friendly_name": "DUMMY_USER_My_House LIVINGROOM FIREALARM",
 }
+CARBONDIOXIDE = {
+    "state_class": "measurement",
+    "readingdate": datetime.datetime(2024, 9, 7, 7, 22, 4, tzinfo=tzutc()),
+    "type": "reading",
+    "unit_of_measurement": "ppm",
+    "attribution": "Data provided by AICO HomeLINK",
+    "device_class": "carbon_dioxide",
+    "friendly_name": "DUMMY_USER_My_House HALLWAY1 ENVCO2SENSOR Carbon dioxide",
+}
+HUMIDITY = {
+    "state_class": "measurement",
+    "readingdate": datetime.datetime(2024, 9, 7, 7, 22, 4, tzinfo=tzutc()),
+    "type": "reading",
+    "unit_of_measurement": "%",
+    "attribution": "Data provided by AICO HomeLINK",
+    "device_class": "humidity",
+    "friendly_name": "DUMMY_USER_My_House HALLWAY1 ENVCO2SENSOR Humidity",
+}
+TEMPERATURE = {
+    "state_class": "measurement",
+    "readingdate": datetime.datetime(2024, 9, 7, 7, 22, 4, tzinfo=tzutc()),
+    "type": "reading",
+    "unit_of_measurement": "°C",
+    "attribution": "Data provided by AICO HomeLINK",
+    "device_class": "temperature",
+    "friendly_name": "DUMMY_USER_My_House HALLWAY1 ENVCO2SENSOR Temperature",
+}

@@ -21,7 +21,15 @@ from homeassistant.config import async_process_ha_core_config
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 
-from .helpers.const import BASE_CONFIG_ENTRY, CLIENT_ID, CLIENT_SECRET, TITLE
+from .helpers.const import (
+    BASE_CONFIG_ENTRY,
+    CLIENT_ID,
+    CLIENT_SECRET,
+    EXTERNAL_URL,
+    INSIGHT_OPTIONS,
+    TITLE,
+    WEBHOOK_OPTIONS,
+)
 from .helpers.utils import create_mock
 
 pytest_plugins = "pytest_homeassistant_custom_component"  # pylint: disable=invalid-name
@@ -104,6 +112,34 @@ def base_config_entry(hass: HomeAssistant, expires_at: int) -> HomelinkMockConfi
 
 
 @pytest.fixture
+def webhook_config_entry(
+    hass: HomeAssistant, expires_at: int
+) -> HomelinkMockConfigEntry:
+    """Create HomeLINK entry in Home Assistant."""
+    data = BASE_CONFIG_ENTRY
+    data["expires_at"] = expires_at
+    entry = HomelinkMockConfigEntry(
+        domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=WEBHOOK_OPTIONS
+    )
+    entry.runtime_data = None
+    return entry
+
+
+@pytest.fixture
+def insight_config_entry(
+    hass: HomeAssistant, expires_at: int
+) -> HomelinkMockConfigEntry:
+    """Create HomeLINK entry in Home Assistant."""
+    data = BASE_CONFIG_ENTRY
+    data["expires_at"] = expires_at
+    entry = HomelinkMockConfigEntry(
+        domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=INSIGHT_OPTIONS
+    )
+    entry.runtime_data = None
+    return entry
+
+
+@pytest.fixture
 async def setup_integration(
     request,
     hass,
@@ -124,10 +160,64 @@ async def setup_integration(
 
     await async_process_ha_core_config(
         hass,
-        {"external_url": "https://example.com"},
+        {"external_url": EXTERNAL_URL},
     )
 
     await hass.config_entries.async_setup(base_config_entry.entry_id)
+
+
+@pytest.fixture
+async def setup_webhook_integration(
+    request,
+    hass,
+    aioclient_mock: AiohttpClientMocker,
+    setup_credentials: None,
+    webhook_config_entry: HomelinkMockConfigEntry,
+) -> None:
+    """Fixture for setting up the component."""
+    if hasattr(request, "param"):
+        method_name = request.param
+    else:
+        method_name = "standard_mocks"
+
+    mock_method = getattr(THIS_MODULE, method_name)
+    mock_method(aioclient_mock)
+
+    webhook_config_entry.add_to_hass(hass)
+
+    await async_process_ha_core_config(
+        hass,
+        {"external_url": EXTERNAL_URL},
+    )
+
+    await hass.config_entries.async_setup(webhook_config_entry.entry_id)
+
+
+@pytest.fixture
+async def setup_insight_integration(
+    request,
+    hass,
+    aioclient_mock: AiohttpClientMocker,
+    setup_credentials: None,
+    insight_config_entry: HomelinkMockConfigEntry,
+) -> None:
+    """Fixture for setting up the component."""
+    if hasattr(request, "param"):
+        method_name = request.param
+    else:
+        method_name = "standard_mocks"
+
+    mock_method = getattr(THIS_MODULE, method_name)
+    mock_method(aioclient_mock)
+
+    insight_config_entry.add_to_hass(hass)
+
+    await async_process_ha_core_config(
+        hass,
+        {"external_url": EXTERNAL_URL},
+    )
+
+    await hass.config_entries.async_setup(insight_config_entry.entry_id)
 
 
 def standard_mocks(
@@ -138,8 +228,12 @@ def standard_mocks(
     create_mock(aioclient_mock, "/property", "property.json")
     create_mock(aioclient_mock, "/device", "device.json")
     create_mock(aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "alerts.json")
-    url = f"/property/DUMMY_USER_My_House/readings?date={date.today()}"
-    create_mock(aioclient_mock, url, "readings.json")
+    create_mock(
+        aioclient_mock,
+        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
+        "readings.json",
+    )
+    create_mock(aioclient_mock, "/insight", "insight.json")
 
 
 def environment_alert_mocks(
@@ -154,8 +248,11 @@ def environment_alert_mocks(
         "/property/DUMMY_USER_My_House/alerts",
         "alerts_environment.json",
     )
-    url = f"/property/DUMMY_USER_My_House/readings?date={date.today()}"
-    create_mock(aioclient_mock, url, "readings.json")
+    create_mock(
+        aioclient_mock,
+        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
+        "readings.json",
+    )
 
 
 def alarm_alert_mocks(

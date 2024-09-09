@@ -1,6 +1,11 @@
 """Test the HomeLINK config flow."""
 
 # Note that MQTT config setup is not tested as yet
+from asyncio import TimeoutError
+from dataclasses import dataclass
+from unittest.mock import Mock, patch
+
+from aiohttp import ClientConnectorError, ClientResponseError
 import pytest
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
@@ -34,21 +39,79 @@ async def test_config_flow_no_credentials(hass: HomeAssistant) -> None:
     assert result.get("reason") == "missing_credentials"
 
 
-async def test_config_flow_invalid_credentials(
+async def test_config_flow_api_errors(
     hass: HomeAssistant,
     aioclient_mock: AiohttpClientMocker,
     setup_credentials: None,  # pylint: disable=unused-argument
 ) -> None:
-    """Check for invalid credentials."""
+    """Check for api_error handling."""
 
     aioclient_mock.get(
         f"{BASE_AUTH_URL}/oauth2?client={CLIENT_ID}&secret={CLIENT_SECRET}",
-        json=None,
-        status=401,
+        json={"accessToken": TOKEN},
     )
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
-    )
+
+    with (
+        patch(
+            "custom_components.homelink.helpers.oauth2.HomeLINKOAuth2Implementation.async_resolve_external_data",
+            side_effect=ClientResponseError(None, None, status=401),
+        ),
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+    assert result.get("type") is FlowResultType.ABORT
+    assert result.get("reason") == "oauth_error"
+
+    with (
+        patch(
+            "custom_components.homelink.helpers.oauth2.HomeLINKOAuth2Implementation.async_resolve_external_data",
+            side_effect=ClientResponseError(None, None, status=500),
+        ),
+        pytest.raises(ClientResponseError),
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+
+    with patch(
+        "custom_components.homelink.helpers.oauth2.HomeLINKOAuth2Implementation.async_resolve_external_data",
+        side_effect=ClientConnectorError(Mock(), OSError()),
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+    assert result.get("type") is FlowResultType.ABORT
+    assert result.get("reason") == "cannot_connect"
+
+    with patch(
+        "custom_components.homelink.helpers.oauth2.HomeLINKOAuth2Implementation.async_resolve_external_data",
+        side_effect=TimeoutError(OSError()),
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+    assert result.get("type") is FlowResultType.ABORT
+    assert result.get("reason") == "timeout_connect"
+
+    with patch(
+        "custom_components.homelink.helpers.oauth2.HomeLINKOAuth2Implementation.async_resolve_external_data",
+        return_value=None,
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+    assert result.get("type") is FlowResultType.ABORT
+    assert result.get("reason") == "oauth_error"
+
+    with patch(
+        "custom_components.homelink.helpers.oauth2.HomeLINKOAuth2Implementation.async_resolve_external_data",
+        return_value={"expires_in": "1.2"},
+    ):
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+
     assert result.get("type") is FlowResultType.ABORT
     assert result.get("reason") == "oauth_error"
 
@@ -135,12 +198,12 @@ async def test_reauth(
 
 
 @pytest.mark.usefixtures("current_request_with_host")
-async def test_options_flow(
+async def test_options_flow_default(
     hass: HomeAssistant,
     base_config_entry: HomelinkMockConfigEntry,
     setup_integration: None,
 ) -> None:
-    """Test options config flow for a V1 bridge."""
+    """Test options flow."""
 
     result = await hass.config_entries.options.async_init(base_config_entry.entry_id)
 
@@ -152,6 +215,33 @@ async def test_options_flow(
     assert _get_schema_default(schema, CONF_MQTT_HOMELINK) is True
     assert _get_schema_default(schema, CONF_WEBHOOK_ENABLE) is False
 
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        user_input={
+            CONF_INSIGHTS_ENABLE: False,
+            CONF_MQTT_HOMELINK: False,
+            CONF_WEBHOOK_ENABLE: False,
+        },
+    )
+    assert result.get("type") is FlowResultType.CREATE_ENTRY
+    assert "result" in result
+    assert result["result"] is True
+    assert result["data"]["webhook_id"] is None
+    assert result["data"][CONF_INSIGHTS_ENABLE] is False
+    assert result["data"][CONF_MQTT_ENABLE] is False
+    assert result["data"][CONF_MQTT_HOMELINK] is False
+    assert result["data"][CONF_WEBHOOK_ENABLE] is False
+
+
+@pytest.mark.usefixtures("current_request_with_host")
+async def test_options_flow_webhooks_insights(
+    hass: HomeAssistant,
+    base_config_entry: HomelinkMockConfigEntry,
+    setup_integration: None,
+) -> None:
+    """Test options flow with webhooks and insights."""
+
+    result = await hass.config_entries.options.async_init(base_config_entry.entry_id)
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
         user_input={
@@ -170,15 +260,39 @@ async def test_options_flow(
         result["flow_id"],
         user_input=None,
     )
-    # print("****************************>", result)
     assert result.get("type") is FlowResultType.CREATE_ENTRY
     assert "result" in result
     assert result["result"] is True
     assert result["data"]["webhook_id"] is not None
     assert result["data"][CONF_INSIGHTS_ENABLE] is True
-    assert result["data"][CONF_MQTT_ENABLE] is False
-    assert result["data"][CONF_MQTT_HOMELINK] is False
     assert result["data"][CONF_WEBHOOK_ENABLE] is True
+
+
+@pytest.mark.usefixtures("current_request_with_host")
+async def test_options_flow_webhooks_no_external_utl(
+    hass: HomeAssistant,
+    base_config_entry: HomelinkMockConfigEntry,
+) -> None:
+    """Test options flow for no external url for webhooks."""
+
+    base_config_entry.add_to_hass(hass)
+    await hass.config_entries.async_setup(base_config_entry.entry_id)
+
+    result = await hass.config_entries.options.async_init(base_config_entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        user_input={
+            CONF_INSIGHTS_ENABLE: False,
+            CONF_MQTT_HOMELINK: False,
+            CONF_WEBHOOK_ENABLE: True,
+        },
+    )
+    # print("****************************>", result)
+    assert result["type"] is FlowResultType.FORM
+    assert result["step_id"] == "user"
+    assert "errors" in result
+    assert "base" in result["errors"]
+    assert result["errors"]["base"] == "no_external_url"
 
 
 def _get_schema_default(schema, key_name):
