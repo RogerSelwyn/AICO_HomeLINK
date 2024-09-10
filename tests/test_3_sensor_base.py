@@ -17,7 +17,7 @@ from .state.device_state import (
 
 
 async def test_device_count(
-    setup_integration: None,
+    setup_base_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
     device_registry: dr.DeviceRegistry,
 ):
@@ -31,7 +31,7 @@ async def test_device_count(
 
 async def test_core_entities(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
 ):
     """Test HomeLINK core entities."""
 
@@ -46,7 +46,7 @@ async def test_core_entities(
 
 async def test_ei3016(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
 ):
     """Test HomeLINK ei3016."""
 
@@ -62,7 +62,7 @@ async def test_ei3016(
 
 async def test_ei450(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
 ):
     """Test HomeLINK ei450."""
 
@@ -78,7 +78,7 @@ async def test_ei450(
 
 async def test_ei1000g(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
 ):
     """Test HomeLINK ei1000g."""
 
@@ -94,7 +94,7 @@ async def test_ei1000g(
 
 async def test_ei1025(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
 ):
     """Test HomeLINK ei1025."""
 
@@ -110,7 +110,7 @@ async def test_ei1025(
 
 async def test_ei3014(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
 ):
     """Test HomeLINK ei3014."""
 
@@ -126,7 +126,7 @@ async def test_ei3014(
 
 async def test_ei3028(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
 ):
     """Test HomeLINK ei3028."""
 

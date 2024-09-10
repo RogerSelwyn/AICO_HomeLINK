@@ -58,14 +58,14 @@ async def test_webhook_property_alert(
     webhook_setup: WebhookSetupData,
     webhook_config_entry: HomelinkMockConfigEntry,
 ) -> None:
-    """Test webhook alert receival and no refresh start."""
+    """Test webhook alert receipt and no refresh start."""
 
     with patch(
         "homeassistant.helpers.update_coordinator.DataUpdateCoordinator.async_refresh",
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook_property_alert.json"),
+            json=load_json("../data/webhook/property_alert.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -79,14 +79,14 @@ async def test_webhook_device_alert(
     webhook_setup: WebhookSetupData,
     webhook_config_entry: HomelinkMockConfigEntry,
 ) -> None:
-    """Test webhook alert receival and refresh start."""
+    """Test webhook alert receipt and refresh start."""
 
     with patch(
         "homeassistant.helpers.update_coordinator.DataUpdateCoordinator.async_refresh",
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook_device_alert.json"),
+            json=load_json("../data/webhook/device_alert.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -98,15 +98,14 @@ async def test_webhook_device_alert(
 
 
 async def test_webhook_device_reading(
-    hass: HomeAssistant,
     webhook_setup: WebhookSetupData,
     webhook_config_entry: HomelinkMockConfigEntry,
 ) -> None:
-    """Test webhook reading receival and reading sensor update."""
+    """Test webhook reading receipt and reading sensor update."""
 
     resp = await webhook_setup.client.post(
         urlparse(webhook_setup.webhook_url).path,
-        json=load_json("../data/webhook_device_reading.json"),
+        json=load_json("../data/webhook/device_reading.json"),
     )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -114,7 +113,7 @@ async def test_webhook_device_reading(
     assert len(webhook_setup.events) == 1
     assert webhook_setup.events[0].event_type == "homelink_reading"
     check_entity_state(
-        hass,
+        webhook_setup.hass,
         "sensor.dummy_user_my_house_hallway1_envco2sensor_humidity",
         "57.7",
     )
@@ -125,11 +124,11 @@ async def test_webhook_notification(
     webhook_setup: WebhookSetupData,
     webhook_config_entry: HomelinkMockConfigEntry,
 ) -> None:
-    """Test webhook notification receival and ignore."""
+    """Test webhook notification receipt and ignore."""
 
     resp = await webhook_setup.client.post(
         urlparse(webhook_setup.webhook_url).path,
-        json=load_json("../data/webhook_notification.json"),
+        json=load_json("../data/webhook/notification.json"),
     )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -143,14 +142,14 @@ async def test_webhook_property_add(
     webhook_setup: WebhookSetupData,
     webhook_config_entry: HomelinkMockConfigEntry,
 ) -> None:
-    """Test webhook property receival and refresh start."""
+    """Test webhook property receipt and refresh start."""
 
     with patch(
         "homeassistant.helpers.update_coordinator.DataUpdateCoordinator.async_refresh",
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook_property_add.json"),
+            json=load_json("../data/webhook/property_add.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -165,14 +164,14 @@ async def test_webhook_device_add(
     webhook_setup: WebhookSetupData,
     webhook_config_entry: HomelinkMockConfigEntry,
 ) -> None:
-    """Test webhook device receival and refresh start."""
+    """Test webhook device receipt and refresh start."""
 
     with patch(
         "homeassistant.helpers.update_coordinator.DataUpdateCoordinator.async_refresh",
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook_device_add.json"),
+            json=load_json("../data/webhook/device_add.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -194,7 +193,7 @@ async def test_webhook_unknown_message(
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook_unknown_type.json"),
+            json=load_json("../data/webhook/unknown_type.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()

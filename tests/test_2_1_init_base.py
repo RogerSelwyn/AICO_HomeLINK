@@ -53,7 +53,7 @@ async def test_setup_errors(
 
 async def test_full_init(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
 ):
     """Test full HomeLINK initialisation."""

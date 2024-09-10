@@ -169,7 +169,7 @@ async def test_reauth(
     hass: HomeAssistant,
     aioclient_mock: AiohttpClientMocker,
     base_config_entry: HomelinkMockConfigEntry,
-    setup_integration: None,
+    setup_base_integration: None,
 ) -> None:
     """Test reauth an existing profile reauthenticates the config entry."""
 
@@ -200,7 +200,7 @@ async def test_reauth(
 async def test_options_flow_default(
     hass: HomeAssistant,
     base_config_entry: HomelinkMockConfigEntry,
-    setup_integration: None,
+    setup_base_integration: None,
 ) -> None:
     """Test options flow."""
 
@@ -236,7 +236,7 @@ async def test_options_flow_default(
 async def test_options_flow_webhooks_insights(
     hass: HomeAssistant,
     base_config_entry: HomelinkMockConfigEntry,
-    setup_integration: None,
+    setup_base_integration: None,
 ) -> None:
     """Test options flow with webhooks and insights."""
 

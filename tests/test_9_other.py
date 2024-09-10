@@ -14,7 +14,7 @@ from .conftest import HomelinkMockConfigEntry
 
 async def test_diagnostics(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
 ):
     """Test Diagnostics."""
@@ -30,7 +30,7 @@ async def test_diagnostics(
 
 async def test_coordinator_auth_error(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
     caplog: pytest.LogCaptureFixture,
 ):
@@ -49,7 +49,7 @@ async def test_coordinator_auth_error(
 
 async def test_coordinator_api_error(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
     caplog: pytest.LogCaptureFixture,
 ):

@@ -17,11 +17,11 @@ from .state.device_state import (
 
 
 @pytest.mark.parametrize(
-    "setup_integration", ["environment_alert_mocks"], indirect=True
+    "setup_base_integration", ["environment_alert_mocks"], indirect=True
 )
 async def test_environment_entity_alert_states(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
 ):
     """Test HomeLINK alerts."""
 
@@ -57,10 +57,10 @@ async def test_environment_entity_alert_states(
     )
 
 
-@pytest.mark.parametrize("setup_integration", ["alarm_alert_mocks"], indirect=True)
+@pytest.mark.parametrize("setup_base_integration", ["alarm_alert_mocks"], indirect=True)
 async def test_alarm_alert_state(
     hass: HomeAssistant,
-    setup_integration: None,
+    setup_base_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
 ):
     """Test HomeLINK alerts."""
