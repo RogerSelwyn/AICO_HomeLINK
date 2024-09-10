@@ -1,5 +1,6 @@
 """Test sensors."""
 
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 
 from .conftest import HomelinkMockConfigEntry
@@ -29,7 +30,7 @@ async def test_device_count(
 
 
 async def test_core_entities(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
 ):
     """Test HomeLINK core entities."""
@@ -44,7 +45,7 @@ async def test_core_entities(
 
 
 async def test_ei3016(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
 ):
     """Test HomeLINK ei3016."""
@@ -60,7 +61,7 @@ async def test_ei3016(
 
 
 async def test_ei450(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
 ):
     """Test HomeLINK ei450."""
@@ -76,7 +77,7 @@ async def test_ei450(
 
 
 async def test_ei1000g(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
 ):
     """Test HomeLINK ei1000g."""
@@ -92,7 +93,7 @@ async def test_ei1000g(
 
 
 async def test_ei1025(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
 ):
     """Test HomeLINK ei1025."""
@@ -108,7 +109,7 @@ async def test_ei1025(
 
 
 async def test_ei3014(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
 ):
     """Test HomeLINK ei3014."""
@@ -124,7 +125,7 @@ async def test_ei3014(
 
 
 async def test_ei3028(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
 ):
     """Test HomeLINK ei3028."""

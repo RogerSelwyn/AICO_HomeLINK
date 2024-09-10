@@ -2,6 +2,8 @@
 
 import pytest
 
+from homeassistant.core import HomeAssistant
+
 from .conftest import HomelinkMockConfigEntry
 from .helpers.utils import async_check_sensor, check_entity_state
 from .state.core_state import ALARM_BAD, ENVIRONMENT_BAD
@@ -18,7 +20,7 @@ from .state.device_state import (
     "setup_integration", ["environment_alert_mocks"], indirect=True
 )
 async def test_environment_entity_alert_states(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
 ):
     """Test HomeLINK alerts."""
@@ -57,7 +59,7 @@ async def test_environment_entity_alert_states(
 
 @pytest.mark.parametrize("setup_integration", ["alarm_alert_mocks"], indirect=True)
 async def test_alarm_alert_state(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
 ):

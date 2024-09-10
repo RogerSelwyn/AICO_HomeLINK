@@ -1,0 +1,23 @@
+{
+    "locationNickname": null,
+    "collectionDate": "2024-02-27T10:38:58.078Z",
+    "deviceId": "6f66832b-eb7b-49e1-8ffe-74a052a03324",
+    "devicePhySerialNumber": "C3CEC7FB-001FD75F",
+    "deviceSerialNumber": "C3CEC7FB-001FD75F",
+    "landlordReference": "DUMMY_USER",
+    "location": "HALLWAY1",
+    "manufacturerReference": "EI",
+    "propertyDisplayReference": "My House",
+    "propertyId": "9e7b63b9-e752-4deb-aafb-b0a69259c1ca",
+    "propertyReference": "DUMMY_USER_My_House",
+    "readingDate": "2099-02-28T10:37:10.000Z",
+    "readingTypeId": "environment.humidity.indoor",
+    "room": "Hallway 1",
+    "sourceModel": "EI1025",
+    "sourceModelType": "ENVCO2SENSOR",
+    "unit": "RH",
+    "value": 57.7,
+    "__IDENTITY": "6f66832b-eb7b-49e1-8ffe-74a052a03324-environment.humidity.indoor-1709030230000",
+    "action": "ADD",
+    "actionTimestamp": "2024-02-27T10:38:58.078Z"
+}

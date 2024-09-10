@@ -4,7 +4,6 @@ from .conftest import HomelinkMockConfigEntry
 
 
 async def test_webhook_init(
-    hass,
     setup_webhook_integration,
     webhook_config_entry: HomelinkMockConfigEntry,
 ) -> None:

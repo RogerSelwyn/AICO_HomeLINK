@@ -1,5 +1,7 @@
 """Test setup process."""
 
+from homeassistant.core import HomeAssistant
+
 from .conftest import HomelinkMockConfigEntry
 from .helpers.utils import check_entity_state
 from .state.insight_state import (
@@ -13,7 +15,7 @@ from .state.insight_state import (
 
 
 async def test_insights_init(
-    hass,
+    hass: HomeAssistant,
     setup_insight_integration: None,
     insight_config_entry: HomelinkMockConfigEntry,
 ):

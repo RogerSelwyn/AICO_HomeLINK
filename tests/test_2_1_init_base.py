@@ -6,6 +6,7 @@ from aiohttp import ClientConnectorError, ClientResponseError
 import pytest
 
 from custom_components.homelink import async_setup_entry
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 
 from .conftest import HomelinkMockConfigEntry
@@ -13,7 +14,7 @@ from .helpers.utils import check_entity_state
 
 
 async def test_setup_errors(
-    hass,
+    hass: HomeAssistant,
     setup_credentials: None,
     base_config_entry: HomelinkMockConfigEntry,
 ):
@@ -51,7 +52,7 @@ async def test_setup_errors(
 
 
 async def test_full_init(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
 ):

@@ -7,12 +7,13 @@ import pytest
 
 from custom_components.homelink.const import DOMAIN
 from custom_components.homelink.diagnostics import async_get_config_entry_diagnostics
+from homeassistant.core import HomeAssistant
 
 from .conftest import HomelinkMockConfigEntry
 
 
 async def test_diagnostics(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
 ):
@@ -28,7 +29,7 @@ async def test_diagnostics(
 
 
 async def test_coordinator_auth_error(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
     caplog: pytest.LogCaptureFixture,
@@ -47,7 +48,7 @@ async def test_coordinator_auth_error(
 
 
 async def test_coordinator_api_error(
-    hass,
+    hass: HomeAssistant,
     setup_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
     caplog: pytest.LogCaptureFixture,
