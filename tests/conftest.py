@@ -2,20 +2,17 @@
 """Global fixtures for integration."""
 
 from collections.abc import Generator
-from dataclasses import dataclass
+
+# from dataclasses import dataclass
 from datetime import date
 import sys
 import time
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, patch
 
-from aiohttp.test_utils import TestClient
+# from aiohttp.test_utils import TestClient
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
-from pytest_homeassistant_custom_component.typing import (
-    ClientSessionGenerator,
-    MqttMockHAClient,
-)
 
 from custom_components.homelink import HLData
 from custom_components.homelink.const import DOMAIN
@@ -24,20 +21,25 @@ from homeassistant.components.application_credentials import (
     async_import_client_credential,
 )
 from homeassistant.config import async_process_ha_core_config
-from homeassistant.core import Event, HomeAssistant
+from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
 
-from .helpers.const import (
+from .helpers.const import (  # MQTT_HA_OPTIONS,; MQTT_HL_OPTIONS,
     BASE_CONFIG_ENTRY,
     CLIENT_ID,
     CLIENT_SECRET,
     EXTERNAL_URL,
     INSIGHT_OPTIONS,
-    MQTT_OPTIONS,
     TITLE,
     WEBHOOK_OPTIONS,
 )
 from .helpers.utils import create_mock
+
+# from pytest_homeassistant_custom_component.typing import (
+#     ClientSessionGenerator,
+#     MqttMockHAClient,
+# )
+
 
 pytest_plugins = "pytest_homeassistant_custom_component"  # pylint: disable=invalid-name
 THIS_MODULE = sys.modules[__name__]
@@ -146,16 +148,32 @@ def insight_config_entry(
     return entry
 
 
-@pytest.fixture
-def mqtt_config_entry(hass: HomeAssistant, expires_at: int) -> HomelinkMockConfigEntry:
-    """Create HomeLINK entry in Home Assistant."""
-    data = BASE_CONFIG_ENTRY
-    data["expires_at"] = expires_at
-    entry = HomelinkMockConfigEntry(
-        domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=MQTT_OPTIONS
-    )
-    entry.runtime_data = None
-    return entry
+# @pytest.fixture
+# def mqtt_ha_config_entry(
+#     hass: HomeAssistant, expires_at: int
+# ) -> HomelinkMockConfigEntry:
+#     """Create HomeLINK entry in Home Assistant."""
+#     data = BASE_CONFIG_ENTRY
+#     data["expires_at"] = expires_at
+#     entry = HomelinkMockConfigEntry(
+#         domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=MQTT_HA_OPTIONS
+#     )
+#     entry.runtime_data = None
+#     return entry
+
+
+# @pytest.fixture
+# def mqtt_hl_config_entry(
+#     hass: HomeAssistant, expires_at: int
+# ) -> HomelinkMockConfigEntry:
+#     """Create HomeLINK entry in Home Assistant."""
+#     data = BASE_CONFIG_ENTRY
+#     data["expires_at"] = expires_at
+#     entry = HomelinkMockConfigEntry(
+#         domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=MQTT_HL_OPTIONS
+#     )
+#     entry.runtime_data = None
+#     return entry
 
 
 @pytest.fixture
@@ -239,32 +257,32 @@ async def setup_insight_integration(
     await hass.config_entries.async_setup(insight_config_entry.entry_id)
 
 
-@pytest.fixture
-async def setup_mqtt_integration(
-    request,
-    hass,
-    aioclient_mock: AiohttpClientMocker,
-    setup_credentials: None,
-    mqtt_config_entry: HomelinkMockConfigEntry,
-    mqtt_mock: MqttMockHAClient,
-) -> None:
-    """Fixture for setting up the component."""
-    if hasattr(request, "param"):
-        method_name = request.param
-    else:
-        method_name = "standard_mocks"
+# @pytest.fixture
+# async def setup_mqtt_integration(
+#     request,
+#     hass,
+#     aioclient_mock: AiohttpClientMocker,
+#     setup_credentials: None,
+#     mqtt_ha_config_entry: HomelinkMockConfigEntry,
+#     mqtt_mock: MqttMockHAClient,
+# ) -> None:
+#     """Fixture for setting up the component."""
+#     if hasattr(request, "param"):
+#         method_name = request.param
+#     else:
+#         method_name = "standard_mocks"
 
-    mock_method = getattr(THIS_MODULE, method_name)
-    mock_method(aioclient_mock)
+#     mock_method = getattr(THIS_MODULE, method_name)
+#     mock_method(aioclient_mock)
 
-    mqtt_config_entry.add_to_hass(hass)
+#     mqtt_ha_config_entry.add_to_hass(hass)
 
-    await async_process_ha_core_config(
-        hass,
-        {"external_url": EXTERNAL_URL},
-    )
+#     await async_process_ha_core_config(
+#         hass,
+#         {"external_url": EXTERNAL_URL},
+#     )
 
-    await hass.config_entries.async_setup(mqtt_config_entry.entry_id)
+#     await hass.config_entries.async_setup(mqtt_ha_config_entry.entry_id)
 
 
 def standard_mocks(
@@ -320,43 +338,75 @@ def alarm_alert_mocks(
     create_mock(aioclient_mock, url, "base/readings.json")
 
 
-@dataclass
-class MQTTSetupData:
-    """A collection of data set up by the mqtt_setup fixture."""
+# @dataclass
+# class MQTTSetupData:
+#     """A collection of data set up by the mqtt_setup fixture."""
 
-    hass: HomeAssistant
-    client: TestClient
-    event_listener: Mock
-    events: any
+#     hass: HomeAssistant
+#     client: TestClient
+#     event_listener: Mock
+#     events: any
 
 
-@pytest.fixture
-async def mqtt_setup(
-    hass: HomeAssistant,
-    aioclient_mock: AiohttpClientMocker,
-    setup_credentials: None,
-    mqtt_config_entry: HomelinkMockConfigEntry,
-    hass_client_no_auth: ClientSessionGenerator,
-    mqtt_mock: MqttMockHAClient,
-) -> MQTTSetupData:
-    """Set up integration."""
-    standard_mocks(aioclient_mock)
-    mqtt_config_entry.add_to_hass(hass)
-    await hass.config_entries.async_setup(mqtt_config_entry.entry_id)
-    await hass.async_block_till_done()
+# @pytest.fixture
+# async def mqtt_ha_setup(
+#     hass: HomeAssistant,
+#     aioclient_mock: AiohttpClientMocker,
+#     setup_credentials: None,
+#     mqtt_ha_config_entry: HomelinkMockConfigEntry,
+#     hass_client_no_auth: ClientSessionGenerator,
+#     mqtt_mock: MqttMockHAClient,
+# ) -> MQTTSetupData:
+#     """Set up integration."""
+#     standard_mocks(aioclient_mock)
+#     mqtt_ha_config_entry.add_to_hass(hass)
+#     await hass.config_entries.async_setup(mqtt_ha_config_entry.entry_id)
+#     await hass.async_block_till_done()
 
-    client = await hass_client_no_auth()
+#     client = await hass_client_no_auth()
 
-    events = []
+#     events = []
 
-    async def event_listener(event: Event) -> None:
-        events.append(event)
+#     async def event_listener(event: Event) -> None:
+#         events.append(event)
 
-    hass.bus.async_listen("homelink_alert", event_listener)
-    hass.bus.async_listen("homelink_device", event_listener)
-    hass.bus.async_listen("homelink_notification", event_listener)
-    hass.bus.async_listen("homelink_property", event_listener)
-    hass.bus.async_listen("homelink_reading", event_listener)
-    hass.bus.async_listen("homelink_unknown", event_listener)
+#     hass.bus.async_listen("homelink_alert", event_listener)
+#     hass.bus.async_listen("homelink_device", event_listener)
+#     hass.bus.async_listen("homelink_notification", event_listener)
+#     hass.bus.async_listen("homelink_property", event_listener)
+#     hass.bus.async_listen("homelink_reading", event_listener)
+#     hass.bus.async_listen("homelink_unknown", event_listener)
 
-    return MQTTSetupData(hass, client, event_listener, events)
+#     return MQTTSetupData(hass, client, event_listener, events)
+
+
+# @pytest.fixture
+# async def mqtt_hl_setup(
+#     hass: HomeAssistant,
+#     aioclient_mock: AiohttpClientMocker,
+#     setup_credentials: None,
+#     mqtt_hl_config_entry: HomelinkMockConfigEntry,
+#     hass_client_no_auth: ClientSessionGenerator,
+#     mqtt_mock: MqttMockHAClient,
+# ) -> MQTTSetupData:
+#     """Set up integration."""
+#     standard_mocks(aioclient_mock)
+#     mqtt_hl_config_entry.add_to_hass(hass)
+#     await hass.config_entries.async_setup(mqtt_hl_config_entry.entry_id)
+#     await hass.async_block_till_done()
+
+#     client = await hass_client_no_auth()
+
+#     events = []
+
+#     async def event_listener(event: Event) -> None:
+#         events.append(event)
+
+#     hass.bus.async_listen("homelink_alert", event_listener)
+#     hass.bus.async_listen("homelink_device", event_listener)
+#     hass.bus.async_listen("homelink_notification", event_listener)
+#     hass.bus.async_listen("homelink_property", event_listener)
+#     hass.bus.async_listen("homelink_reading", event_listener)
+#     hass.bus.async_listen("homelink_unknown", event_listener)
+
+#     return MQTTSetupData(hass, client, event_listener, events)

@@ -2,12 +2,8 @@
 
 import time
 
-from custom_components.homelink.const import (
-    CONF_EVENT_ENABLE,
+from custom_components.homelink.const import (  # CONF_EVENT_ENABLE,; CONF_MQTT_ENABLE,; CONF_MQTT_HOMELINK,; CONF_MQTT_TOPIC,
     CONF_INSIGHTS_ENABLE,
-    CONF_MQTT_ENABLE,
-    CONF_MQTT_HOMELINK,
-    CONF_MQTT_TOPIC,
     CONF_WEBHOOK_ENABLE,
     DOMAIN,
 )
@@ -41,9 +37,16 @@ WEBHOOK_OPTIONS = {
 INSIGHT_OPTIONS = {
     CONF_INSIGHTS_ENABLE: True,
 }
-MQTT_OPTIONS = {
-    CONF_MQTT_TOPIC: "dummy_user",
-    CONF_MQTT_ENABLE: True,
-    CONF_MQTT_HOMELINK: False,
-    CONF_EVENT_ENABLE: True,
-}
+# MQTT_HA_OPTIONS = {
+#     CONF_MQTT_TOPIC: "dummy_user",
+#     CONF_MQTT_ENABLE: True,
+#     CONF_MQTT_HOMELINK: False,
+#     CONF_EVENT_ENABLE: True,
+# }
+
+# MQTT_HL_OPTIONS = {
+#     CONF_MQTT_TOPIC: "dummy_user",
+#     CONF_MQTT_ENABLE: True,
+#     CONF_MQTT_HOMELINK: True,
+#     CONF_EVENT_ENABLE: True,
+# }
