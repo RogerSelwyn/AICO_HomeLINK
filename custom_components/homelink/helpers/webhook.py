@@ -10,8 +10,10 @@ from homeassistant.helpers.dispatcher import dispatcher_send
 
 from ..const import (
     ALARMTYPE_ALARM,
+    ALARMTYPE_ENVIRONMENT,
     DOMAIN,
     HOMELINK_MESSAGE_MQTT,
+    MQTT_INSIGHTID,
     WEBHOOK_ACTION,
     WEBHOOK_DEVICECOUNT,
     WEBHOOK_DEVICESERIALNUMBER,
@@ -96,7 +98,12 @@ class HomeLINKWebhook:
             await self._async_device_message(hass, actiontype, message, messagetype)
             return
 
-        return
+        # Property alert so route to 'alarm' binary sensor
+        if messagetype in [HomeLINKMessageType.MESSAGE_ALERT]:
+            await self._async_alarm_message(hass, key, actiontype, message, messagetype)
+            return
+
+        _LOGGER.warning("Unknown Webhook message type: %s - %s", messagetype, message)
 
     def _identify_message(self, message):
         actiontype = message[WEBHOOK_ACTION]
@@ -121,6 +128,16 @@ class HomeLINKWebhook:
             domain=DOMAIN, key=f"{key}_{ALARMTYPE_ALARM}"
         ).lower()
         dispatcher_send(hass, event, topic, message, messagetype)
+
+    async def _async_alarm_message(self, hass, key, topic, payload, messagetype):
+        if payload[MQTT_INSIGHTID]:
+            alarm_type = ALARMTYPE_ENVIRONMENT
+        else:
+            alarm_type = ALARMTYPE_ALARM
+        event = HOMELINK_MESSAGE_MQTT.format(
+            domain=DOMAIN, key=f"{key}_{alarm_type}"
+        ).lower()
+        dispatcher_send(hass, event, topic, payload, messagetype)
 
     async def _async_device_message(self, hass, topic, message, messagetype):
         serialnumber = message[WEBHOOK_DEVICESERIALNUMBER]

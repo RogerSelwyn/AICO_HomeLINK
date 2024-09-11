@@ -5,7 +5,6 @@ import logging
 import queue
 
 import paho.mqtt.client as paho_mqtt
-
 from homeassistant.components import mqtt
 from homeassistant.components.mqtt import DOMAIN as MQTT_DOMAIN
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
