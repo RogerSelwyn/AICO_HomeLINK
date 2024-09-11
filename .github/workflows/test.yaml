@@ -20,12 +20,9 @@ jobs:
       - name: "Install requirements"
         run: python3 -m pip install -r requirements_test.txt
         
-      - name: "Install additional requirements"
-        run: python3 -m pip install pytest-md pytest-emoji
-        
       - name: "Run pytest"
         uses: pavelzw/pytest-action@v2
         with:
-          emoji: true
+          emoji: false
           verbose: false
-          job-summary: true
+          job-summary: false
