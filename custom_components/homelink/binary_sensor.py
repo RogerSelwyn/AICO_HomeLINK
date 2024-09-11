@@ -577,7 +577,3 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
 
         event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
         dispatcher_send(self.hass, event, payload, topic, messagetype, readingtype)
-
-
-def _extract_classifier(topic, item):
-    return topic.split("/")[item]
