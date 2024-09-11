@@ -1,18 +1,17 @@
 # pylint: disable=protected-access,redefined-outer-name
 """Global fixtures for integration."""
 
-from collections.abc import Generator
-
-# from dataclasses import dataclass
+from dataclasses import dataclass
 from datetime import date
 import sys
-import time
-from unittest.mock import AsyncMock, patch
+from unittest.mock import Mock, patch
 
-# from aiohttp.test_utils import TestClient
+from aiohttp import ClientSession
+from aiohttp.test_utils import TestClient
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
+from pytest_homeassistant_custom_component.typing import ClientSessionGenerator
 
 from custom_components.homelink import HLData
 from custom_components.homelink.const import DOMAIN
@@ -20,8 +19,9 @@ from homeassistant.components.application_credentials import (
     ClientCredential,
     async_import_client_credential,
 )
+from homeassistant.components.webhook import async_generate_url
 from homeassistant.config import async_process_ha_core_config
-from homeassistant.core import HomeAssistant
+from homeassistant.core import Event, HomeAssistant
 from homeassistant.setup import async_setup_component
 
 from .helpers.const import (  # MQTT_HA_OPTIONS,; MQTT_HL_OPTIONS,
@@ -30,16 +30,11 @@ from .helpers.const import (  # MQTT_HA_OPTIONS,; MQTT_HL_OPTIONS,
     CLIENT_SECRET,
     EXTERNAL_URL,
     INSIGHT_OPTIONS,
+    REFRESH_CONFIG_ENTRY,
     TITLE,
     WEBHOOK_OPTIONS,
 )
 from .helpers.utils import create_mock
-
-# from pytest_homeassistant_custom_component.typing import (
-#     ClientSessionGenerator,
-#     MqttMockHAClient,
-# )
-
 
 pytest_plugins = "pytest_homeassistant_custom_component"  # pylint: disable=invalid-name
 THIS_MODULE = sys.modules[__name__]
@@ -52,6 +47,12 @@ class HomelinkMockConfigEntry(MockConfigEntry):
         """Initialise HomelinkMockConfigEntry."""
         self.runtime_data: HLData = None
         super().__init__(*args, **kwargs)
+
+
+@pytest.fixture
+def aiohttp_client_session() -> None:
+    """AIOHTTP client session."""
+    return ClientSession
 
 
 # This fixture enables loading custom integrations in all tests.
@@ -80,15 +81,6 @@ def skip_notifications_fixture():
 
 
 @pytest.fixture
-def mock_setup_entry() -> Generator[AsyncMock]:
-    """Mock setting up a config entry."""
-    with patch(
-        "custom_components.homelink.async_setup_entry", return_value=True
-    ) as mock_setup:
-        yield mock_setup
-
-
-@pytest.fixture
 async def setup_credentials(hass: HomeAssistant) -> None:
     """Fixture to setup application credentials component."""
     await async_setup_component(hass, "application_credentials", {})
@@ -100,16 +92,9 @@ async def setup_credentials(hass: HomeAssistant) -> None:
 
 
 @pytest.fixture
-def expires_at() -> int:
-    """Fixture to set the oauth token expiration time."""
-    return time.time() + (20 * 60 * 60)
-
-
-@pytest.fixture
-def base_config_entry(hass: HomeAssistant, expires_at: int) -> HomelinkMockConfigEntry:
+def base_config_entry(hass: HomeAssistant) -> HomelinkMockConfigEntry:
     """Create HomeLINK entry in Home Assistant."""
     data = BASE_CONFIG_ENTRY
-    data["expires_at"] = expires_at
     entry = HomelinkMockConfigEntry(
         domain=DOMAIN,
         title=TITLE,
@@ -121,12 +106,25 @@ def base_config_entry(hass: HomeAssistant, expires_at: int) -> HomelinkMockConfi
 
 
 @pytest.fixture
-def webhook_config_entry(
-    hass: HomeAssistant, expires_at: int
+def refresh_config_entry(
+    hass: HomeAssistant,
 ) -> HomelinkMockConfigEntry:
     """Create HomeLINK entry in Home Assistant."""
+    data = REFRESH_CONFIG_ENTRY
+    entry = HomelinkMockConfigEntry(
+        domain=DOMAIN,
+        title=TITLE,
+        unique_id=DOMAIN,
+        data=data,
+    )
+    entry.runtime_data = None
+    return entry
+
+
+@pytest.fixture
+def webhook_config_entry(hass: HomeAssistant) -> HomelinkMockConfigEntry:
+    """Create HomeLINK entry in Home Assistant."""
     data = BASE_CONFIG_ENTRY
-    data["expires_at"] = expires_at
     entry = HomelinkMockConfigEntry(
         domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=WEBHOOK_OPTIONS
     )
@@ -136,11 +134,10 @@ def webhook_config_entry(
 
 @pytest.fixture
 def insight_config_entry(
-    hass: HomeAssistant, expires_at: int
+    hass: HomeAssistant,
 ) -> HomelinkMockConfigEntry:
     """Create HomeLINK entry in Home Assistant."""
     data = BASE_CONFIG_ENTRY
-    data["expires_at"] = expires_at
     entry = HomelinkMockConfigEntry(
         domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=INSIGHT_OPTIONS
     )
@@ -150,11 +147,10 @@ def insight_config_entry(
 
 # @pytest.fixture
 # def mqtt_ha_config_entry(
-#     hass: HomeAssistant, expires_at: int
+#     hass: HomeAssistant,
 # ) -> HomelinkMockConfigEntry:
 #     """Create HomeLINK entry in Home Assistant."""
 #     data = BASE_CONFIG_ENTRY
-#     data["expires_at"] = expires_at
 #     entry = HomelinkMockConfigEntry(
 #         domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=MQTT_HA_OPTIONS
 #     )
@@ -164,11 +160,10 @@ def insight_config_entry(
 
 # @pytest.fixture
 # def mqtt_hl_config_entry(
-#     hass: HomeAssistant, expires_at: int
+#     hass: HomeAssistant,
 # ) -> HomelinkMockConfigEntry:
 #     """Create HomeLINK entry in Home Assistant."""
 #     data = BASE_CONFIG_ENTRY
-#     data["expires_at"] = expires_at
 #     entry = HomelinkMockConfigEntry(
 #         domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=MQTT_HL_OPTIONS
 #     )
@@ -410,3 +405,42 @@ def alarm_alert_mocks(
 #     hass.bus.async_listen("homelink_unknown", event_listener)
 
 #     return MQTTSetupData(hass, client, event_listener, events)
+
+
+@dataclass
+class WebhookSetupData:
+    """A collection of data set up by the webhook_setup fixture."""
+
+    hass: HomeAssistant
+    client: TestClient
+    webhook_url: str
+    event_listener: Mock
+    events: any
+
+
+@pytest.fixture
+async def webhook_setup(
+    hass: HomeAssistant,
+    setup_webhook_integration,
+    webhook_config_entry: HomelinkMockConfigEntry,
+    hass_client_no_auth: ClientSessionGenerator,
+) -> WebhookSetupData:
+    """Set up integration, client and webhook url."""
+
+    client = await hass_client_no_auth()
+    webhook_id = webhook_config_entry.options["webhook_id"]
+    webhook_url = async_generate_url(hass, webhook_id)
+
+    events = []
+
+    async def event_listener(event: Event) -> None:
+        events.append(event)
+
+    hass.bus.async_listen("homelink_alert", event_listener)
+    hass.bus.async_listen("homelink_device", event_listener)
+    hass.bus.async_listen("homelink_notification", event_listener)
+    hass.bus.async_listen("homelink_property", event_listener)
+    hass.bus.async_listen("homelink_reading", event_listener)
+    hass.bus.async_listen("homelink_unknown", event_listener)
+
+    return WebhookSetupData(hass, client, webhook_url, event_listener, events)

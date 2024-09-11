@@ -1,0 +1,17 @@
+{
+    "address2": "Town",
+    "action": "ADD",
+    "actionTimestamp": "2000-09-05T14:46:28.914Z",
+    "address1": "My House",
+    "addressConfidence": "FULL",
+    "city": "City",
+    "country": "GB",
+    "deviceCount": 11,
+    "installedBy": "migration",
+    "landlordReference": "DUMMY_USER",
+    "postcode": "PostCode",
+    "propertyDisplayReference": "My House",
+    "propertyId": "9e7b63b9-e752-4deb-aafb-b0a69259c1ca",
+    "propertyReference": "DUMMY_USER_My_House",
+    "__IDENTITY": "9e7b63b9-e752-4deb-aafb-b0a69259c1ca"
+}

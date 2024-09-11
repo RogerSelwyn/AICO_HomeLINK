@@ -12,6 +12,7 @@ from .state.device_state import (
     KITCHEN_FIREALARM_GOOD,
     KITCHEN_GATEWAY_GOOD,
     LIVINGROOM_FIREALARM_GOOD,
+    UTILITY_COALARM_GOOD,
     UTILITY_FIRECOALARM_GOOD,
 )
 
@@ -26,7 +27,7 @@ async def test_device_count(
         base_config_entry.entry_id
     )
 
-    assert len(devices) == 9
+    assert len(devices) == 10
 
 
 async def test_core_entities(
@@ -135,6 +136,22 @@ async def test_ei3028(
         "utility_firecoalarm",
         "off",
         UTILITY_FIRECOALARM_GOOD,
+        "2024-09-06T09:05:16+00:00",
+        "2034-05-29",
+    )
+
+
+async def test_ei3018(
+    hass: HomeAssistant,
+    setup_base_integration: None,
+):
+    """Test HomeLINK ei3028."""
+
+    await async_check_sensor(
+        hass,
+        "utility_coalarm",
+        "off",
+        UTILITY_COALARM_GOOD,
         "2024-09-06T09:05:16+00:00",
         "2034-05-29",
     )

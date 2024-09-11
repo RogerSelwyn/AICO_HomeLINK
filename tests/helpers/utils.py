@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from pytest_homeassistant_custom_component.common import async_fire_mqtt_message
 
-from .const import BASE_API_URL
+from .const import BASE_API_URL, TOKEN_URL
 
 
 def check_entity_state(
@@ -87,3 +87,17 @@ async def fire_mqtt(hass, topic, payload):
 
     await hass.async_block_till_done()
     return async_refresh
+
+
+def mock_token_call(aioclient_mock, token, post=False):
+    """Mock the call url."""
+    if not post:
+        aioclient_mock.get(
+            TOKEN_URL,
+            json={"accessToken": token},
+        )
+    else:
+        aioclient_mock.post(
+            TOKEN_URL,
+            json={"access_token": token},
+        )

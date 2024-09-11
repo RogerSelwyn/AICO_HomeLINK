@@ -1,60 +1,13 @@
 """Test setup process."""
 
-from dataclasses import dataclass
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 from urllib.parse import urlparse
 
-from aiohttp.test_utils import TestClient
-import pytest
-from pytest_homeassistant_custom_component.typing import ClientSessionGenerator
-
-from homeassistant.components.webhook import async_generate_url
-from homeassistant.core import Event, HomeAssistant
-
-from .conftest import HomelinkMockConfigEntry
+from .conftest import HomelinkMockConfigEntry, WebhookSetupData
 from .helpers.utils import check_entity_state, load_json
 
 
-@dataclass
-class WebhookSetupData:
-    """A collection of data set up by the webhook_setup fixture."""
-
-    hass: HomeAssistant
-    client: TestClient
-    webhook_url: str
-    event_listener: Mock
-    events: any
-
-
-@pytest.fixture
-async def webhook_setup(
-    hass: HomeAssistant,
-    setup_webhook_integration,
-    webhook_config_entry: HomelinkMockConfigEntry,
-    hass_client_no_auth: ClientSessionGenerator,
-) -> WebhookSetupData:
-    """Set up integration, client and webhook url."""
-
-    client = await hass_client_no_auth()
-    webhook_id = webhook_config_entry.options["webhook_id"]
-    webhook_url = async_generate_url(hass, webhook_id)
-
-    events = []
-
-    async def event_listener(event: Event) -> None:
-        events.append(event)
-
-    hass.bus.async_listen("homelink_alert", event_listener)
-    hass.bus.async_listen("homelink_device", event_listener)
-    hass.bus.async_listen("homelink_notification", event_listener)
-    hass.bus.async_listen("homelink_property", event_listener)
-    hass.bus.async_listen("homelink_reading", event_listener)
-    hass.bus.async_listen("homelink_unknown", event_listener)
-
-    return WebhookSetupData(hass, client, webhook_url, event_listener, events)
-
-
-async def test_webhook_property_alert(
+async def test_webhook_property_environment_alert(
     webhook_setup: WebhookSetupData,
     webhook_config_entry: HomelinkMockConfigEntry,
 ) -> None:
@@ -65,13 +18,36 @@ async def test_webhook_property_alert(
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook/property_alert.json"),
+            json=load_json("../data/webhook/property_environment_alert.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
     assert resp.ok
-    assert len(webhook_setup.events) == 0
-    assert not async_refresh.called
+    assert len(webhook_setup.events) == 1
+    assert webhook_setup.events[0].event_type == "homelink_alert"
+    assert async_refresh.called
+    resp.close()
+
+
+async def test_webhook_property_fire_alert(
+    webhook_setup: WebhookSetupData,
+    webhook_config_entry: HomelinkMockConfigEntry,
+) -> None:
+    """Test webhook alert receipt and no refresh start."""
+
+    with patch(
+        "homeassistant.helpers.update_coordinator.DataUpdateCoordinator.async_refresh",
+    ) as async_refresh:
+        resp = await webhook_setup.client.post(
+            urlparse(webhook_setup.webhook_url).path,
+            json=load_json("../data/webhook/property_fire_alert.json"),
+        )
+    # Wait for remaining tasks to complete.
+    await webhook_setup.hass.async_block_till_done()
+    assert resp.ok
+    assert len(webhook_setup.events) == 1
+    assert webhook_setup.events[0].event_type == "homelink_alert"
+    assert async_refresh.called
     resp.close()
 
 
@@ -120,6 +96,24 @@ async def test_webhook_device_reading(
     resp.close()
 
 
+async def test_webhook_device_reading_old(
+    webhook_setup: WebhookSetupData,
+    webhook_config_entry: HomelinkMockConfigEntry,
+) -> None:
+    """Test webhook old alert receipt and ignore."""
+
+    resp = await webhook_setup.client.post(
+        urlparse(webhook_setup.webhook_url).path,
+        json=load_json("../data/webhook/device_alert_old.json"),
+    )
+    # Wait for remaining tasks to complete.
+    await webhook_setup.hass.async_block_till_done()
+    assert resp.ok
+    assert len(webhook_setup.events) == 0
+
+    resp.close()
+
+
 async def test_webhook_notification(
     webhook_setup: WebhookSetupData,
     webhook_config_entry: HomelinkMockConfigEntry,
@@ -157,6 +151,27 @@ async def test_webhook_property_add(
     assert len(webhook_setup.events) == 1
     assert webhook_setup.events[0].event_type == "homelink_property"
     assert async_refresh.called
+    resp.close()
+
+
+async def test_webhook_property_add_old(
+    webhook_setup: WebhookSetupData,
+    webhook_config_entry: HomelinkMockConfigEntry,
+) -> None:
+    """Test webhook old property receipt ignored."""
+
+    with patch(
+        "homeassistant.helpers.update_coordinator.DataUpdateCoordinator.async_refresh",
+    ) as async_refresh:
+        resp = await webhook_setup.client.post(
+            urlparse(webhook_setup.webhook_url).path,
+            json=load_json("../data/webhook/property_add_old.json"),
+        )
+    # Wait for remaining tasks to complete.
+    await webhook_setup.hass.async_block_till_done()
+    assert resp.ok
+    assert len(webhook_setup.events) == 0
+    assert not async_refresh.called
     resp.close()
 
 

@@ -24,9 +24,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
 from .conftest import HomelinkMockConfigEntry
-from .helpers.const import BASE_AUTH_URL, CLIENT_ID, CLIENT_SECRET, TOKEN
+from .helpers.const import CLIENT_ID, CLIENT_SECRET, TOKEN
+from .helpers.utils import mock_token_call
 
-pytestmark = pytest.mark.usefixtures("mock_setup_entry")
+
+@pytest.fixture(autouse=True)
+async def request_setup(current_request_with_host: None) -> None:
+    """Request setup."""
 
 
 async def test_config_flow_no_credentials(hass: HomeAssistant) -> None:
@@ -45,10 +49,7 @@ async def test_config_flow_api_errors(
 ) -> None:
     """Check for api_error handling."""
 
-    aioclient_mock.get(
-        f"{BASE_AUTH_URL}/oauth2?client={CLIENT_ID}&secret={CLIENT_SECRET}",
-        json={"accessToken": TOKEN},
-    )
+    mock_token_call(aioclient_mock, TOKEN)
 
     with (
         patch(
@@ -123,10 +124,7 @@ async def test_full_flow(
 ) -> None:
     """Check full flow."""
 
-    aioclient_mock.get(
-        f"{BASE_AUTH_URL}/oauth2?client={CLIENT_ID}&secret={CLIENT_SECRET}",
-        json={"accessToken": TOKEN},
-    )
+    mock_token_call(aioclient_mock, TOKEN)
 
     await async_import_client_credential(
         hass, DOMAIN, ClientCredential(CLIENT_ID, CLIENT_SECRET)
@@ -150,10 +148,8 @@ async def test_config_flow_second_instance(
 ) -> None:
     """Check for second installation of integration."""
 
-    aioclient_mock.get(
-        f"{BASE_AUTH_URL}/oauth2?client={CLIENT_ID}&secret={CLIENT_SECRET}",
-        json={"accessToken": TOKEN},
-    )
+    mock_token_call(aioclient_mock, TOKEN)
+
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
@@ -173,10 +169,7 @@ async def test_reauth(
 ) -> None:
     """Test reauth an existing profile reauthenticates the config entry."""
 
-    aioclient_mock.get(
-        f"{BASE_AUTH_URL}/oauth2?client={CLIENT_ID}&secret={CLIENT_SECRET}",
-        json={"accessToken": TOKEN},
-    )
+    mock_token_call(aioclient_mock, TOKEN)
 
     result = await hass.config_entries.flow.async_init(
         DOMAIN,

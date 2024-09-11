@@ -175,6 +175,34 @@
                 "property": "property/DUMMY_USER_My_House",
                 "alerts": "device/D6FCD4F0/alerts"
             }
+        },
+        {
+            "serialNumber": "D6003018",
+            "model": "Ei3018",
+            "modelType": "COALARM",
+            "location": "UTILITY",
+            "locationNickname": null,
+            "manufacturer": "Ei",
+            "installationDate": "2023-09-05T00:00:00.000Z",
+            "installedBy": "Dummy User",
+            "replaceDate": "2034-05-29T00:00:00.000Z",
+            "createdAt": "2023-09-05T14:46:29.017Z",
+            "updatedAt": "2024-09-06T09:05:55.904Z",
+            "metadata": {
+                "signalStrength": -50,
+                "lastSeenDate": "2024-08-10T12:11:07.460Z",
+                "connectivityType": "EIRF868"
+            },
+            "status": {
+                "operationalStatus": "GOOD",
+                "lastTestedDate": "2024-09-06T09:05:16.000Z",
+                "dataCollectionStatus": "ACTIVE"
+            },
+            "_rel": {
+                "_self": "device/D6003018",
+                "property": "property/DUMMY_USER_My_House",
+                "alerts": "device/D6003018/alerts"
+            }
         }
     ],
     "totalPages": 1

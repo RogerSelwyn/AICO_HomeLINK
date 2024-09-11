@@ -28,6 +28,20 @@ BASE_CONFIG_ENTRY = {
         "expires_at": time.time() + (20 * 60 * 60),
     },
 }
+TOKEN_URL = f"{BASE_AUTH_URL}/oauth2?client={CLIENT_ID}&secret={CLIENT_SECRET}"
+
+REFRESH_CONFIG_ENTRY = {
+    "auth_implementation": DOMAIN,
+    "token": {
+        "access_token": TOKEN,
+        "refresh_token": None,
+        "scope": "standard",
+        "token_type": "bearer",
+        "expires_in": 72000,
+        "expires_at": time.time() - 1000,
+    },
+}
+
 
 WEBHOOK_ID = webhook.async_generate_id()
 WEBHOOK_OPTIONS = {

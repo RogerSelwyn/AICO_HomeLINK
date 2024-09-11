@@ -136,6 +136,29 @@ UTILITY_FIRECOALARM_GOOD = {
     "friendly_name": "DUMMY_USER_My_House UTILITY FIRECOALARM",
 }
 
+UTILITY_COALARM_GOOD = {
+    "serialnumber": "D6003018",
+    "installationdate": datetime.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
+    "installedby": "Dummy User",
+    "replacedate": datetime.datetime(2034, 5, 29, 0, 0, tzinfo=tzutc()),
+    "metadata": {
+        "signalstrength": -50,
+        "lastseendate": datetime.datetime(
+            2024, 8, 10, 12, 11, 7, 460000, tzinfo=tzutc()
+        ),
+        "connectivitytype": "EIRF868",
+    },
+    "status": {
+        "operationalstatus": "GOOD",
+        "lasttesteddate": datetime.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
+        "datacollectionstatus": "ACTIVE",
+    },
+    "attribution": "Data provided by AICO HomeLINK",
+    "device_class": "carbon_monoxide",
+    "friendly_name": "DUMMY_USER_My_House UTILITY COALARM",
+}
+
+
 HALLWAY1_ENVCO2SENSOR_BAD = {
     "serialnumber": "001FD75F",
     "installationdate": datetime.datetime(
