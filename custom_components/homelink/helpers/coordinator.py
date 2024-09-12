@@ -3,7 +3,7 @@
 import asyncio
 import logging
 from copy import deepcopy
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -11,7 +11,6 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-from homeassistant.util import Throttle
 from pyhomelink import HomeLINKApi
 from pyhomelink.exceptions import ApiException, AuthException
 
@@ -65,6 +64,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._first_refresh = True
         self._eventtypes = []
         self._error = False
+        self._throttle = datetime.now()
 
     async def _async_setup(self) -> None:
         await self._async_get_eventtypes_lookup()
@@ -140,9 +140,11 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             )
         return coord_properties
 
-    @Throttle(RETRIEVAL_INTERVAL_READINGS)
     async def _async_retrieve_readings(self, hl_property, property_devices):
         readings = []
+        if datetime.now() < self._throttle + RETRIEVAL_INTERVAL_READINGS:
+            return readings
+        self._throttle = datetime.now()
         for device in property_devices.values():
             if hasattr(device.rel, ATTR_READINGS):
                 readings = await hl_property.async_get_readings(date.today())
