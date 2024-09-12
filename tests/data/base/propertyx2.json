@@ -1,0 +1,46 @@
+{
+    "count": 2,
+    "page": 1,
+    "limit": 50,
+    "results": [
+        {
+            "reference": "DUMMY_USER_My_House",
+            "createdAt": "2023-09-05T14:46:28.914Z",
+            "updatedAt": "2023-11-16T15:52:09.183Z",
+            "postcode": "PostCode",
+            "latitude": 60.01953704,
+            "longitude": 1.36647542,
+            "address": "My House Town City County PostCode GB",
+            "tags": [
+                "COTTAGE"
+            ],
+            "_rel": {
+                "_self": "property/DUMMY_USER_My_House",
+                "devices": "property/DUMMY_USER_My_House/devices",
+                "alerts": "property/DUMMY_USER_My_House/alerts",
+                "readings": "property/DUMMY_USER_My_House/readings",
+                "insights": "property/DUMMY_USER_My_House/insights"
+            }
+        },
+        {
+            "reference": "DUMMY_USER_My_New_House",
+            "createdAt": "2023-09-05T14:46:28.914Z",
+            "updatedAt": "2023-11-16T15:52:09.183Z",
+            "postcode": "PostCode",
+            "latitude": 60.01953704,
+            "longitude": 1.36647542,
+            "address": "My New House Town City County PostCode GB",
+            "tags": [
+                "COTTAGE"
+            ],
+            "_rel": {
+                "_self": "property/DUMMY_USER_My_New_House",
+                "devices": "property/DUMMY_USER_My_New_House/devices",
+                "alerts": "property/DUMMY_USER_My_New_House/alerts",
+                "readings": "property/DUMMY_USER_My_New_House/readings",
+                "insights": "property/DUMMY_USER_My_New_House/insights"
+            }
+        }
+    ],
+    "totalPages": 1
+}

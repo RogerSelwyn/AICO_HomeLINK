@@ -1,0 +1,30 @@
+[
+    {
+        "unit": "ppm",
+        "type": "environment-co2-indoor",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+        ]
+    },
+   {
+        "unit": "rh %",
+        "type": "environment-humidity-indoor",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+        ]
+    },
+    {
+        "unit": "celsius",
+        "type": "environment-temperature-indoor",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+        ]
+    },
+    {
+        "unit": "n/a",
+        "type": "environment-absolutehumidity-indoor",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+        ]
+    }
+]

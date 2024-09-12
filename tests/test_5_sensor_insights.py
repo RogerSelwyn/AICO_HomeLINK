@@ -3,8 +3,7 @@
 from homeassistant.core import HomeAssistant
 
 from .conftest import HomelinkMockConfigEntry
-from .helpers.utils import check_entity_state
-from .state.insight_state import (
+from .data.state.insight_state import (
     ABANDONMENT,
     AIRQUALITY,
     COLDHOMES,
@@ -12,6 +11,7 @@ from .state.insight_state import (
     HEATLOSS,
     VENTILATION,
 )
+from .helpers.utils import check_entity_state
 
 
 async def test_insights_init(

@@ -1,5 +1,5 @@
 {
-    "count": 10,
+    "count": 9,
     "page": 1,
     "limit": 50,
     "results": [
@@ -202,6 +202,62 @@
                 "_self": "device/D6003018",
                 "property": "property/DUMMY_USER_My_House",
                 "alerts": "device/D6003018/alerts"
+            }
+        },
+        {
+            "serialNumber": "C3NEWNEW",
+            "model": "Ei1000G",
+            "modelType": "GATEWAY",
+            "location": "KITCHENX2",
+            "locationNickname": null,
+            "manufacturer": "Ei",
+            "installationDate": "2023-09-05T00:00:00.000Z",
+            "installedBy": "Dummy User",
+            "replaceDate": "2034-04-24T00:00:00.000Z",
+            "createdAt": "2023-09-05T14:46:29.023Z",
+            "updatedAt": "2023-12-06T10:41:06.559Z",
+            "metadata": {
+                "signalStrength": -79,
+                "lastSeenDate": "2024-09-07T09:24:19.466Z",
+                "connectivityType": "GSM"
+            },
+            "status": {
+                "operationalStatus": "GOOD",
+                "lastTestedDate": null,
+                "dataCollectionStatus": "ACTIVE"
+            },
+            "_rel": {
+                "_self": "device/C3NEWNEW",
+                "property": "property/DUMMY_USER_My_New_House",
+                "alerts": "device/C3NEWNEW/alerts"
+            }
+        },
+        {
+            "serialNumber": "D6NEWNEW",
+            "model": "Ei3028",
+            "modelType": "FIRECOALARM",
+            "location": "UTILITYX2",
+            "locationNickname": null,
+            "manufacturer": "Ei",
+            "installationDate": "2023-09-05T00:00:00.000Z",
+            "installedBy": "Dummy User",
+            "replaceDate": "2034-05-29T00:00:00.000Z",
+            "createdAt": "2023-09-05T14:46:29.017Z",
+            "updatedAt": "2024-09-06T09:05:55.904Z",
+            "metadata": {
+                "signalStrength": -50,
+                "lastSeenDate": "2024-08-10T12:11:07.460Z",
+                "connectivityType": "EIRF868"
+            },
+            "status": {
+                "operationalStatus": "GOOD",
+                "lastTestedDate": "2024-09-06T09:05:16.000Z",
+                "dataCollectionStatus": "ACTIVE"
+            },
+            "_rel": {
+                "_self": "device/D6NEWNEW",
+                "property": "property/DUMMY_USER_My_New_House",
+                "alerts": "device/D6NEWNEW0/alerts"
             }
         }
     ],

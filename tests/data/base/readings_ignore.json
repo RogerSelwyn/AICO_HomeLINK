@@ -1,0 +1,192 @@
+[
+    {
+        "unit": "ppm",
+        "type": "environment-co2-indoor",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+            {
+                "count": 38,
+                "serialNumber": "C3CEC7FB-IGNOREME",
+                "_rel": {
+                    "property": "property/DUMMY_USER_My_House",
+                    "device": "device/C3CEC7FB-IGNOREME"
+                },
+                "values": [
+                    {
+                        "value": 1235,
+                        "readingDate": "2024-09-07T07:37:03.000Z"
+                    },
+                    {
+                        "value": 1858,
+                        "readingDate": "2024-09-07T07:52:03.000Z"
+                    },
+                    {
+                        "value": 1995,
+                        "readingDate": "2024-09-07T08:07:04.000Z"
+                    },
+                    {
+                        "value": 2542,
+                        "readingDate": "2024-09-07T08:22:03.000Z"
+                    },
+                    {
+                        "value": 1331,
+                        "readingDate": "2024-09-07T08:37:03.000Z"
+                    },
+                    {
+                        "value": 2268,
+                        "readingDate": "2024-09-07T08:52:03.000Z"
+                    },
+                    {
+                        "value": 2132,
+                        "readingDate": "2024-09-07T09:07:03.000Z"
+                    },
+                    {
+                        "value": 2194,
+                        "readingDate": "2024-09-07T09:22:03.000Z"
+                    },
+                    {
+                        "value": 710,
+                        "readingDate": "2024-09-07T00:07:05.000Z"
+                    },
+                    {
+                        "value": 710,
+                        "readingDate": "2024-09-07T00:22:05.000Z"
+                    },
+                    {
+                        "value": 711,
+                        "readingDate": "2024-09-07T00:37:05.000Z"
+                    },
+                    {
+                        "value": 713,
+                        "readingDate": "2024-09-07T00:52:04.000Z"
+                    },
+                    {
+                        "value": 720,
+                        "readingDate": "2024-09-07T01:07:04.000Z"
+                    },
+                    {
+                        "value": 720,
+                        "readingDate": "2024-09-07T01:22:04.000Z"
+                    },
+                    {
+                        "value": 716,
+                        "readingDate": "2024-09-07T01:37:04.000Z"
+                    },
+                    {
+                        "value": 765,
+                        "readingDate": "2024-09-07T01:52:04.000Z"
+                    },
+                    {
+                        "value": 784,
+                        "readingDate": "2024-09-07T02:07:04.000Z"
+                    },
+                    {
+                        "value": 817,
+                        "readingDate": "2024-09-07T02:22:04.000Z"
+                    },
+                    {
+                        "value": 842,
+                        "readingDate": "2024-09-07T02:37:04.000Z"
+                    },
+                    {
+                        "value": 871,
+                        "readingDate": "2024-09-07T02:52:04.000Z"
+                    },
+                    {
+                        "value": 872,
+                        "readingDate": "2024-09-07T03:07:04.000Z"
+                    },
+                    {
+                        "value": 865,
+                        "readingDate": "2024-09-07T03:22:04.000Z"
+                    },
+                    {
+                        "value": 867,
+                        "readingDate": "2024-09-07T03:37:05.000Z"
+                    },
+                    {
+                        "value": 858,
+                        "readingDate": "2024-09-07T03:52:04.000Z"
+                    },
+                    {
+                        "value": 853,
+                        "readingDate": "2024-09-07T04:07:04.000Z"
+                    },
+                    {
+                        "value": 842,
+                        "readingDate": "2024-09-07T04:22:04.000Z"
+                    },
+                    {
+                        "value": 843,
+                        "readingDate": "2024-09-07T04:37:04.000Z"
+                    },
+                    {
+                        "value": 837,
+                        "readingDate": "2024-09-07T04:52:04.000Z"
+                    },
+                    {
+                        "value": 833,
+                        "readingDate": "2024-09-07T05:07:04.000Z"
+                    },
+                    {
+                        "value": 827,
+                        "readingDate": "2024-09-07T05:22:04.000Z"
+                    },
+                    {
+                        "value": 905,
+                        "readingDate": "2024-09-07T05:37:04.000Z"
+                    },
+                    {
+                        "value": 841,
+                        "readingDate": "2024-09-07T05:52:04.000Z"
+                    },
+                    {
+                        "value": 837,
+                        "readingDate": "2024-09-07T06:07:03.000Z"
+                    },
+                    {
+                        "value": 890,
+                        "readingDate": "2024-09-07T06:22:04.000Z"
+                    },
+                    {
+                        "value": 991,
+                        "readingDate": "2024-09-07T06:37:03.000Z"
+                    },
+                    {
+                        "value": 1140,
+                        "readingDate": "2024-09-07T06:52:03.000Z"
+                    },
+                    {
+                        "value": 1132,
+                        "readingDate": "2024-09-07T07:07:03.000Z"
+                    },
+                    {
+                        "value": 1031,
+                        "readingDate": "2024-09-07T07:22:04.000Z"
+                    }
+                ]
+            }
+        ]
+    },
+   {
+        "unit": "rh %",
+        "type": "environment-humidity-indoor",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+        ]
+    },
+    {
+        "unit": "celsius",
+        "type": "environment-temperature-indoor",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+        ]
+    },
+    {
+        "unit": "n/a",
+        "type": "environment-absolutehumidity-indoor",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+        ]
+    }
+]

@@ -4,9 +4,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 
 from .conftest import HomelinkMockConfigEntry
-from .helpers.utils import async_check_sensor, check_entity_state
-from .state.core_state import ALARM_GOOD, ENVIRONMENT_GOOD, HOME_GOOD
-from .state.device_state import (
+from .data.state.core_state import ALARM_GOOD, ENVIRONMENT_GOOD, HOME_GOOD
+from .data.state.device_state import (
     HALLWAY1_EIACCESSORY_GOOD,
     HALLWAY1_ENVCO2SENSOR_GOOD,
     KITCHEN_FIREALARM_GOOD,
@@ -15,6 +14,7 @@ from .state.device_state import (
     UTILITY_COALARM_GOOD,
     UTILITY_FIRECOALARM_GOOD,
 )
+from .helpers.utils import async_check_sensor, check_entity_state
 
 
 async def test_device_count(
