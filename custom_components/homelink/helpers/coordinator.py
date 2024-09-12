@@ -64,7 +64,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._first_refresh = True
         self._eventtypes = []
         self._error = False
-        self._throttle = datetime.now()
+        self._throttle = datetime.now() - RETRIEVAL_INTERVAL_READINGS
 
     async def _async_setup(self) -> None:
         await self._async_get_eventtypes_lookup()
@@ -135,15 +135,16 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 COORD_ALERTS: await hl_property.async_get_alerts(),
             }
 
-            coord_properties[hl_property.reference][COORD_READINGS] = (
-                await self._async_retrieve_readings(hl_property, property_devices) or []
-            )
+            readings = []
+            if datetime.now() >= self._throttle + RETRIEVAL_INTERVAL_READINGS:
+                readings = await self._async_retrieve_readings(
+                    hl_property, property_devices
+                )
+            coord_properties[hl_property.reference][COORD_READINGS] = readings
         return coord_properties
 
     async def _async_retrieve_readings(self, hl_property, property_devices):
         readings = []
-        if datetime.now() < self._throttle + RETRIEVAL_INTERVAL_READINGS:
-            return readings
         self._throttle = datetime.now()
         for device in property_devices.values():
             if hasattr(device.rel, ATTR_READINGS):
