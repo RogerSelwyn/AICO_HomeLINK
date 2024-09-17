@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.5.1 (2024/09/17)
+### 🐛 Fixes
+- [Fix issue with environment sensor with multiple properties](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6719ceec7de5bf6bab4152d8ff2e8eb0e22ae483) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.5.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8de5a66484112a7a3f6347be69766255a06d6cdd) - @RogerSelwyn
+
 ## v1.5.0 (2024/09/17)
 ### 🐛 Fixes
 - [Handle re-auth correctly](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a75913020d4e83d46d653b6d99107413557f60b3) - @RogerSelwyn
