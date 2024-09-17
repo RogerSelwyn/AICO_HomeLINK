@@ -353,7 +353,7 @@ class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
             ATTR_TYPE: ATTR_INSIGHT_PROPERTY,
             ATTR_INSIGHTID: self._insight.insightid,
             ATTR_RISKLEVEL: self._insight.risklevel,
-            ATTR_CALCULATEDAT: parser.parse(self._insight.calculatedat),
+            ATTR_CALCULATEDAT: self._insight.calculatedat,
         }
 
     def _update_attributes(self):
@@ -418,7 +418,7 @@ class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
             ATTR_TYPE: ATTR_INSIGHT_ROOM,
             ATTR_INSIGHTID: self._insight.insightid,
             ATTR_RISKLEVEL: self._insight.risklevel,
-            ATTR_CALCULATEDAT: parser.parse(self._insight.calculatedat),
+            ATTR_CALCULATEDAT: self._insight.calculatedat,
         }
 
     def _update_attributes(self):
