@@ -1,5 +1,50 @@
 # Changelog
 
+## v1.5.0 (2024/09/17)
+### 🐛 Fixes
+- [Handle re-auth correctly](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a75913020d4e83d46d653b6d99107413557f60b3) - @RogerSelwyn
+- [Fix lack of support of webhook property alert](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4bdf83246bdbc95bb70ce717d0d8074b16f67772) - @RogerSelwyn
+- [Fix incorrect throttling](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/29504ba0cc36897c66ed410db7a19edcf6265c47) - @RogerSelwyn
+- [Fix corrected calculatedat from pyhomelink](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ccc1a15c170f4b8b54def693e84cf10784541751) - @RogerSelwyn
+
+### 🧰 Maintenance
+- [Minor formatting](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/16ac28c27acce3140e7ff4770e4a1d29113327e8) - @RogerSelwyn
+- [Minor re-structure to remove unneeded exception protection](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3781e63e33bfc8fcf1a6b49ff4b4813dc45967d5) - @RogerSelwyn
+- [Remove redundant code](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ad407ee7edcd1f6f4f24b708a120b4e5c003e9e1) - @RogerSelwyn
+- [Tweak throttling to give control](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8e3fc021ae66d7d5827c2271eb074d01faca8e4d) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [Bump pyhomelink to 0.2.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c5eac3fecf460ebbc7664896e6514f48652114ae) - @RogerSelwyn
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b567c506d2a0d882a5a47a6d3c3cf58a0e447127) - @actions-user
+- [build(deps): bump ruff from 0.5.5 to 0.6.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/260af61c605d790c64c39e2763d999c1eee2786d) - @dependabot[bot]
+- [build(deps): bump ruff from 0.6.3 to 0.6.5](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/fcc8201eb9b77e09ec81fcf28605fb7bfa6091ba) - @dependabot[bot]
+
+### 📚 Documentation
+- [Update README.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/323da02c06829920d2d5f745ac9bd9e4517ac49a) - @RogerSelwyn
+
+### ✅ Test
+- [Add initial config_flow testing](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/bd20862cacc799770fba9bff1c44c475fd9350ab) - @RogerSelwyn
+- [Sort out linting issues](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4f953d959a59510bb87e96d1f2d1b9f359ab769d) - @RogerSelwyn
+- [Add pyproject.toml matching HA for linting/formatting](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/99ae15ae8bf4b3d794710b5ffc1873c7911f753e) - @RogerSelwyn
+- [Format testing code with Ruff](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/226d59ec6f43130ad924fd4bf180623f4b8e0aaf) - @RogerSelwyn
+- [Correct pyproject.toml for Ruff](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0f689c702408f2a3bf78a0ffbc1253817abecb3b) - @RogerSelwyn
+- [Ruff deal with Ruff errors :-(](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ceb30bbe34e834696ab125d7441fb2e65f32cde2) - @RogerSelwyn
+- [Add some base setup testing](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2e703e679b82dd7ac05557d7289aa636c59d0057) - @RogerSelwyn
+- [Add more testing for alerts via api](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/5bfe06f3036ea13e826d0593f7e6d720946b9ca7) - @RogerSelwyn
+- [Add more testing around errors, webhooks and insights](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/baaa6db8d506018837ff69c80e71c87542f81fb2) - @RogerSelwyn
+- [Add tests for Webhooks](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/93c92bcbf7c1129d95996c7df72f69df4d23aaa2) - @RogerSelwyn
+- [Added final webhook tests](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a3c7d32847f406ceb594d8957eafd59249ba4b13) - @RogerSelwyn
+- [Added MQTT testing - 95% commented out due to Mock issues](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/aeaff5aa40a22c9b0c275756b4b90a2347b64235) - @RogerSelwyn
+- [Remove MQTT testing since it is deprecated in HomeLINK](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ca91cb5a1060a0994fe6f45a0101915b86c888bf) - @RogerSelwyn
+- [Add testing action](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/9ad72fc4ce96855e62619b89cdf0329014cc96be) - @RogerSelwyn
+- [Update test.yaml](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/9f392e4ed4ab1b289e190f17356c616c2c314da5) - @RogerSelwyn
+- [Add more testing to fill gaps](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2622a2b87a99e1984d59a42a409aa6d552cd1bed) - @RogerSelwyn
+- [Add readings tests (and restructure tests)](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/dfc157e62ba2098046004ce5077614425d540144) - @RogerSelwyn
+- [Remove print statements](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/15cf384a03865925f5ac46d53ac5a403f3996323) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.5.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c285fe57f5d0234c89903d67ddb538a589712a5d) - @RogerSelwyn
+
 ## v1.4.6 (2024/08/08)
 ### 🧰 Maintenance
 - [Move coordinator setup code to new _async_setup method](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d63c2db854b23678c8958531e41f92e9db08b99d) - @RogerSelwyn
