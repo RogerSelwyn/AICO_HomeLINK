@@ -120,7 +120,7 @@ async def async_setup_entry(
             for insight in hl_coordinator.data[COORD_PROPERTIES][hl_property][
                 COORD_INSIGHTS
             ]:
-                _add_sensor_insight(insight)
+                _add_sensor_insight(hl_property, insight)
 
     @callback
     def async_add_sensor_device(hl_property, device_key, device, gateway_key):  # pylint: disable=unused-argument
@@ -133,9 +133,9 @@ async def async_setup_entry(
         if hasattr(device.rel, ATTR_READINGS):
             for reading, reading_type in READINGS.items():
                 if hasattr(device.rel.readings, reading):
-                    _add_sensor_reading(reading_type, device_key)
+                    _add_sensor_reading(hl_property, reading_type, device_key)
 
-    def _add_sensor_reading(reading_type, device_key):
+    def _add_sensor_reading(hl_property, reading_type, device_key):
         async_add_entities(
             [
                 HomeLINKReadingSensor(
@@ -144,7 +144,7 @@ async def async_setup_entry(
             ]
         )
 
-    def _add_sensor_insight(insight):
+    def _add_sensor_insight(hl_property, insight):
         if insight.appliesto == APPLIESTO_ROOM:
             async_add_entities(
                 [HomeLINKRoomInsightSensor(hl_coordinator, hl_property, insight)]
@@ -154,8 +154,8 @@ async def async_setup_entry(
                 [HomeLINKPropertyInsightSensor(hl_coordinator, hl_property, insight)]
             )
 
-    for hl_property in hl_coordinator.data[COORD_PROPERTIES]:
-        async_add_sensor_property(hl_property)
+    for property_ref in hl_coordinator.data[COORD_PROPERTIES]:
+        async_add_sensor_property(property_ref)
 
     entry.async_on_unload(
         async_dispatcher_connect(hass, HOMELINK_ADD_PROPERTY, async_add_sensor_property)
