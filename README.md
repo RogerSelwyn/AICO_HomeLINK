@@ -3,7 +3,7 @@
 ![GitHub release](https://img.shields.io/github/v/release/RogerSelwyn/AICO_HomeLINK) [![maintained](https://img.shields.io/maintenance/yes/2024.svg)](#) [![maintainer](https://img.shields.io/badge/maintainer-%20%40RogerSelwyn-blue.svg)](https://github.com/RogerSelwyn) [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://github.com/hacs/integration)
 
 
-# AICO HomeLINK integration for Home Assistant
+# AICO HomeLINK integration for Home Assistant 
 
 The `homelink` platform allows you to view the status of your AICO alarm system. Note that you need an AICO HomeLINK dashboard account with Landlord access to be able to create the credentials needed to use this integration.
 
