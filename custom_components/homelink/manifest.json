@@ -20,7 +20,7 @@
   ],
   "quality_scale": "silver",
   "requirements": [
-    "pyhomelink==0.1.11",
+    "pyhomelink==0.2.0",
     "paho-mqtt==1.6.1"
   ],
   "single_config_entry": true,
