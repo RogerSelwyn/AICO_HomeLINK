@@ -19,7 +19,7 @@ This table provides a list of AICO 1000 and 3000 series devices and their suppor
 | Ei3018       | CO               |                  | False        | It may work, but untested   |
 | Ei3024       | Heat, Smoke      |                  | False        | It may work, but untested   |
 | Ei3028       | CO, Heat         | FIRECOALARM      | True         |                             |
-| Ei3030       | CO, Heat, Smoke  |                  | False        | It may work, but untested   |
+| Ei3030       | CO, Heat, Smoke  | FIRECOALARM      | True         |                             |
 | Ei450        | Alarm Controller | EIACCESSORY      | True         |                             |
 
 These are the presented as the following entity types within Home Assistant:
