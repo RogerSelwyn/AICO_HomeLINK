@@ -4,7 +4,7 @@ from unittest.mock import patch
 from urllib.parse import urlparse
 
 from .conftest import HomelinkMockConfigEntry, WebhookSetupData
-from .helpers.utils import check_entity_state, load_json
+from .helpers.utils import check_entity_state, load_webhook_json
 
 
 async def test_webhook_property_environment_alert(
@@ -18,7 +18,7 @@ async def test_webhook_property_environment_alert(
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook/property_environment_alert.json"),
+            json=load_webhook_json("property_environment_alert.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -40,7 +40,7 @@ async def test_webhook_property_fire_alert(
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook/property_fire_alert.json"),
+            json=load_webhook_json("property_fire_alert.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -62,7 +62,7 @@ async def test_webhook_device_alert(
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook/device_alert.json"),
+            json=load_webhook_json("device_alert.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -81,7 +81,7 @@ async def test_webhook_device_reading(
 
     resp = await webhook_setup.client.post(
         urlparse(webhook_setup.webhook_url).path,
-        json=load_json("../data/webhook/device_reading.json"),
+        json=load_webhook_json("device_reading.json"),
     )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -104,7 +104,7 @@ async def test_webhook_device_reading_old(
 
     resp = await webhook_setup.client.post(
         urlparse(webhook_setup.webhook_url).path,
-        json=load_json("../data/webhook/device_alert_old.json"),
+        json=load_webhook_json("device_alert_old.json"),
     )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -122,7 +122,7 @@ async def test_webhook_notification(
 
     resp = await webhook_setup.client.post(
         urlparse(webhook_setup.webhook_url).path,
-        json=load_json("../data/webhook/notification.json"),
+        json=load_webhook_json("notification.json"),
     )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -143,7 +143,7 @@ async def test_webhook_property_add(
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook/property_add.json"),
+            json=load_webhook_json("property_add.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -165,7 +165,7 @@ async def test_webhook_property_add_old(
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook/property_add_old.json"),
+            json=load_webhook_json("property_add_old.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -186,7 +186,7 @@ async def test_webhook_device_add(
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook/device_add.json"),
+            json=load_webhook_json("device_add.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -208,7 +208,7 @@ async def test_webhook_ignored_property(
     ) as update_message:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook/device_add_ignored_property.json"),
+            json=load_webhook_json("device_add_ignored_property.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()
@@ -228,7 +228,7 @@ async def test_webhook_unknown_message(
     ) as async_refresh:
         resp = await webhook_setup.client.post(
             urlparse(webhook_setup.webhook_url).path,
-            json=load_json("../data/webhook/unknown_type.json"),
+            json=load_webhook_json("unknown_type.json"),
         )
     # Wait for remaining tasks to complete.
     await webhook_setup.hass.async_block_till_done()

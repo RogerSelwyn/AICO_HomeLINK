@@ -30,19 +30,26 @@ def create_mock(aioclient_mock, url, filename):
     """Create a mock."""
     aioclient_mock.get(
         f"{BASE_API_URL}{url}",
-        text=load_json_txt(f"../data/{filename}"),
+        text=load_json(f"{filename}"),
     )
 
 
-def load_json_txt(filename):
-    """Load a json file as string."""
-    return pathlib.Path(__file__).parent.joinpath(filename).read_text(encoding="utf8")
-
-
 def load_json(filename):
+    """Load a json file as string."""
+    return (
+        pathlib.Path(__file__)
+        .parent.joinpath("../data/", filename)
+        .read_text(encoding="utf8")
+    )
+
+
+def load_webhook_json(filename):
     """Load a json file."""
     return json.load(
-        open(pathlib.Path(__file__).parent.joinpath(filename), encoding="utf8")
+        open(
+            pathlib.Path(__file__).parent.joinpath("../data/webhook/", filename),
+            encoding="utf8",
+        )
     )
 
 
