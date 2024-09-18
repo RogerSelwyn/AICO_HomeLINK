@@ -1,14 +1,12 @@
 """Test sensors."""
 
-from datetime import date
-
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 
 from .conftest import HomelinkMockConfigEntry, standard_mocks
-from .helpers.utils import create_mock
+from .helpers.utils import add_device_mocks, add_property_mocks
 
 
 async def test_add_property(
@@ -161,65 +159,3 @@ async def test_delete_property(
         entity_registry, insight_config_entry.entry_id
     )
     assert len(entities) == 41
-
-
-def add_property_mocks(
-    aioclient_mock: AiohttpClientMocker,
-):
-    """Specific add property mocks."""
-    create_mock(aioclient_mock, "/lookup/eventType", "base/lookup.json")
-    create_mock(aioclient_mock, "/property", "base/propertyx2.json")
-    create_mock(aioclient_mock, "/device", "base/devicex2.json")
-    create_mock(
-        aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json"
-    )
-    create_mock(
-        aioclient_mock, "/property/DUMMY_USER_My_New_House/alerts", "base/alerts.json"
-    )
-    create_mock(
-        aioclient_mock,
-        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
-        "base/readings.json",
-    )
-    create_mock(
-        aioclient_mock,
-        f"/property/DUMMY_USER_My_New_House/readings?date={date.today()}",
-        "base/readingsx2.json",
-    )
-    create_mock(aioclient_mock, "/insight", "base/insight.json")
-
-
-def add_device_mocks(
-    aioclient_mock: AiohttpClientMocker,
-):
-    """Specific add property mocks."""
-    create_mock(aioclient_mock, "/lookup/eventType", "base/lookup.json")
-    create_mock(aioclient_mock, "/property", "base/property.json")
-    create_mock(aioclient_mock, "/device", "base/devicex3.json")
-    create_mock(
-        aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json"
-    )
-    create_mock(
-        aioclient_mock,
-        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
-        "base/readings.json",
-    )
-    create_mock(aioclient_mock, "/insight", "base/insight.json")
-
-
-def ignore_reading_mocks(
-    aioclient_mock: AiohttpClientMocker,
-):
-    """Specific add property mocks."""
-    create_mock(aioclient_mock, "/lookup/eventType", "base/lookup.json")
-    create_mock(aioclient_mock, "/property", "base/property.json")
-    create_mock(aioclient_mock, "/device", "base/device.json")
-    create_mock(
-        aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json"
-    )
-    create_mock(
-        aioclient_mock,
-        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
-        "base/readings_ignore.json",
-    )
-    create_mock(aioclient_mock, "/insight", "base/insight.json")

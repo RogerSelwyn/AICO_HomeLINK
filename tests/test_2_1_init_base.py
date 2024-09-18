@@ -8,16 +8,21 @@ import pytest
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.homelink import async_setup_entry
+from custom_components.homelink.const import CONF_PROPERTIES
 from custom_components.homelink.helpers import api
 from homeassistant.config import async_process_ha_core_config
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
-from homeassistant.helpers import config_entry_oauth2_flow
+from homeassistant.helpers import (
+    config_entry_oauth2_flow,
+    device_registry as dr,
+    entity_registry as er,
+)
 from homeassistant.setup import async_setup_component
 
 from .conftest import HomelinkMockConfigEntry, standard_mocks
 from .helpers.const import DOMAIN, EXTERNAL_URL, REFRESH_CONFIG_ENTRY, TITLE, TOKEN_URL
-from .helpers.utils import check_entity_state, mock_token_call
+from .helpers.utils import add_property_mocks, check_entity_state, mock_token_call
 
 
 async def test_setup_errors(
@@ -138,3 +143,38 @@ async def test_invalid_token(
 
     tok = await hl.async_get_access_token()
     assert tok == new_token
+
+
+async def test_ignore_property(
+    hass: HomeAssistant,
+    setup_insight_integration: None,
+    insight_config_entry: HomelinkMockConfigEntry,
+    device_registry: dr.DeviceRegistry,
+    entity_registry: er.EntityRegistry,
+    aioclient_mock: AiohttpClientMocker,
+):
+    """Test addition ignore of property."""
+    hass.config_entries.async_update_entry(
+        insight_config_entry,
+        options={
+            CONF_PROPERTIES: {
+                "DUMMY_USER_My_New_House": True,
+                "DUMMY_USER_My_House": False,
+            },
+        },
+    )
+    coordinator = insight_config_entry.runtime_data.coordinator
+
+    aioclient_mock.clear_requests()
+    add_property_mocks(aioclient_mock)
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+    devices = device_registry.devices.get_devices_for_config_entry_id(
+        insight_config_entry.entry_id
+    )
+    assert len(devices) == 6
+
+    entities = er.async_entries_for_config_entry(
+        entity_registry, insight_config_entry.entry_id
+    )
+    assert len(entities) == 15

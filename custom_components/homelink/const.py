@@ -62,10 +62,12 @@ ATTR_TYPE = "type"
 
 CATEGORY_INSIGHT = "INSIGHT"
 
+CONF_ERROR_AUTHENTICATING = "error_authenticating"
 CONF_ERROR_CREDENTIALS = "invalid_credentials"
 CONF_ERROR_TOPIC = "invalid_topic"
 CONF_ERROR_UNAVAILABLE = "server_unavailable"
 CONF_EVENT_ENABLE = "event_enable"
+CONF_INVALID_APPLICATION_CREDENTIALS = "invalid_application_credentials"
 
 CONF_INSIGHTS_ENABLE = "insights_enable"
 CONF_MQTT_CLIENT_ID = "mqtt_client_id"
@@ -73,6 +75,7 @@ CONF_MQTT_ENABLE = "mqtt_enable"
 CONF_MQTT_HOMELINK = "mqtt_homelink"
 CONF_MQTT_TOPIC = "mqtt_topic"
 
+CONF_PROPERTIES = "properties"
 CONF_WEBHOOK_ENABLE = "webhook_enable"
 
 

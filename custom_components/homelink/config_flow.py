@@ -9,28 +9,34 @@ from collections.abc import Mapping
 from typing import Any
 
 import aiohttp
+import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components import webhook
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_WEBHOOK_ID
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers import config_entry_oauth2_flow
+from homeassistant.data_entry_flow import AbortFlow, FlowResult
+from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
 from homeassistant.helpers.network import NoURLAvailableError, get_url
 from homeassistant.helpers.selector import BooleanSelector, TextSelector
+from pyhomelink.api import HomeLINKApi
 
 from .const import (
     ATTR_EXTERNAL_URL,
+    CONF_ERROR_AUTHENTICATING,
     CONF_ERROR_TOPIC,
     CONF_EVENT_ENABLE,
     CONF_INSIGHTS_ENABLE,
+    CONF_INVALID_APPLICATION_CREDENTIALS,
     CONF_MQTT_CLIENT_ID,
     CONF_MQTT_ENABLE,
     CONF_MQTT_HOMELINK,
     CONF_MQTT_TOPIC,
+    CONF_PROPERTIES,
     CONF_WEBHOOK_ENABLE,
     DOMAIN,
 )
+from .helpers.api import AsyncConfigEntryAuth
 from .helpers.mqtt import HomeLINKMQTT
 
 OAUTH_TOKEN_TIMEOUT_SEC = 30
@@ -136,7 +142,9 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
 
     def __init__(self, config_entry):
         """Initialize HomeLINK options flow."""
+        self._entry = config_entry
         options = config_entry.options
+        self._properties = options.get(CONF_PROPERTIES, {})
         self._mqtt_enable = options.get(CONF_MQTT_ENABLE, False)
         self._webhook_enable = options.get(CONF_WEBHOOK_ENABLE, False)
         self._event_enable = options.get(CONF_EVENT_ENABLE, False)
@@ -149,12 +157,14 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         self._webhook_id = options.get(CONF_WEBHOOK_ID, None)
         self._user_input = None
         self._webhook_displayed = False
+        self._property_list = []
 
     async def async_step_init(
         self,
         user_input=None,  # pylint: disable=unused-argument
     ) -> FlowResult:
         """Set up the option flow."""
+        self._property_list = await self._async_get_properties()
 
         return await self.async_step_user()
 
@@ -163,12 +173,23 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         """Handle a flow initialized by the user."""
         errors = {}
         if user_input is not None:
+            stored_properties = user_input.get(CONF_PROPERTIES).copy()
+            self._user_input = user_input
+            self._properties = {}
+            for hl_property in self._property_list:
+                self._properties[hl_property] = hl_property in user_input.get(
+                    CONF_PROPERTIES
+                )
+            self._user_input[CONF_PROPERTIES] = self._properties
+
             self._insights_enable = user_input.get(CONF_INSIGHTS_ENABLE)
             self._mqtt_enable = user_input.get(CONF_MQTT_ENABLE)
             self._webhook_enable = user_input.get(CONF_WEBHOOK_ENABLE)
             self._mqtt_homelink = user_input.get(CONF_MQTT_HOMELINK)
 
-            self._user_input = user_input
+            if len(stored_properties) == 0:
+                errors[CONF_PROPERTIES] = "must_select_one"
+
             if not self._webhook_enable:
                 user_input[CONF_WEBHOOK_ID] = None
             else:
@@ -186,10 +207,20 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
 
                 return self.async_create_entry(title="", data=user_input)
 
+        display_properties = [
+            hl_property
+            for hl_property, value in self._properties.items()
+            if value is True
+        ]
+
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
+                    vol.Required(
+                        CONF_PROPERTIES,
+                        default=display_properties,
+                    ): cv.multi_select(self._property_list),
                     vol.Optional(
                         CONF_INSIGHTS_ENABLE,
                         default=self._insights_enable,
@@ -211,6 +242,48 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             last_step=False,
             errors=errors,
         )
+
+    async def _async_get_properties(self):
+        implementation = (
+            await config_entry_oauth2_flow.async_get_config_entry_implementation(
+                self.hass, self._entry
+            )
+        )
+        session = config_entry_oauth2_flow.OAuth2Session(
+            self.hass, self._entry, implementation
+        )
+        try:
+            await session.async_ensure_token_valid()
+        except aiohttp.client_exceptions.ClientResponseError as err:
+            if err.status == 401:
+                errmsg = CONF_INVALID_APPLICATION_CREDENTIALS
+
+            else:
+                errmsg = CONF_ERROR_AUTHENTICATING
+            _LOGGER.error(errmsg)
+            raise AbortFlow(errmsg) from err
+
+        except aiohttp.client_exceptions.ClientConnectorError as err:
+            errmsg = CONF_ERROR_AUTHENTICATING
+            _LOGGER.error(errmsg)
+            raise AbortFlow(errmsg) from err
+
+        hl_api = HomeLINKApi(
+            AsyncConfigEntryAuth(
+                aiohttp_client.async_get_clientsession(self.hass), session
+            )
+        )
+        properties = await hl_api.async_get_properties()
+        property_list = [hl_property.reference for hl_property in properties]
+        for hl_property in property_list:
+            if hl_property not in self._properties:
+                self._properties[hl_property] = True
+
+        working_properties = dict(self._properties)
+        for hl_property in working_properties.keys():
+            if hl_property not in property_list:
+                del self._properties[hl_property]
+        return property_list
 
     async def async_step_ha_mqtt(self, user_input=None) -> FlowResult:
         """Handle HA MQTT setup."""

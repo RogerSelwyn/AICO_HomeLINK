@@ -1,6 +1,6 @@
 """Test readings."""
 
-from datetime import date, timedelta
+from datetime import timedelta
 from unittest.mock import patch
 
 import pytest
@@ -11,7 +11,7 @@ from homeassistant.helpers import device_registry as dr
 
 from .conftest import HomelinkMockConfigEntry
 from .data.state.device_state import CARBONDIOXIDE, HUMIDITY, TEMPERATURE
-from .helpers.utils import check_entity_state, create_mock
+from .helpers.utils import check_entity_state, ignore_reading_mocks
 
 
 @pytest.mark.parametrize(
@@ -113,21 +113,3 @@ async def test_readings_ignored(
         await coordinator.async_refresh()
     await hass.async_block_till_done()
     assert not update_values.called
-
-
-def ignore_reading_mocks(
-    aioclient_mock: AiohttpClientMocker,
-):
-    """Specific add property mocks."""
-    create_mock(aioclient_mock, "/lookup/eventType", "base/lookup.json")
-    create_mock(aioclient_mock, "/property", "base/property.json")
-    create_mock(aioclient_mock, "/device", "base/device.json")
-    create_mock(
-        aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json"
-    )
-    create_mock(
-        aioclient_mock,
-        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
-        "base/readings_ignore.json",
-    )
-    create_mock(aioclient_mock, "/insight", "base/insight.json")

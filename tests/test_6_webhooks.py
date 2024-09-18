@@ -197,6 +197,26 @@ async def test_webhook_device_add(
     resp.close()
 
 
+async def test_webhook_ignored_property(
+    webhook_setup: WebhookSetupData,
+    webhook_config_entry: HomelinkMockConfigEntry,
+) -> None:
+    """Test webhook device receipt and refresh start."""
+
+    with patch(
+        "custom_components.homelink.helpers.webhook.HomeLINKWebhook._async_property_device_update_message",
+    ) as update_message:
+        resp = await webhook_setup.client.post(
+            urlparse(webhook_setup.webhook_url).path,
+            json=load_json("../data/webhook/device_add_ignored_property.json"),
+        )
+    # Wait for remaining tasks to complete.
+    await webhook_setup.hass.async_block_till_done()
+    assert resp.ok
+    assert not update_message.called
+    resp.close()
+
+
 async def test_webhook_unknown_message(
     webhook_setup: WebhookSetupData,
     webhook_config_entry: HomelinkMockConfigEntry,

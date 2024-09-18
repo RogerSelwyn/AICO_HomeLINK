@@ -8,6 +8,7 @@ from ..const import (
     ATTR_DEVICE,
     ATTR_HOMELINK,
     ATTR_PROPERTY,
+    CONF_PROPERTIES,
     DASHBOARD_URL,
     DOMAIN,
     MODELTYPE_GATEWAY,
@@ -62,3 +63,10 @@ def device_device_info(identifiers, parent_key, device):
         model=device.modeltype,
         model_id=device.model,
     )
+
+
+def include_property(options, hl_property):
+    """ "Check if property is to be included."""
+    properties = options.get(CONF_PROPERTIES, {})
+
+    return properties.get(hl_property, True)

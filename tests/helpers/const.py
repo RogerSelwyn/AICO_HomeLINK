@@ -4,6 +4,7 @@ import time
 
 from custom_components.homelink.const import (  # CONF_EVENT_ENABLE,; CONF_MQTT_ENABLE,; CONF_MQTT_HOMELINK,; CONF_MQTT_TOPIC,
     CONF_INSIGHTS_ENABLE,
+    CONF_PROPERTIES,
     CONF_WEBHOOK_ENABLE,
     DOMAIN,
 )
@@ -45,6 +46,10 @@ REFRESH_CONFIG_ENTRY = {
 
 WEBHOOK_ID = webhook.async_generate_id()
 WEBHOOK_OPTIONS = {
+    CONF_PROPERTIES: {
+        "DUMMY_USER_Ignored_Property": False,
+        "DUMMY_USER_My_House": True,
+    },
     CONF_WEBHOOK_ENABLE: True,
     CONF_WEBHOOK_ID: WEBHOOK_ID,
 }

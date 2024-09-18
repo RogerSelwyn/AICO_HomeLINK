@@ -25,6 +25,7 @@ from ..const import (
     WEBHOOK_STATUSID,
     HomeLINKMessageType,
 )
+from .utils import include_property
 
 _LOGGER = logging.getLogger(__name__)
 ALLOWED_METHODS = [METH_POST]
@@ -33,8 +34,9 @@ ALLOWED_METHODS = [METH_POST]
 class HomeLINKWebhook:
     """HomeLINK Webhooks."""
 
-    def __init__(self):
+    def __init__(self, entry):
         """Initialise the webhooks."""
+        self._entry = entry
 
     def register_webhooks(self, hass, webhook_id):
         """Register the required webhooks with Home Assistant."""
@@ -75,6 +77,8 @@ class HomeLINKWebhook:
         _LOGGER.debug("Webhook message: %s - %s - %s", actiontype, messagetype, message)
 
         key = message[WEBHOOK_PROPERTY_REFERENCE]
+        if not include_property(self._entry.options, key):
+            return
 
         # Property/Device added or deleted, so route to property binary sensor to trigger refresh
         if messagetype in [

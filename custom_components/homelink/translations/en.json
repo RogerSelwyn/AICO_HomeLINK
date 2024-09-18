@@ -26,11 +26,15 @@
       "invalid_credentials": "Client ID, Username and Password combination is invalid",
       "invalid_topic": "Topic invalid for given credentials",
       "server_unavailable": "HomeLINK server unavailable",
-      "no_external_url": "External url that is required for Webhooks is not enabled on Home Assistant. Enable and retry."
+      "no_external_url": "External url that is required for Webhooks is not enabled on Home Assistant. Enable and retry.",
+      "must_select_one": "Must select at least one property to create entities for",
+      "invalid_application_credentials": "Supplied credentials fail to authenticate. Please validate.",
+      "error_authenticating": "Error whilst authenticating with HomeLINK. Please check logs."
     },
     "step": {
       "user": {
         "data": {
+          "properties": "Select properties to create entities for",
           "insights_enable": "Enable Insight sensors (if available)",
           "mqtt_enable": "Enable MQTT",
           "mqtt_homelink": "Use HomeLINK MQTT broker",

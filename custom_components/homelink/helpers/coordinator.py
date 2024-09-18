@@ -38,6 +38,7 @@ from ..const import (
     MODELTYPE_GATEWAY,
     RETRIEVAL_INTERVAL_READINGS,
 )
+from .utils import include_property
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -109,6 +110,8 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         )
         coord_properties = {}
         for hl_property in properties:
+            if not include_property(self._entry.options, hl_property.reference):
+                continue
             property_devices = {
                 device.serialnumber: device
                 for device in devices

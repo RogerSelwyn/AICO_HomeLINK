@@ -70,7 +70,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:
         entry.runtime_data.mqtt = hl_mqtt
 
     if entry.options.get(CONF_WEBHOOK_ENABLE):
-        hl_webhook = HomeLINKWebhook()
+        hl_webhook = HomeLINKWebhook(entry)
         hl_webhook.register_webhooks(hass, entry.options.get(CONF_WEBHOOK_ID))
         entry.runtime_data.webhook = hl_webhook
 
