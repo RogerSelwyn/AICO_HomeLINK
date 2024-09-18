@@ -164,3 +164,4 @@ cython_debug/
 .DS_Store
 .vscode/ltex.dictionary.en-GB.txt
 .vscode/ltex.disabledRules.en-GB.txt
+tests/whitelist.py
