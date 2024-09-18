@@ -280,7 +280,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                 self._properties[hl_property] = True
 
         working_properties = dict(self._properties)
-        for hl_property in working_properties.keys():
+        for hl_property in working_properties:
             if hl_property not in property_list:
                 del self._properties[hl_property]
         return property_list

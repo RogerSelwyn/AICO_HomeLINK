@@ -66,7 +66,7 @@ def device_device_info(identifiers, parent_key, device):
 
 
 def include_property(options, hl_property):
-    """ "Check if property is to be included."""
+    """Check if property is to be included."""
     properties = options.get(CONF_PROPERTIES, {})
 
     return properties.get(hl_property, True)
