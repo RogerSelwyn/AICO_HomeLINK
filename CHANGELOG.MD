@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.6.0 (2024/09/18)
+### ✨ Enhancements
+- [Add support for ignoring property](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2ac4a96d4384f10078d78ee38a1998f3b6110b3d) - @RogerSelwyn
+
+### 🧰 Maintenance
+- [Ignore vulture whitelist](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d66cb2d6a0a93455e374d9cce06efddc7fc107c5) - @RogerSelwyn
+- [Remove minor linting erros](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c81033caf1858e724670c4159d45f1ec1e10fc48) - @RogerSelwyn
+
+### 📚 Documentation
+- [Update to show support for Ei3030](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ff80819c340acb42775db846e1d5d477398d3aef) - @RogerSelwyn
+
+### ✅ Test
+- [Add more robust testing for multi property](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d6ec8350154250ba4e03519818984389cf1f9c3a) - @RogerSelwyn
+- [Improve test data file loading](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/20f966ecbe66dc46c3caa2245580d92592f81dde) - @RogerSelwyn
+- [Remove vulture whitelist](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6c90f205d92fa218acdea78e6a219ef5668e88f9) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.6.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e4698bd38d380e0aabd4a4bb453811b88e654bd9) - @RogerSelwyn
+
 ## v1.5.1 (2024/09/17)
 ### 🐛 Fixes
 - [Fix issue with environment sensor with multiple properties](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6719ceec7de5bf6bab4152d8ff2e8eb0e22ae483) - @RogerSelwyn
