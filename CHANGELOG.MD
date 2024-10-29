@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.6.1 (2024/10/29)
+### 🐛 Fixes
+- [Correct handling of readings at startup](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ff28c1209e2717c66dcdedad447b88be5c0bae9e) - @RogerSelwyn
+
+### 🧰 Maintenance
+- [Add extra logging for timeouts](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/984bb10831eef670b08a4071e21af363cecb7b12) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v1.6.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/30c825b108fd952073b40b8b28a894b49b692446) - @RogerSelwyn
+
 ## v1.6.0 (2024/09/18)
 ### ✨ Enhancements
 - [Add support for ignoring property](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2ac4a96d4384f10078d78ee38a1998f3b6110b3d) - @RogerSelwyn
