@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import traceback
 from copy import deepcopy
 from datetime import date, datetime, timedelta
 
@@ -53,7 +54,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         super().__init__(
             hass,
             _LOGGER,
-            name="HomeLINK Data",
+            name="HomeLINK",
             update_interval=timedelta(seconds=30),
             always_update=False,
         )
@@ -89,7 +90,14 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             raise UpdateFailed(
                 f"Error communicating with HL API: {api_err}"
             ) from api_err
-
+        except asyncio.TimeoutError as timeout_err:
+            err_traceback = traceback.format_exc()
+            if not self._error:
+                _LOGGER.warning("Timeout communicating with HL API: %s", err_traceback)
+                self._error = True
+            raise UpdateFailed(
+                f"Timeout communicating with HL API: {err_traceback}"
+            ) from timeout_err
         await self._async_check_for_changes(coord_properties)
         config_entry = self._entry.options
 
