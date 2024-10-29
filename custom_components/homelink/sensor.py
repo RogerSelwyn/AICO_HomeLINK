@@ -1,11 +1,13 @@
 """Support for HomeLINK sensors."""
 
-import logging
 from collections.abc import Callable
 from dataclasses import dataclass
+import logging
 from typing import Any
 
 from dateutil import parser
+from pyhomelink import HomeLINKReadingType
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -23,7 +25,6 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
-from pyhomelink import HomeLINKReadingType
 
 from . import HLConfigEntry
 from .const import (
@@ -63,10 +64,7 @@ from .const import (
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.entity import HomeLINKAlarmEntity, HomeLINKDeviceEntity
 from .helpers.events import raise_reading_event
-from .helpers.utils import (
-    build_mqtt_device_key,
-    device_device_info,
-)
+from .helpers.utils import build_mqtt_device_key, device_device_info
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -273,13 +271,14 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
                 ):
                     continue
 
-                if self._readingdate is None:
-                    self._update_values(device.values[-1])
-                else:
-                    for value in device.values:
-                        if value.readingdate > self._readingdate:
-                            self._update_values(value)
-                            self.async_write_ha_state()
+                for value in device.values:
+                    if (
+                        self._readingdate is None
+                        or value.readingdate > self._readingdate
+                    ):
+                        self._update_values(value)
+                if self.hass:
+                    self.async_write_ha_state()
 
                 break
 

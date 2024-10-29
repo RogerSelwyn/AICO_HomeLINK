@@ -1,10 +1,13 @@
 """HomeLINK coordinators."""
 
 import asyncio
-import logging
-import traceback
 from copy import deepcopy
 from datetime import date, datetime, timedelta
+import logging
+import traceback
+
+from pyhomelink import HomeLINKApi
+from pyhomelink.exceptions import ApiException, AuthException
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -12,8 +15,6 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-from pyhomelink import HomeLINKApi
-from pyhomelink.exceptions import ApiException, AuthException
 
 from ..const import (
     ATTR_ALARM,
@@ -109,6 +110,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         }
 
     async def _async_get_core_data(self):
+        throttle = self._check_throttle()
         properties = await self._hl_api.async_get_properties()
         devices = await self._hl_api.async_get_devices()
         insights = (
@@ -147,7 +149,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             }
 
             readings = []
-            if datetime.now() >= self._throttle + RETRIEVAL_INTERVAL_READINGS:
+            if not throttle:
                 readings = await self._async_retrieve_readings(
                     hl_property, property_devices
                 )
@@ -156,7 +158,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
 
     async def _async_retrieve_readings(self, hl_property, property_devices):
         readings = []
-        self._throttle = datetime.now()
         for device in property_devices.values():
             if hasattr(device.rel, ATTR_READINGS):
                 readings = await hl_property.async_get_readings(date.today())
@@ -167,6 +168,12 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._eventtypes = await self._hl_api.async_get_lookups(
             HOMELINK_LOOKUP_EVENTTYPE
         )
+
+    def _check_throttle(self):
+        if datetime.now() >= self._throttle + RETRIEVAL_INTERVAL_READINGS:
+            self._throttle = datetime.now()
+            return False
+        return True
 
     async def _async_check_for_changes(self, coord_properties):
         if not self._known_properties:

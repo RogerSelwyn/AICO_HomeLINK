@@ -240,7 +240,7 @@ LIVINGROOM_FIREALARM_BAD = {
 }
 CARBONDIOXIDE = {
     "state_class": "measurement",
-    "readingdate": datetime.datetime(2024, 9, 7, 7, 22, 4, tzinfo=tzutc()),
+    "readingdate": datetime.datetime(2024, 9, 7, 9, 22, 3, tzinfo=tzutc()),
     "type": "reading",
     "unit_of_measurement": "ppm",
     "attribution": "Data provided by AICO HomeLINK",
@@ -249,7 +249,7 @@ CARBONDIOXIDE = {
 }
 HUMIDITY = {
     "state_class": "measurement",
-    "readingdate": datetime.datetime(2024, 9, 7, 7, 22, 4, tzinfo=tzutc()),
+    "readingdate": datetime.datetime(2024, 9, 7, 9, 22, 3, tzinfo=tzutc()),
     "type": "reading",
     "unit_of_measurement": "%",
     "attribution": "Data provided by AICO HomeLINK",
@@ -258,7 +258,7 @@ HUMIDITY = {
 }
 TEMPERATURE = {
     "state_class": "measurement",
-    "readingdate": datetime.datetime(2024, 9, 7, 7, 22, 4, tzinfo=tzutc()),
+    "readingdate": datetime.datetime(2024, 9, 7, 9, 22, 3, tzinfo=tzutc()),
     "type": "reading",
     "unit_of_measurement": "°C",
     "attribution": "Data provided by AICO HomeLINK",

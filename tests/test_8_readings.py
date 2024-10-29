@@ -26,19 +26,19 @@ async def test_environment_entity_alert_states(
     check_entity_state(
         hass,
         "sensor.dummy_user_my_house_hallway1_envco2sensor_carbon_dioxide",
-        "1031",
+        "2194",
         CARBONDIOXIDE,
     )
     check_entity_state(
         hass,
         "sensor.dummy_user_my_house_hallway1_envco2sensor_humidity",
-        "84.5",
+        "84.7",
         HUMIDITY,
     )
     check_entity_state(
         hass,
         "sensor.dummy_user_my_house_hallway1_envco2sensor_temperature",
-        "20.46",
+        "20.61",
         TEMPERATURE,
     )
 
