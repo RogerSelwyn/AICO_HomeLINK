@@ -113,6 +113,11 @@ If you wish to receive alerts via MQTT (the base integration will update every 3
 ### Webhook
 If you wish to receive alerts via Webhook (the base integration will update every 30 seconds) to give you quicker notification of alerts and readings, then please follow the instructions here - [Webhook Setup](webhook.md#setup-and-configuration).
 
+## Data updates
+
+The AICO HomeLINK integration polls the cloud api every 30 seconds for all date apart from Readings which are polled every 5 minutes.
+
+
 ## Removing the integration
 
 This integration follows standard integration removal. Remember to remove via HACS as well.
