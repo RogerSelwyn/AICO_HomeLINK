@@ -70,12 +70,14 @@ You will need to create a set of credentials by going to the `Access Keys` tab o
 **Note:-** Only one instance of the integration can be installed to Home Assistant. However, all properties and devices you have access to will be exposed.
 
 #### Installation 
+
 | **Name** | **Description**  |
 |:---------|:-----------------|
 | Client ID | Obtained from HomeLINK Dashboard |
 | Client Secret | Obtained from HomeLINK Dashboard |
 
 #### Options - Base
+
 | **Name** | **Description**  |
 |:---------|:-----------------|
 | Properties | List of properties to create entities for |
@@ -85,12 +87,14 @@ You will need to create a set of credentials by going to the `Access Keys` tab o
 | Webhooks | Enable Webhooks |
 
 #### Options - MQTT (HA)
+
 | **Name** | **Description**  |
 |:---------|:-----------------|
 | Topic | The base subscription for your account |
 | Events | Enable MQTT event entities |
 
 #### Options - MQTT (HomeLINK)
+
 | **Name** | **Description**  |
 |:---------|:-----------------|
 | MQTT Client ID | MQTT Client ID, obtained from HomeLINK Dashboard |
@@ -100,6 +104,7 @@ You will need to create a set of credentials by going to the `Access Keys` tab o
 | Events | Enable MQTT event entities |
 
 #### Options - Webhooks
+
 | **Name** | **Description**  |
 |:---------|:-----------------|
 | URL | URL to be used on the HomeLINK Dashboard |
