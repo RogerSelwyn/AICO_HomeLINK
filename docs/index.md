@@ -53,11 +53,11 @@ You can either use HACS or install the component manually:
 
 <details><summary>Manual configuration</summary>If the above My button doesn't work, you can also perform the following steps manually: 
 
-Browse to your Home Assistant instance.
-Go to [Settings > Devices & Services](https://my.home-assistant.io/redirect/integrations). 
-In the bottom right corner, select the [Add Integration](https://my.home-assistant.io/redirect/config_flow_start?domain=homelink) button.
-From the list, select AICO HomeLINK.
-Follow the instructions on screen to complete the setup.
+* Browse to your Home Assistant instance.
+* Go to [Settings > Devices & Services](https://my.home-assistant.io/redirect/integrations). 
+* In the bottom right corner, select the [Add Integration](https://my.home-assistant.io/redirect/config_flow_start?domain=homelink) button.
+* From the list, select AICO HomeLINK.
+* Follow the instructions on screen to complete the setup.
 </details>
 
 ### Base Integration
