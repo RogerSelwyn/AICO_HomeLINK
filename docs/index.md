@@ -69,6 +69,41 @@ You will need to create a set of credentials by going to the `Access Keys` tab o
 
 **Note:-** Only one instance of the integration can be installed to Home Assistant. However, all properties and devices you have access to will be exposed.
 
+#### Installation 
+| **Name** | **Description**  |
+|:---------|:-----------------|
+| Client ID | Obtained from HomeLINK Dashboard |
+| Client Secret | Obtained from HomeLINK Dashboard |
+
+#### Options - Base
+| **Name** | **Description**  |
+|:---------|:-----------------|
+| Properties | List of properties to create entities for |
+| Insights | Enable Insight sensors (if available) |
+| MQTT | Enable MQTT |
+| HomeLINK MQTT | Use HomeLINK MQTT broker |
+| Webhooks | Enable Webhooks |
+
+#### Options - MQTT (HA)
+| **Name** | **Description**  |
+|:---------|:-----------------|
+| Topic | The base subscription for your account |
+| Events | Enable MQTT event entities |
+
+#### Options - MQTT (HomeLINK)
+| **Name** | **Description**  |
+|:---------|:-----------------|
+| MQTT Client ID | MQTT Client ID, obtained from HomeLINK Dashboard |
+| Username | Obtained from HomeLINK Dashboard |
+| Password | Obtained from HomeLINK Dashboard |
+| Topic | The base subscription for your account |
+| Events | Enable MQTT event entities |
+
+#### Options - Webhooks
+| **Name** | **Description**  |
+|:---------|:-----------------|
+| URL | URL to be used on the HomeLINK Dashboard |
+
 ### Insights
 If you have environment devices (Ei1020 and Ei1025) installed, then you may optionally enable Insight sensors. These will display the level of various types of risk as a percentage.
 
