@@ -37,16 +37,28 @@ These are the presented as the following entity types within Home Assistant:
   - Device replace by date
   - CO2, Humidity, Temperature
   - Insights (with Insights enabled)
+  - Electricity/Gas Consumption
+  - Electricity/Gas Tariff
 
 # Installation
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=RogerSelwyn&repository=AICO_HomeLINK)
 
 You can either use HACS or install the component manually:
-
 - **HACS** - [Home Assistant Community Store (HACS)](https://hacs.xyz/) - search for and install AICO HomelINK
 
 - **Manual** - Put the files from `/custom_components/homelink/` in your folder `<config directory>/custom_components/homelin/`
 
 ## Configuration
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=homelink)
+
+<details><summary>Manual configuration</summary>If the above My button doesn't work, you can also perform the following steps manually: 
+
+Browse to your Home Assistant instance.
+Go to [Settings > Devices & Services](https://my.home-assistant.io/redirect/integrations). 
+In the bottom right corner, select the [Add Integration](https://my.home-assistant.io/redirect/config_flow_start?domain=homelink) button.
+From the list, select AICO HomeLINK.
+Follow the instructions on screen to complete the setup.
+</details>
 
 ### Base Integration
 Configuration is done via the Home Assistant Integrations UI dialogue which will request a Client ID and Secret that you must obtain from the [HomeLINK Dashboard](https://dashboard.live.homelync.io/#/pages/admin/integrations). You will need to have an `admin` account on your dashboard to enable access to the integrations dialogue. If you have a `standard` account you will need to request an admin account from AICO HomeLINK. 
@@ -64,3 +76,14 @@ If you wish to receive alerts via MQTT (the base integration will update every 3
 ### Webhook
 If you wish to receive alerts via Webhook (the base integration will update every 30 seconds) to give you quicker notification of alerts and readings, then please follow the instructions here - [Webhook Setup](webhook.md#setup-and-configuration).
 
+## Removing the integration
+
+This integration follows standard integration removal. Remember to remove via HACS as well.
+
+### To remove an integration instance from Home Assistant
+
+1. Go to [**Settings** > **Devices & services**](https://my.home-assistant.io/redirect/integrations) and select the integration card.
+2. From the list of devices, select the integration instance you want to remove.
+3. Next to the entry, select the three-dot menu. Then, select **Delete**.
+
+After deleting the integration, go to the app of the manufacturer and remove the Home Assistant integration from there as well.
