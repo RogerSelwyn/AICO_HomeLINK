@@ -89,3 +89,14 @@ This integration follows standard integration removal. Remember to remove via HA
 3. Next to the entry, select the three-dot menu. Then, select **Delete**.
 
 After deleting the integration, go to the app of the manufacturer and remove the Home Assistant integration from there as well.
+
+<details><summary>A summary of the contents.</summary>
+
+- a markdown
+- list to parse
+
+</details>
+
+<details markdown="1"><summary>A summary of the contents.</summary>
+Some **longer** and more *detailed* contents that includes markdown...
+</details>
