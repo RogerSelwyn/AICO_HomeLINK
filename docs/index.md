@@ -58,6 +58,7 @@ You can either use HACS or install the component manually:
 * In the bottom right corner, select the [Add Integration](https://my.home-assistant.io/redirect/config_flow_start?domain=homelink) button.
 * From the list, select AICO HomeLINK.
 * Follow the instructions on screen to complete the setup.
+  
 </details>
 
 ### Base Integration
