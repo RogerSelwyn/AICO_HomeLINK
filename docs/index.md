@@ -51,7 +51,7 @@ You can either use HACS or install the component manually:
 ## Configuration
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=homelink)
 
-<details><summary>Manual configuration</summary>
+<details markdown="1"><summary>Manual configuration</summary>
   
 If the above My button doesn't work, you can also perform the following steps manually: 
 * Browse to your Home Assistant instance.
