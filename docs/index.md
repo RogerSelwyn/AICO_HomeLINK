@@ -63,7 +63,7 @@ If the above My button doesn't work, you can also perform the following steps ma
 </details>
 
 ### Base Integration
-Configuration is done via the Home Assistant Integrations UI dialogue which will request a Client ID and Secret that you must obtain from the [HomeLINK Dashboard](https://dashboard.live.homelync.io/#/pages/admin/integrations). You will need to have an `admin` account on your dashboard to enable access to the integrations dialogue. If you have a `standard` account you will need to request an admin account from AICO HomeLINK. 
+The installation dialogue which will request a Client ID and Secret that you must obtain from the [HomeLINK Dashboard](https://dashboard.live.homelync.io/#/pages/admin/integrations). You will need to have an `admin` account on your dashboard to enable access to the integrations dialogue. If you have a `standard` account you will need to request an admin account from AICO HomeLINK. 
 
 You will need to create a set of credentials by going to the `Access Keys` tab of the integrations dialogue and requesting a `Web Api` credential with the `Standard` scope. Make a note of the credentials generated and enter them into the standard Home Assistant integration installation dialogue. If you input incorrect credentials and it fails to authenticate at setup time, then you will likely need to delete the credentials via the Home Assistant Application Credentials and start again. 
 
@@ -90,13 +90,3 @@ This integration follows standard integration removal. Remember to remove via HA
 
 After deleting the integration, go to the app of the manufacturer and remove the Home Assistant integration from there as well.
 
-<details><summary>A summary of the contents.</summary>
-
-- a markdown
-- list to parse
-
-</details>
-
-<details markdown="1"><summary>A summary of the contents.</summary>
-Some **longer** and more *detailed* contents that includes markdown...
-</details>
