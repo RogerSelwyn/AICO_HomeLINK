@@ -128,6 +128,29 @@ When the fire alarm is triggered, the lights can be turned on within the house. 
 ### Notify end of life
 The alarms have a limited lifespan, varying up to 10 years. The replacament date sensors can be used to notify via email when a device should be replaced.
 
+### Troubleshooting
+
+If you are having issues and want to report a problem, please report an issue here - https://github.com/RogerSelwyn/AICO_HomeLINK/issues.
+
+#### Troubleshooting Installation
+
+If the integration won't install with authentication issues, you may have to delete your stored application credential on Home Assistant and then re-create checking carefully that you have copied the correct details from the [HomeLINK dashboard](https://dashboard.live.homelync.io/#/pages/admin/integrations), and that you created a 'Web Api' credential.
+
+[![Open your Home Assistant instance and Manage your application credentials.](https://my.home-assistant.io/badges/application_credentials.svg)](https://my.home-assistant.io/redirect/application_credentials/)
+
+#### Troubleshooting MQTT
+If you aren't receiving MQTT messages, bear in mind that in normal operations HomeLINK only sends messages in batches from your alarm system. Check the details carefully in the file you download from the [HomeLINK dashboard](https://dashboard.live.homelync.io/#/pages/admin/integrations) after you created an 'MQTT' credential.
+
+You can test for MQTT messages more quickly by triggering an alarm status on the system, this can be easily done by removing an alarm head, which should trigger a message within a minute.
+
+#### Troubleshooting Webhooks
+If you aren't receiving Webhooks messages, bear in mind that in normal operations HomeLINK only sends messages in batches from your alarm system. Make sure you have correctly copied the url provided in the Home Assistant configuration dialogue, and then add endpoints as listed here - [Webhook Setup](webhook.md#setup-and-configuration)
+
+Make sure that your Home Assistant instance is available at the url detailed in the webhook.
+
+You can test for Webook messages more quickly by triggering an alarm status on the system, this can be easily done by removing an alarm head, which should trigger a message within a minute.
+
+Note that currently there are no webhooks for events, these only come via MQTT.
 
 ## Removing the integration
 
