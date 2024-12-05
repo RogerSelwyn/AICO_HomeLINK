@@ -1,13 +1,10 @@
 """HomeLINK coordinators."""
 
 import asyncio
-from copy import deepcopy
-from datetime import date, datetime, timedelta
 import logging
 import traceback
-
-from pyhomelink import HomeLINKApi
-from pyhomelink.exceptions import ApiException, AuthException
+from copy import deepcopy
+from datetime import date, datetime, timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -15,6 +12,8 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from pyhomelink import HomeLINKApi
+from pyhomelink.exceptions import ApiException, AuthException
 
 from ..const import (
     ATTR_ALARM,
@@ -30,6 +29,7 @@ from ..const import (
     COORD_PROPERTIES,
     COORD_PROPERTY,
     COORD_READINGS,
+    DOMAIN,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
     HOMELINK_LOOKUP_EVENTTYPE,
@@ -70,11 +70,17 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._throttle = datetime.now() - RETRIEVAL_INTERVAL_READINGS
 
     async def _async_setup(self) -> None:
-        await self._async_get_eventtypes_lookup()
+        try:
+            await self._async_get_eventtypes_lookup()
+
+        except AuthException as auth_err:
+            if not self._error:
+                _LOGGER.warning("Error authenticating with HL API: %s", auth_err)
+                self._error = True
+            raise ConfigEntryAuthFailed from auth_err
 
     async def _async_update_data(self):
         """Fetch data from API endpoint."""
-
         try:
             async with asyncio.timeout(10):
                 coord_properties = await self._async_get_core_data()
@@ -89,7 +95,11 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 _LOGGER.warning("Error communicating with HL API: %s", api_err)
                 self._error = True
             raise UpdateFailed(
-                f"Error communicating with HL API: {api_err}"
+                translation_domain=DOMAIN,
+                translation_key="error_communicating_with_api",
+                translation_placeholders={
+                    "api_err": api_err,
+                },
             ) from api_err
         except asyncio.TimeoutError as timeout_err:
             err_traceback = traceback.format_exc()
@@ -97,7 +107,11 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 _LOGGER.warning("Timeout communicating with HL API: %s", err_traceback)
                 self._error = True
             raise UpdateFailed(
-                f"Timeout communicating with HL API: {err_traceback}"
+                translation_domain=DOMAIN,
+                translation_key="timeout_communicating_with_api",
+                translation_placeholders={
+                    "err_traceback": err_traceback,
+                },
             ) from timeout_err
         await self._async_check_for_changes(coord_properties)
         config_entry = self._entry.options

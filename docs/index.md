@@ -37,6 +37,8 @@ These are the presented as the following entity types within Home Assistant:
   - Device replace by date
   - CO2, Humidity, Temperature
   - Insights (with Insights enabled)
+  - Electricity/Gas Consumption
+  - Electricity/Gas Tariff
 
 # Installation
 

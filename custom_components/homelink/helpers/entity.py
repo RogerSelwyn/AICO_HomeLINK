@@ -53,6 +53,11 @@ class HomeLINKPropertyEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         self._update_attributes()
 
     @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return True
+
+    @property
     def device_info(self):
         """Entity device information."""
         return property_device_info(self._key)
@@ -84,6 +89,11 @@ class HomeLINKAlarmEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         self._update_attributes()
 
     @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return super().available and self._is_data_in_coordinator()
+
+    @property
     def device_info(self):
         """Entity device information."""
         return alarm_device_info(self._key, self._alarm_type)
@@ -95,6 +105,9 @@ class HomeLINKAlarmEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         self.async_write_ha_state()
 
     def _update_attributes(self):
+        """Overloaded in sub entities."""
+
+    def _is_data_in_coordinator(self):
         """Overloaded in sub entities."""
 
 
@@ -120,6 +133,11 @@ class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         self._update_attributes()
 
     @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return super().available and self._is_data_in_coordinator()
+
+    @property
     def device_info(self):
         """Entity device information."""
         return device_device_info(self._identifiers, self._parent_key, self._device)
@@ -133,12 +151,14 @@ class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
     def _update_attributes(self):
         """Overloaded in sub entities."""
 
+    def _is_data_in_coordinator(self):
+        """Overloaded in sub entities."""
+
 
 class HomeLINKEventEntity(EventEntity):
     """Event entity for HomeLINK ."""
 
     _attr_has_entity_name = True
-    _attr_name = "Event"
     _attr_should_poll = False
 
     def __init__(self, entry, key, eventtypes, mqtt_key) -> None:
@@ -151,9 +171,14 @@ class HomeLINKEventEntity(EventEntity):
         self._lastdate = dt_util.utcnow()
 
     @property
+    def name(self) -> str:
+        """Return the name of the sensor as device name."""
+        return None
+
+    @property
     def unique_id(self) -> str:
         """Return the unique_id of the event entity."""
-        return f"{self._key}_event"
+        return f"{self._key}"
 
     async def async_added_to_hass(self) -> None:
         """Register Event handler."""
@@ -164,7 +189,7 @@ class HomeLINKEventEntity(EventEntity):
         )
 
     async def async_will_remove_from_hass(self) -> None:
-        """Unregister Evemt handler."""
+        """Unregister Event handler."""
         if self._unregister_event_handler:
             self._unregister_event_handler()
 

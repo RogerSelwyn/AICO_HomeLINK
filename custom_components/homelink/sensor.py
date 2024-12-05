@@ -2,29 +2,27 @@
 
 from collections.abc import Callable
 from dataclasses import dataclass
-import logging
 from typing import Any
 
 from dateutil import parser
-from pyhomelink import HomeLINKReadingType
-
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
     SensorStateClass,
 )
-
-# from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONCENTRATION_PARTS_PER_MILLION,
     PERCENTAGE,
+    EntityCategory,
+    UnitOfEnergy,
     UnitOfTemperature,
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
+from pyhomelink import HomeLINKReadingType
 
 from . import HLConfigEntry
 from .const import (
@@ -51,22 +49,32 @@ from .const import (
     COORD_PROPERTIES,
     COORD_READINGS,
     DOMAIN,
-    ENTITY_NAME_LASTTESTDATE,
-    ENTITY_NAME_REPLACEDATE,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
     HOMELINK_MESSAGE_MQTT,
+    MODELLIST_ENERGY,
     MODELLIST_ENVIRONMENT,
+    MODELTYPE_SMARTMETERELEC,
+    MODELTYPE_SMARTMETERGAS,
+    MODELTYPE_SMARTMETERGASELEC,
     MQTT_READINGDATE,
     MQTT_VALUE,
-    READINGS,
+    READINGS_ENVIRONMENT,
+    READINGS_SENSOR_ELECTRIC,
+    READINGS_SENSOR_ELECTRIC_TARIFF,
+    READINGS_SENSOR_GAS,
+    READINGS_SENSOR_GAS_TARIFF,
+    SENSOR_TRANSLATION_KEY,
 )
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.entity import HomeLINKAlarmEntity, HomeLINKDeviceEntity
 from .helpers.events import raise_reading_event
-from .helpers.utils import build_mqtt_device_key, device_device_info
+from .helpers.utils import (
+    build_mqtt_device_key,
+    device_device_info,
+)
 
-_LOGGER = logging.getLogger(__name__)
+PARALLEL_UPDATES = 1
 
 
 @dataclass
@@ -86,14 +94,14 @@ class HomeLINKEntityDescription(
 SENSOR_TYPES: tuple[HomeLINKEntityDescription, ...] = (
     HomeLINKEntityDescription(  # pylint: disable=unexpected-keyword-arg
         key=ATTR_REPLACEDATE,
-        name=ENTITY_NAME_REPLACEDATE,
         device_class=SensorDeviceClass.DATE,
+        translation_key="replace_by_date",
         value_fn=lambda data: data.replacedate.date() or None,
     ),
     HomeLINKEntityDescription(  # pylint: disable=unexpected-keyword-arg
         key=ATTR_LASTTESTDATE,
-        name=ENTITY_NAME_LASTTESTDATE,
         device_class=SensorDeviceClass.TIMESTAMP,
+        translation_key="last_tested_date",
         value_fn=lambda data: data.status.lasttesteddate,
     ),
 )
@@ -122,21 +130,51 @@ async def async_setup_entry(
 
     @callback
     def async_add_sensor_device(hl_property, device_key, device, gateway_key):  # pylint: disable=unused-argument
-        async_add_entities(
-            [
-                HomeLINKSensor(hl_coordinator, hl_property, device_key, description)
-                for description in SENSOR_TYPES
-            ]
-        )
-        if hasattr(device.rel, ATTR_READINGS):
-            for reading, reading_type in READINGS.items():
-                if hasattr(device.rel.readings, reading):
-                    _add_sensor_reading(hl_property, reading_type, device_key)
+        if device.modeltype not in MODELLIST_ENERGY:
+            async_add_entities(
+                [
+                    HomeLINKSensor(hl_coordinator, hl_property, device_key, description)
+                    for description in SENSOR_TYPES
+                ]
+            )
+            if hasattr(device.rel, ATTR_READINGS):
+                for reading, reading_type in READINGS_ENVIRONMENT.items():
+                    if hasattr(device.rel.readings, reading):
+                        _add_sensor_reading(hl_property, reading_type, device_key)
+
+        else:
+            if device.modeltype in [
+                MODELTYPE_SMARTMETERGASELEC,
+                MODELTYPE_SMARTMETERELEC,
+            ]:
+                _add_sensor_energy_reading(
+                    hl_property, READINGS_SENSOR_ELECTRIC, device_key
+                )
+                _add_sensor_energy_reading(
+                    hl_property, READINGS_SENSOR_ELECTRIC_TARIFF, device_key
+                )
+            if device.modeltype in [
+                MODELTYPE_SMARTMETERGASELEC,
+                MODELTYPE_SMARTMETERGAS,
+            ]:
+                _add_sensor_energy_reading(hl_property, READINGS_SENSOR_GAS, device_key)
+                _add_sensor_energy_reading(
+                    hl_property, READINGS_SENSOR_GAS_TARIFF, device_key
+                )
 
     def _add_sensor_reading(hl_property, reading_type, device_key):
         async_add_entities(
             [
                 HomeLINKReadingSensor(
+                    entry, hl_coordinator, hl_property, device_key, reading_type
+                )
+            ]
+        )
+
+    def _add_sensor_energy_reading(hl_property, reading_type, device_key):
+        async_add_entities(
+            [
+                HomeLINKEnergyReadingSensor(
                     entry, hl_coordinator, hl_property, device_key, reading_type
                 )
             ]
@@ -168,6 +206,8 @@ class HomeLINKSensor(HomeLINKDeviceEntity, SensorEntity):
     """Sensor entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_entity_registry_enabled_default = False
     entity_description: HomeLINKEntityDescription
 
     def __init__(
@@ -188,17 +228,22 @@ class HomeLINKSensor(HomeLINKDeviceEntity, SensorEntity):
         return self.entity_description.value_fn(self._device)
 
     def _update_attributes(self):
-        if (
-            self._parent_key in self.coordinator.data[COORD_PROPERTIES]
-            and self._key
-            in self.coordinator.data[COORD_PROPERTIES][self._parent_key][COORD_DEVICES]
-        ):
+        if self._is_data_in_coordinator():
             self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
                 COORD_DEVICES
             ][self._key]
             self._gateway_key = self.coordinator.data[COORD_PROPERTIES][
                 self._parent_key
             ][COORD_GATEWAY_KEY]
+
+    def _is_data_in_coordinator(self):
+        if (
+            self._parent_key in self.coordinator.data[COORD_PROPERTIES]
+            and self._key
+            in self.coordinator.data[COORD_PROPERTIES][self._parent_key][COORD_DEVICES]
+        ):
+            return True
+        return False
 
 
 class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
@@ -233,6 +278,18 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         elif readingtype == HomeLINKReadingType.TEMPERATURE:
             self._attr_device_class = SensorDeviceClass.TEMPERATURE
             self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+        elif readingtype in [READINGS_SENSOR_ELECTRIC, READINGS_SENSOR_GAS]:
+            self._attr_device_class = SensorDeviceClass.ENERGY
+            self._attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
+            self._attr_state_class = SensorStateClass.TOTAL
+        elif readingtype in [
+            READINGS_SENSOR_ELECTRIC_TARIFF,
+            READINGS_SENSOR_GAS_TARIFF,
+        ]:
+            self._attr_device_class = SensorDeviceClass.MONETARY
+            self._attr_native_unit_of_measurement = "GBp/kWh"
+            self._attr_suggested_display_precision = 2
+            self._attr_state_class = None
         self._unregister_message_handler = None
 
     @property
@@ -251,13 +308,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         return device_device_info(self._identifiers, self._parent_key, self._device)
 
     def _update_attributes(self):
-        if (
-            self._parent_key not in self.coordinator.data[COORD_PROPERTIES]
-            or self._key
-            not in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-                COORD_DEVICES
-            ]
-        ):
+        if not self._is_data_in_coordinator():
             return
         for reading in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
             COORD_READINGS
@@ -281,6 +332,17 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
                     self.async_write_ha_state()
 
                 break
+
+    def _is_data_in_coordinator(self):
+        if (
+            self._parent_key not in self.coordinator.data[COORD_PROPERTIES]
+            or self._key
+            not in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+                COORD_DEVICES
+            ]
+        ):
+            return False
+        return True
 
     def _update_values(self, value):
         self._state = value.value
@@ -315,6 +377,15 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
             self._state = payload[MQTT_VALUE]
             self._readingdate = readingdate
             self.async_write_ha_state()
+
+
+class HomeLINKEnergyReadingSensor(HomeLINKReadingSensor):
+    """An energy Reading Sensor"""
+
+    @property
+    def translation_key(self):
+        """Entity Translation Key."""
+        return SENSOR_TRANSLATION_KEY[self._readingtype]
 
 
 class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
@@ -364,6 +435,17 @@ class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
                 and insight.hl_type == self._insight.hl_type
             ):
                 self._insight = insight
+
+    def _is_data_in_coordinator(self):
+        for insight in self.coordinator.data[COORD_PROPERTIES][self._key][
+            COORD_INSIGHTS
+        ]:
+            if (
+                insight.appliesto == APPLIESTO_PROPERTY
+                and insight.hl_type == self._insight.hl_type
+            ):
+                return True
+        return False
 
 
 class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
@@ -430,3 +512,15 @@ class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
                 and insight.hl_type == self._insight.hl_type
             ):
                 self._insight = insight
+
+    def _is_data_in_coordinator(self):
+        for insight in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+            COORD_INSIGHTS
+        ]:
+            if (
+                insight.appliesto == APPLIESTO_ROOM
+                and insight.location == self._insight.location
+                and insight.hl_type == self._insight.hl_type
+            ):
+                return True
+        return False

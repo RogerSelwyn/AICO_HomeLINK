@@ -6,7 +6,7 @@ import asyncio
 import logging
 import time
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Self
 
 import aiohttp
 import homeassistant.helpers.config_validation as cv
@@ -67,9 +67,8 @@ class OAuth2FlowHandler(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Create an entry for auth."""
-        # Need to re-validate re-auth
-        # if self._reauth_config_entry:
-        #     return self.async_abort(reason="oauth_error")
+        if self._reauth_config_entry:
+            return self.async_abort(reason="oauth_error")
 
         try:
             async with asyncio.timeout(OAUTH_TOKEN_TIMEOUT_SEC):
@@ -107,9 +106,7 @@ class OAuth2FlowHandler(
         entry_data: Mapping[str, Any],  # pylint: disable=unused-argument
     ) -> FlowResult:
         """Perform reauth upon an API authentication error."""
-        self._reauth_config_entry = self.hass.config_entries.async_get_entry(
-            self.context["entry_id"]
-        )
+        self._reauth_config_entry = self._get_reauth_entry()
         return await self.async_step_reauth_confirm()
 
     async def async_step_reauth_confirm(
@@ -125,7 +122,7 @@ class OAuth2FlowHandler(
         existing_entry = await self.async_set_unique_id(DOMAIN)
         if existing_entry:
             return self.async_update_reload_and_abort(
-                existing_entry, data=data, unique_id=self.unique_id
+                existing_entry, data_updates=data, unique_id=self.unique_id
             )
 
         return await super().async_oauth_create_entry(data)
@@ -135,6 +132,10 @@ class OAuth2FlowHandler(
     def async_get_options_flow(config_entry):
         """HomeLINK options callback."""
         return HomeLINKOptionsFlowHandler(config_entry)
+
+    def is_matching(self, other_flow: Self) -> bool:
+        """Return True if other_flow is matching this flow."""
+        return False
 
 
 class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):

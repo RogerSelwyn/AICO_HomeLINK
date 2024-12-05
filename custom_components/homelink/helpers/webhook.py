@@ -55,13 +55,14 @@ class HomeLINKWebhook:
         """Unregister the required webhooks with Home Assistant."""
         webhook.async_unregister(hass, webhook_id)
         _LOGGER.debug("HomeLINK Webhook unregistered")
+        return
 
     async def _async_handle_webhook(
         self,
         hass: HomeAssistant,
         webhook_id: str,  # pylint: disable=unused-argument
         request: aiohttp.web.Request,
-    ) -> aiohttp.web.Response:
+    ) -> None:
         """Handle webhook callback."""
         message = await request.json()
         messagetype, actiontype = self._identify_message(message)
@@ -108,6 +109,7 @@ class HomeLINKWebhook:
             return
 
         _LOGGER.warning("Unknown Webhook message type: %s - %s", messagetype, message)
+        return
 
     def _identify_message(self, message):
         actiontype = message[WEBHOOK_ACTION]

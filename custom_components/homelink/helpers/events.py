@@ -1,4 +1,5 @@
 """Helpers for raising events."""
+
 import logging
 
 from ..const import (
@@ -12,6 +13,7 @@ from ..const import (
     DOMAIN,
 )
 
+PARALLEL_UPDATES = 1
 _LOGGER = logging.getLogger(__name__)
 
 

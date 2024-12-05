@@ -1,7 +1,5 @@
 """Support for HomeLINK sensors."""
 
-import logging
-
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
@@ -61,6 +59,7 @@ from .const import (
     HOMELINK_ADD_PROPERTY,
     HOMELINK_MESSAGE_MQTT,
     MODELLIST_ALARMS,
+    MODELLIST_ENERGY,
     MODELLIST_ENVIRONMENT,
     MODELLIST_PROBLEMS,
     MODELTYPE_COALARM,
@@ -82,7 +81,7 @@ from .helpers.utils import (
     get_message_date,
 )
 
-_LOGGER = logging.getLogger(__name__)
+PARALLEL_UPDATES = 1
 
 
 async def async_setup_entry(
@@ -101,7 +100,8 @@ async def async_setup_entry(
         for device_key, device in hl_coordinator.data[COORD_PROPERTIES][hl_property][
             COORD_DEVICES
         ].items():
-            async_add_device(hl_property, device_key, None, None)
+            if device.modeltype not in MODELLIST_ENERGY:
+                async_add_device(hl_property, device_key, None, None)
             if device.modeltype in MODELLIST_ENVIRONMENT:
                 environment = True
 
@@ -289,11 +289,16 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             self._unregister_message_handler()
 
     def _update_attributes(self):
-        if self._key in self.coordinator.data[COORD_PROPERTIES]:
+        if self._is_data_in_coordinator():
             self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
             self._gateway_key = self._property[COORD_GATEWAY_KEY]
             self._alerts = self._set_alerts()
             self._status, self._alarms_devices, self._alarms_rooms = self._set_status()
+
+    def _is_data_in_coordinator(self):
+        if self._key in self.coordinator.data[COORD_PROPERTIES]:
+            return True
+        return False
 
     def _set_status(self) -> bool:
         status = STATUS_GOOD
@@ -417,7 +422,6 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
     @property
     def name(self) -> str:
         """Return the name of the sensor."""
-
         return None
 
     @property
@@ -490,13 +494,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         return None
 
     def _update_attributes(self):
-        if (
-            self._parent_key not in self.coordinator.data[COORD_PROPERTIES]
-            or self._key
-            not in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-                COORD_DEVICES
-            ]
-        ):
+        if not self._is_data_in_coordinator():
             return
 
         self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
@@ -507,6 +505,17 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         ]
         self._alerts = self._set_alerts()
         self._status = self._set_status()
+
+    def _is_data_in_coordinator(self):
+        if (
+            self._parent_key not in self.coordinator.data[COORD_PROPERTIES]
+            or self._key
+            not in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+                COORD_DEVICES
+            ]
+        ):
+            return False
+        return True
 
     def _set_status(self) -> bool:
         return bool(self._get_alerts())

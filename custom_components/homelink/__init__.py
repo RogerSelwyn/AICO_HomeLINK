@@ -10,6 +10,7 @@ from homeassistant.const import CONF_WEBHOOK_ID, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
+
 from pyhomelink.api import HomeLINKApi
 
 from .const import (
@@ -17,6 +18,7 @@ from .const import (
     CONF_MQTT_HOMELINK,
     CONF_WEBHOOK_ENABLE,
     COORD_PROPERTIES,
+    DOMAIN,
 )
 from .helpers.api import AsyncConfigEntryAuth
 from .helpers.coordinator import HomeLINKDataCoordinator
@@ -32,10 +34,10 @@ HLConfigEntry = ConfigEntry["HLData"]
 class HLData:
     """Data previously stored in hass.data."""
 
-    coordinator: HomeLINKDataCoordinator
-    mqtt: any
-    webhook: HomeLINKWebhook
-    options: MappingProxyType[str, Any]
+    coordinator: HomeLINKDataCoordinator | None
+    mqtt: HAMQTT | HomeLINKMQTT | None
+    webhook: HomeLINKWebhook | None
+    options: MappingProxyType[str, Any] | None
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:
@@ -109,7 +111,7 @@ async def _async_start_mqtt(hass: HomeAssistant, entry: HLConfigEntry):
             hl_coordinator.data[COORD_PROPERTIES],
         )
     else:
-        hl_mqtt = HAMQTT(
+        hl_mqtt = HAMQTT(  # type: ignore[assignment]
             hass,
             entry.options,
             hl_coordinator.data[COORD_PROPERTIES],
@@ -119,9 +121,11 @@ async def _async_start_mqtt(hass: HomeAssistant, entry: HLConfigEntry):
         ret = await hl_mqtt.async_start()
         if ret:
             raise ConfigEntryNotReady(
-                "HomeLink MQTT credentials/topic are invalid. Please reconfigure"
+                translation_domain=DOMAIN, translation_key="homelink_mqtt_invalid"
             )
         return hl_mqtt  # noqa: TRY300
 
     except ConnectionRefusedError as err:
-        raise ConfigEntryNotReady("HomeLink MQTT server not available") from err
+        raise ConfigEntryNotReady(
+            translation_domain=DOMAIN, translation_key="homelink_mqtt_unavailable"
+        ) from err

@@ -19,6 +19,7 @@ from .const import (
     EVENTTYPE_INSIGHT,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
+    MODELLIST_ENERGY,
     MODELLIST_ENVIRONMENT,
 )
 from .helpers.coordinator import HomeLINKDataCoordinator
@@ -59,7 +60,8 @@ async def _async_create_entities(
         for device_key, device in hl_coordinator.data[COORD_PROPERTIES][hl_property][
             COORD_DEVICES
         ].items():
-            async_add_device(hl_property, device_key, device, gateway_key)
+            if device.modeltype not in MODELLIST_ENERGY:
+                async_add_device(hl_property, device_key, device, gateway_key)
 
     @callback
     def async_add_device(hl_property, device_key, device, gateway_key):
