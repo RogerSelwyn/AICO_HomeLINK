@@ -1,7 +1,9 @@
 """Test sensors."""
 
+import pytest
+
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 
 from .conftest import HomelinkMockConfigEntry
 from .data.state.core_state import ALARM_GOOD, ENVIRONMENT_GOOD, HOME_GOOD
@@ -27,12 +29,14 @@ async def test_device_count(
         base_config_entry.entry_id
     )
 
-    assert len(devices) == 10
+    assert len(devices) == 11
 
 
 async def test_core_entities(
     hass: HomeAssistant,
     setup_base_integration: None,
+    base_config_entry: HomelinkMockConfigEntry,
+    entity_registry: er.EntityRegistry,
 ):
     """Test HomeLINK core entities."""
 
@@ -43,8 +47,23 @@ async def test_core_entities(
     check_entity_state(
         hass, "binary_sensor.dummy_user_my_house_environment", "off", ENVIRONMENT_GOOD
     )
+    entities = er.async_entries_for_config_entry(
+        entity_registry, base_config_entry.entry_id
+    )
+    assert len(entities) == 31
+    entry = entity_registry.async_get(
+        "sensor.dummy_user_my_house_livingroom_firealarm_last_tested_date"
+    )
+    assert entry.disabled_by == "integration"
+    assert entry.entity_category == "diagnostic"
+    entry = entity_registry.async_get(
+        "sensor.dummy_user_my_house_livingroom_firealarm_replace_by_date"
+    )
+    assert entry.disabled_by == "integration"
+    assert entry.entity_category == "diagnostic"
 
 
+@pytest.mark.parametrize("setup_base_integration", [{"enabled": True}], indirect=True)
 async def test_ei3016(
     hass: HomeAssistant,
     setup_base_integration: None,
@@ -61,6 +80,7 @@ async def test_ei3016(
     )
 
 
+@pytest.mark.parametrize("setup_base_integration", [{"enabled": True}], indirect=True)
 async def test_ei450(
     hass: HomeAssistant,
     setup_base_integration: None,
@@ -77,6 +97,7 @@ async def test_ei450(
     )
 
 
+@pytest.mark.parametrize("setup_base_integration", [{"enabled": True}], indirect=True)
 async def test_ei1000g(
     hass: HomeAssistant,
     setup_base_integration: None,
@@ -93,6 +114,7 @@ async def test_ei1000g(
     )
 
 
+@pytest.mark.parametrize("setup_base_integration", [{"enabled": True}], indirect=True)
 async def test_ei1025(
     hass: HomeAssistant,
     setup_base_integration: None,
@@ -109,6 +131,7 @@ async def test_ei1025(
     )
 
 
+@pytest.mark.parametrize("setup_base_integration", [{"enabled": True}], indirect=True)
 async def test_ei3014(
     hass: HomeAssistant,
     setup_base_integration: None,
@@ -125,6 +148,7 @@ async def test_ei3014(
     )
 
 
+@pytest.mark.parametrize("setup_base_integration", [{"enabled": True}], indirect=True)
 async def test_ei3028(
     hass: HomeAssistant,
     setup_base_integration: None,
@@ -141,6 +165,7 @@ async def test_ei3028(
     )
 
 
+@pytest.mark.parametrize("setup_base_integration", [{"enabled": True}], indirect=True)
 async def test_ei3018(
     hass: HomeAssistant,
     setup_base_integration: None,
@@ -155,3 +180,12 @@ async def test_ei3018(
         "2024-09-06T09:05:16+00:00",
         "2034-05-29",
     )
+
+
+# ## Does not have standard replace_by_date/last_tested_date/event/binary_sensor
+# ## So no need to test here. Tested in readings testing
+# async def test_smartgaselec(
+#     hass: HomeAssistant,
+#     setup_base_integration: None,
+# ):
+#     """Test HomeLINK SMARTMETERGASELEC."""

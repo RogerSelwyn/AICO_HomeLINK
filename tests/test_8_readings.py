@@ -10,12 +10,22 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 
 from .conftest import HomelinkMockConfigEntry
-from .data.state.device_state import CARBONDIOXIDE, HUMIDITY, TEMPERATURE
+from .data.state.device_state import (
+    CARBONDIOXIDE,
+    ELECTRICITY,
+    ELECTRICITY_TARIFF,
+    GAS,
+    GAS_TARIFF,
+    HUMIDITY,
+    TEMPERATURE,
+)
 from .helpers.utils import check_entity_state, ignore_reading_mocks
 
 
 @pytest.mark.parametrize(
-    "setup_base_integration", ["environment_alert_mocks"], indirect=True
+    "setup_base_integration",
+    [{"method_name": "environment_alert_mocks"}],
+    indirect=True,
 )
 async def test_environment_entity_alert_states(
     hass: HomeAssistant,
@@ -40,6 +50,30 @@ async def test_environment_entity_alert_states(
         "sensor.dummy_user_my_house_hallway1_envco2sensor_temperature",
         "20.61",
         TEMPERATURE,
+    )
+    check_entity_state(
+        hass,
+        "sensor.dummy_user_my_house_elec_smartmetergaselec_electricity",
+        "0.105",
+        ELECTRICITY,
+    )
+    check_entity_state(
+        hass,
+        "sensor.dummy_user_my_house_elec_smartmetergaselec_electricity_tariff",
+        "22.49",
+        ELECTRICITY_TARIFF,
+    )
+    check_entity_state(
+        hass,
+        "sensor.dummy_user_my_house_elec_smartmetergaselec_gas",
+        "0.56",
+        GAS,
+    )
+    check_entity_state(
+        hass,
+        "sensor.dummy_user_my_house_elec_smartmetergaselec_gas_tariff",
+        "5.56",
+        GAS_TARIFF,
     )
 
 

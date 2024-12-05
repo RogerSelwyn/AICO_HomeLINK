@@ -177,6 +177,34 @@
             }
         },
         {
+            "serialNumber": "299991234567",
+            "model": "SMARTGE",
+            "modelType": "SMARTMETERGASELEC",
+            "location": "ELEC",
+            "locationNickname": null,
+            "manufacturer": "SmartDCC",
+            "installationDate": "2023-09-21T16:51:38.806Z",
+            "installedBy": null,
+            "replaceDate": null,
+            "createdAt": "2024-10-25T16:51:38.815Z",
+            "updatedAt": "2024-10-25T16:51:38.815Z",
+            "metadata": {
+                "signalStrength": null,
+                "lastSeenDate": null,
+                "connectivityType": "VIRTUAL"
+            },
+            "status": {
+                "operationalStatus": "GOOD",
+                "lastTestedDate": null,
+                "dataCollectionStatus": "ACTIVE"
+            },
+            "_rel": {
+                "_self": "device/299991234567",
+                "property": "property/DUMMY_USER_My_House",
+                "alerts": "device/299991234567/alerts"
+            }
+        },
+        {
             "serialNumber": "D6003018",
             "model": "Ei3018",
             "modelType": "COALARM",
