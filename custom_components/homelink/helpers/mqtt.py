@@ -3,6 +3,9 @@
 import json
 import logging
 import queue
+from collections.abc import Callable
+from types import MappingProxyType
+from typing import Any
 
 import paho.mqtt.client as paho_mqtt
 from homeassistant.components import mqtt
@@ -42,7 +45,7 @@ OTHER_ERROR = "other"
 class HomeLINKMQTT:
     """HomeLINK MQTT client."""
 
-    def __init__(self, hass: HomeAssistant, options, properties=None):
+    def __init__(self, hass: HomeAssistant, options, properties=None) -> None:
         """Initialise the MQTT client."""
         if properties is None:
             properties = []
@@ -51,16 +54,22 @@ class HomeLINKMQTT:
         self._root_topic = options.get(CONF_MQTT_TOPIC)
         self._mqtt_root_topic = f"{self._root_topic}/#"
         self._properties = properties
-        self._client = None
         self._result: queue.Queue[bool] = queue.Queue(maxsize=1)
         self._socket_open = False
         self._connected = False
         self._subscribed = False
-        self._error = False
+        self._error: str | bool = False
 
-    async def async_start(self):
+        protocol = paho_mqtt.MQTTv311
+        transport = HOMELINK_MQTT_PROTOCOL
+        client_id = self._options.get(CONF_MQTT_CLIENT_ID)
+        self._client = paho_mqtt.Client(
+            client_id, protocol=protocol, transport=transport
+        )
+
+    async def async_start(self) -> str | None:
         """Start up the MQTT client."""
-        self._client_setup()
+        await self._async_client_setup()
 
         await self._hass.async_add_executor_job(
             self._client.connect,
@@ -77,17 +86,17 @@ class HomeLINKMQTT:
                 return CONF_ERROR_UNAVAILABLE
             return CONF_ERROR_TOPIC if self._connected else CONF_ERROR_CREDENTIALS
 
-    async def async_stop(self):
+    async def async_stop(self) -> None:
         """Stop up the MQTT client."""
         _LOGGER.debug("HomeLINK MQTT unsubscribed: %s", self._mqtt_root_topic)
         self._client.unsubscribe(self._mqtt_root_topic)
         self._client.disconnect()
         self._client.loop_stop()
 
-    async def async_try_connect(self) -> None:
+    async def async_try_connect(self) -> str | None:
         """Try the connection."""
 
-        self._client_setup()
+        await self._async_client_setup()
         self._client.connect_async(HOMELINK_MQTT_SERVER, HOMELINK_MQTT_PORT)
         self._client.loop_start()
         try:
@@ -102,19 +111,12 @@ class HomeLINKMQTT:
                 self._client.disconnect()
             self._client.loop_stop()
 
-    def _client_setup(self):
-        protocol = paho_mqtt.MQTTv311
-        transport = HOMELINK_MQTT_PROTOCOL
-
-        client_id = self._options.get(CONF_MQTT_CLIENT_ID)
+    async def _async_client_setup(self) -> None:
         username = self._options.get(CONF_USERNAME)
         password = self._options.get(CONF_PASSWORD)
 
-        self._client = paho_mqtt.Client(
-            client_id, protocol=protocol, transport=transport
-        )
         self._client.username_pw_set(username, password)
-        self._client.tls_set_context()
+        await self._hass.async_add_executor_job(self._client.tls_set_context)
 
         self._client.on_socket_open = self._on_socket_open
         self._client.on_connect = self._on_connect
@@ -126,7 +128,7 @@ class HomeLINKMQTT:
         self._socket_open = True
 
     @callback
-    def _on_connect(self, client, userdata, flags, ret, properties=None):  # pylint: disable=unused-argument
+    def _on_connect(self, client, userdata, flags, ret, properties=None) -> None:  # pylint: disable=unused-argument
         if not self._error:
             _LOGGER.debug("HomeLINK MQTT connected with result code: %s", ret)
         if ret == paho_mqtt.CONNACK_ACCEPTED:
@@ -136,7 +138,7 @@ class HomeLINKMQTT:
             client.subscribe(self._mqtt_root_topic, qos=2)
 
     @callback
-    def _on_disconnect(self, client, userdata, ret, properties=None):  # pylint: disable=unused-argument
+    def _on_disconnect(self, client, userdata, ret, properties=None) -> None:  # pylint: disable=unused-argument
         if ret != paho_mqtt.MQTT_ERR_SUCCESS:
             if not self._connected:
                 self._check_error(
@@ -152,18 +154,20 @@ class HomeLINKMQTT:
                 )
 
     @callback
-    def _on_message(self, client, userdata, msg):  # pylint: disable=unused-argument
-        _async_forward_message(self._hass, msg, self._root_topic, self._properties)
+    async def _on_message(self, client, userdata, msg) -> None:  # pylint: disable=unused-argument
+        await _async_forward_message(
+            self._hass, msg, self._root_topic, self._properties
+        )
 
     @callback
-    def _on_subscribe(self, client, userdata, mid, granted_qos):  # pylint: disable=unused-argument
+    def _on_subscribe(self, client, userdata, mid, granted_qos) -> None:  # pylint: disable=unused-argument
         _LOGGER.debug("HomeLINK MQTT subscribed: %s", self._mqtt_root_topic)
         if self._error == SUBSCRIBE_ERROR:
             self._error = False
-        self._result.put("Subscribed")
+        self._result.put(True)
         self._subscribed = True
 
-    def _check_error(self, error_type, error_message, ret):
+    def _check_error(self, error_type: str, error_message: str, ret: Any) -> None:
         err_type = "unspecified"
         if ret == 5:
             err_type = "Connection refused - Invalid credentials"
@@ -178,42 +182,49 @@ class HomeLINKMQTT:
 class HAMQTT:
     """HA MQTT Client."""
 
-    def __init__(self, hass: HomeAssistant, options, properties):
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        options: MappingProxyType[str, Any],
+        properties: dict[str, Any],
+    ) -> None:
         """Initialise the MQTT client."""
         self._hass = hass
-        self._root_topic = options.get(CONF_MQTT_TOPIC)
+        self._root_topic: str = str(options.get(CONF_MQTT_TOPIC))
         self._mqtt_root_topic = f"{self._root_topic}/#"
         self._properties = properties
-        self._unsubscribe_task = None
+        self._unsubscribe_task: Callable[[], None] | None = None
 
-    async def async_start(self):
+    async def async_start(self) -> None:
         """Start up the MQTT client."""
         async_when_setup(self._hass, MQTT_DOMAIN, self._async_subscribe)
 
-    async def async_stop(self):
+    async def async_stop(self) -> None:
         """Stop up the MQTT client."""
         _LOGGER.debug("HA MQTT unsubscribed: %s", self._mqtt_root_topic)
-        self._unsubscribe_task()
+        self._unsubscribe_task()  # type: ignore[misc]
 
     @callback
     async def _async_subscribe(
         self,
         hass: HomeAssistant,  # pylint: disable=unused-argument
-        component,  # pylint: disable=unused-argument
-    ):
+        component: Any,  # pylint: disable=unused-argument
+    ) -> None:
         _LOGGER.debug("HA MQTT subscribed: %s", self._mqtt_root_topic)
         self._unsubscribe_task = await mqtt.async_subscribe(
             self._hass, self._mqtt_root_topic, self._async_message_received, qos=2
         )
 
     @callback
-    async def _async_message_received(self, msg):
+    async def _async_message_received(self, msg: Any) -> None:
         await _async_forward_message(
             self._hass, msg, self._root_topic, self._properties
         )
 
 
-async def _async_forward_message(hass, msg, root_topic, properties):
+async def _async_forward_message(
+    hass: HomeAssistant, msg: Any, root_topic: str, properties: dict[str, Any]
+) -> None:
     key = _extract_property(msg.topic, root_topic, properties)
     if not key:
         return
@@ -264,14 +275,16 @@ async def _async_forward_message(hass, msg, root_topic, properties):
     _LOGGER.warning("Unknown MQTT message type: %s - %s", messagetype, payload)
 
 
-async def _async_property_device_update_message(hass, key, topic, payload, messagetype):
+async def _async_property_device_update_message(
+    hass: HomeAssistant, key: str, topic: str, payload: dict, messagetype: str
+) -> None:
     event = HOMELINK_MESSAGE_MQTT.format(
         domain=DOMAIN, key=f"{key}_{ALARMTYPE_ALARM}"
     ).lower()
     dispatcher_send(hass, event, topic, payload, messagetype)
 
 
-async def _async_event_message(hass, key, payload):
+async def _async_event_message(hass: HomeAssistant, key: str, payload: dict) -> None:
     if MQTT_DEVICESERIALNUMBER in payload and payload[MQTT_DEVICESERIALNUMBER]:  # noqa: RUF019
         event = HOMELINK_MESSAGE_EVENT.format(
             domain=DOMAIN, key=payload[MQTT_DEVICESERIALNUMBER]
@@ -281,7 +294,9 @@ async def _async_event_message(hass, key, payload):
     dispatcher_send(hass, event, payload)
 
 
-async def _async_alarm_message(hass, key, topic, payload, messagetype):
+async def _async_alarm_message(
+    hass: HomeAssistant, key: str, topic: str, payload: dict, messagetype: str
+) -> None:
     if payload[MQTT_INSIGHTID]:
         alarm_type = ALARMTYPE_ENVIRONMENT
     else:
@@ -292,13 +307,17 @@ async def _async_alarm_message(hass, key, topic, payload, messagetype):
     dispatcher_send(hass, event, topic, payload, messagetype)
 
 
-async def _async_device_message(hass, topic, payload, messagetype):
+async def _async_device_message(
+    hass: HomeAssistant, topic: str, payload: dict, messagetype: str
+) -> None:
     serialnumber = payload[MQTT_DEVICESERIALNUMBER]
     event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=serialnumber).lower()
     dispatcher_send(hass, event, payload, topic, messagetype)
 
 
-def _extract_property(topic, root_topic, properties):
+def _extract_property(
+    topic: str, root_topic: str, properties: dict[str, Any]
+) -> str | None:
     if not properties:
         return None
     clean_topic = topic.removeprefix(root_topic)
@@ -312,14 +331,10 @@ def _extract_property(topic, root_topic, properties):
     )
 
 
-def _extract_message_type(topic):
+def _extract_message_type(topic: str) -> str:
     messagetype = topic.split("/")[0]
     messagetypes = [item.value for item in HomeLINKMessageType]
     if messagetype in messagetypes:
         return messagetype
 
     return HomeLINKMessageType.MESSAGE_UNKNOWN
-
-
-def _extract_classifier(topic, item):
-    return topic.split("/")[item]

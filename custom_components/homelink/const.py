@@ -81,8 +81,6 @@ CONF_WEBHOOK_ENABLE = "webhook_enable"
 
 COORD_ALERTS = "alerts"
 COORD_CONFIG_ENTRY_OPTIONS = "config_entry_options"
-COORD_DATA_MQTT = "mqtt"
-COORD_DATA_WEBHOOK = "webhook"
 COORD_DEVICES = "devices"
 COORD_GATEWAY_KEY = "gateway_key"
 COORD_INSIGHTS = "insights"

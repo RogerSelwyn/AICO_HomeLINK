@@ -6,19 +6,22 @@ import asyncio
 import logging
 import time
 from collections.abc import Mapping
-from typing import Any, Self
+from copy import deepcopy
+from typing import Any, List, Self
 
 import aiohttp
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components import webhook
+from homeassistant.config_entries import ConfigEntry, ConfigFlowResult
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_WEBHOOK_ID
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import AbortFlow, FlowResult
+from homeassistant.data_entry_flow import AbortFlow
 from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
 from homeassistant.helpers.network import NoURLAvailableError, get_url
 from homeassistant.helpers.selector import BooleanSelector, TextSelector
+
 from pyhomelink.api import HomeLINKApi
 
 from .const import (
@@ -52,6 +55,8 @@ class OAuth2FlowHandler(
     """Config flow to handle Google Calendars OAuth2 authentication."""
 
     DOMAIN = DOMAIN
+    VERSION = 2
+    MINOR_VERSION = 0
 
     def __init__(self) -> None:
         """Set up instance."""
@@ -65,11 +70,16 @@ class OAuth2FlowHandler(
 
     async def async_step_auth(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Create an entry for auth."""
+
+        # HomeLINK service does not support scope authentication, client id/secret
+        # is a pseudo userid/password that provides an expiring access token.
+        # So there is no re-auth possible.
         if self._reauth_config_entry:
             return self.async_abort(reason="oauth_error")
 
+        # Retrieve a token is possible, check it is valid and set expires_at as needed
         try:
             async with asyncio.timeout(OAUTH_TOKEN_TIMEOUT_SEC):
                 token = await self.flow_impl.async_resolve_external_data(
@@ -104,20 +114,26 @@ class OAuth2FlowHandler(
     async def async_step_reauth(
         self,
         entry_data: Mapping[str, Any],  # pylint: disable=unused-argument
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Perform reauth upon an API authentication error."""
+
+        # No (re-)auth is provide by HomeLINK (see not earlier)
+        # This process guides user to delete and re-add the integration.
+        # Unless they know how to hack the application credentials with a new
+        # client id/secret
+
         self._reauth_config_entry = self._get_reauth_entry()
         return await self.async_step_reauth_confirm()
 
     async def async_step_reauth_confirm(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Confirm reauth dialog."""
         if user_input is None:
             return self.async_show_form(step_id="reauth_confirm")
         return await self.async_step_user()
 
-    async def async_oauth_create_entry(self, data: dict) -> FlowResult:
+    async def async_oauth_create_entry(self, data: dict) -> ConfigFlowResult:
         """Create an entry for HomeLINK ."""
         existing_entry = await self.async_set_unique_id(DOMAIN)
         if existing_entry:
@@ -129,7 +145,7 @@ class OAuth2FlowHandler(
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
+    def async_get_options_flow(config_entry: ConfigEntry):
         """HomeLINK options callback."""
         return HomeLINKOptionsFlowHandler(config_entry)
 
@@ -141,7 +157,7 @@ class OAuth2FlowHandler(
 class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
     """Config flow options for HomeLINK."""
 
-    def __init__(self, config_entry):
+    def __init__(self, config_entry: ConfigEntry):
         """Initialize HomeLINK options flow."""
         self._entry = config_entry
         options = config_entry.options
@@ -156,31 +172,36 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         self._mqtt_username = options.get(CONF_USERNAME, "")
         self._mqtt_password = options.get(CONF_PASSWORD, "")
         self._webhook_id = options.get(CONF_WEBHOOK_ID, None)
-        self._user_input = None
+        self._user_input: dict[str, Any] | None = None
         self._webhook_displayed = False
-        self._property_list = []
+        self._property_list: List[str] = []
 
     async def async_step_init(
         self,
-        user_input=None,  # pylint: disable=unused-argument
-    ) -> FlowResult:
+        user_input: dict[str, Any] | None = None,  # pylint: disable=unused-argument
+    ) -> ConfigFlowResult:
         """Set up the option flow."""
         self._property_list = await self._async_get_properties()
 
         return await self.async_step_user()
 
-    async def async_step_user(self, user_input=None) -> FlowResult:
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         # sourcery skip: last-if-guard
         """Handle a flow initialized by the user."""
+
+        # Need at least one property selected
+        # If MQTT enabled then show MQTT form or HomeLINK form
+        # If Webhooks enabled then show Webhooks form (which provide the webhook url)
         errors = {}
         if user_input is not None:
-            stored_properties = user_input.get(CONF_PROPERTIES).copy()
+            stored_properties = deepcopy(user_input.get(CONF_PROPERTIES))
             self._user_input = user_input
             self._properties = {}
+            conf_properties: Any = user_input.get(CONF_PROPERTIES)
             for hl_property in self._property_list:
-                self._properties[hl_property] = hl_property in user_input.get(
-                    CONF_PROPERTIES
-                )
+                self._properties[hl_property] = hl_property in conf_properties
             self._user_input[CONF_PROPERTIES] = self._properties
 
             self._insights_enable = user_input.get(CONF_INSIGHTS_ENABLE)
@@ -188,7 +209,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             self._webhook_enable = user_input.get(CONF_WEBHOOK_ENABLE)
             self._mqtt_homelink = user_input.get(CONF_MQTT_HOMELINK)
 
-            if len(stored_properties) == 0:
+            if len(stored_properties) == 0:  # type: ignore[arg-type]
                 errors[CONF_PROPERTIES] = "must_select_one"
 
             if not self._webhook_enable:
@@ -244,7 +265,9 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             errors=errors,
         )
 
-    async def _async_get_properties(self):
+    async def _async_get_properties(self) -> List[str]:
+        # Perform authentication and fail is not possible
+        # Then retrieve the property list
         implementation = (
             await config_entry_oauth2_flow.async_get_config_entry_implementation(
                 self.hass, self._entry
@@ -286,14 +309,17 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                 del self._properties[hl_property]
         return property_list
 
-    async def async_step_ha_mqtt(self, user_input=None) -> FlowResult:
+    async def async_step_ha_mqtt(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Handle HA MQTT setup."""
+        # Once mqtt form processed, if webhooks enabled, show that form
         if user_input is not None:
             self._mqtt_topic = _remove_suffixes(user_input.get(CONF_MQTT_TOPIC))
             self._event_enable = user_input.get(CONF_EVENT_ENABLE)
             user_input[CONF_MQTT_TOPIC] = self._mqtt_topic
 
-            self._user_input = {**user_input, **self._user_input}
+            self._user_input = {**user_input, **self._user_input}  # type: ignore[dict-item]
             if self._webhook_enable:
                 return await self.async_step_homelink_webhook()
             return self.async_create_entry(title="", data=self._user_input)
@@ -318,8 +344,11 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             last_step=last_step,
         )
 
-    async def async_step_homelink_mqtt(self, user_input=None) -> FlowResult:
+    async def async_step_homelink_mqtt(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Handle HomeLINK MQTT setup."""
+        # Once mqtt form processed, test the connection then if webhooks enabled, show that form
         errors = {}
         if user_input is not None:
             self._event_enable = user_input.get(CONF_EVENT_ENABLE)
@@ -329,8 +358,8 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             self._mqtt_topic = _remove_suffixes(user_input.get(CONF_MQTT_TOPIC))
             user_input[CONF_MQTT_TOPIC] = self._mqtt_topic
 
-            self._user_input = {**user_input, **self._user_input}
-            errors = await self._async_test_connection(self._user_input)
+            self._user_input = {**user_input, **self._user_input}  # type: ignore[dict-item]
+            errors = await self._async_test_connection()
             if not errors:
                 if self._webhook_enable:
                     return await self.async_step_homelink_webhook()
@@ -369,8 +398,11 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             last_step=last_step,
         )
 
-    async def async_step_homelink_webhook(self, user_input=None) -> FlowResult:
+    async def async_step_homelink_webhook(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Handle HomeLINK MQTT setup."""
+        # This form just shows the webhook url that the user must use on the HomeLINK dashboard
         if not self._webhook_id:
             self._webhook_id = webhook.async_generate_id()
         user_input = {CONF_WEBHOOK_ID: self._webhook_id}
@@ -385,11 +417,11 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                     ATTR_EXTERNAL_URL: external_url,
                 },
             )
-        self._user_input = {**user_input, **self._user_input}
+        self._user_input = {**user_input, **self._user_input}  # type: ignore[dict-item]
         return self.async_create_entry(title="", data=self._user_input)
 
-    async def _async_test_connection(self, options):
-        hl_mqtt = HomeLINKMQTT(self.hass, options)
+    async def _async_test_connection(self) -> dict:
+        hl_mqtt = HomeLINKMQTT(self.hass, self._user_input)
 
         if ret := await hl_mqtt.async_try_connect():
             return (

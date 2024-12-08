@@ -40,20 +40,20 @@ class HomeLINKOAuth2Implementation(AuthImplementation):
         new_token = await self._async_token_refresh()
         return {**token, **new_token}
 
-    async def _async_token_refresh(self):
+    async def _async_token_refresh(self) -> dict[Any, Any]:
         session = async_get_clientsession(self.hass)
         url = self.token_url.format(self.client_id, self.client_secret)
         resp = await session.get(url)
         resp.raise_for_status()
         token = cast(dict, await resp.json())
-        return (
-            {
-                "access_token": token["accessToken"],
-                "refresh_token": None,
-                "scope": "standard",
-                "token_type": "Bearer",
-                "expires_in": 20 * 60 * 60,
-            }
-            if token
-            else False
-        )
+        # HomeLINK has has non-standard OAUTH implementation since no `refresh`
+        # token is used and there is no authorisation to the scope.
+        # In effect client id/secret is just a userid/password that provides
+        # a token that expires in the way a normal access token expires.
+        return {
+            "access_token": token["accessToken"],
+            "refresh_token": None,
+            "scope": "standard",
+            "token_type": "Bearer",
+            "expires_in": 20 * 60 * 60,
+        }

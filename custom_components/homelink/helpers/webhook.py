@@ -1,10 +1,12 @@
 """Webhook management for HomeLINK."""
 
 import logging
+from typing import Any
 
 import aiohttp
 from aiohttp.hdrs import METH_POST
 from homeassistant.components import webhook
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import dispatcher_send
 
@@ -34,11 +36,11 @@ ALLOWED_METHODS = [METH_POST]
 class HomeLINKWebhook:
     """HomeLINK Webhooks."""
 
-    def __init__(self, entry):
+    def __init__(self, entry: ConfigEntry) -> None:
         """Initialise the webhooks."""
         self._entry = entry
 
-    def register_webhooks(self, hass, webhook_id):
+    def register_webhooks(self, hass: HomeAssistant, webhook_id: Any) -> None:
         """Register the required webhooks with Home Assistant."""
 
         webhook.async_register(
@@ -51,11 +53,10 @@ class HomeLINKWebhook:
         )
         _LOGGER.debug("HomeLINK Webhook registered")
 
-    def unregister_webhooks(self, hass, webhook_id):
+    def unregister_webhooks(self, hass: HomeAssistant, webhook_id: Any) -> None:
         """Unregister the required webhooks with Home Assistant."""
         webhook.async_unregister(hass, webhook_id)
         _LOGGER.debug("HomeLINK Webhook unregistered")
-        return
 
     async def _async_handle_webhook(
         self,
@@ -111,7 +112,7 @@ class HomeLINKWebhook:
         _LOGGER.warning("Unknown Webhook message type: %s - %s", messagetype, message)
         return
 
-    def _identify_message(self, message):
+    def _identify_message(self, message: dict) -> tuple[str, str]:
         actiontype = message[WEBHOOK_ACTION]
         if WEBHOOK_DEVICECOUNT in message:
             messagetype = HomeLINKMessageType.MESSAGE_PROPERTY
@@ -128,14 +129,16 @@ class HomeLINKWebhook:
         return messagetype, actiontype
 
     async def _async_property_device_update_message(
-        self, hass, key, topic, message, messagetype
-    ):
+        self, hass: HomeAssistant, key: str, topic: str, message: dict, messagetype: str
+    ) -> None:
         event = HOMELINK_MESSAGE_MQTT.format(
             domain=DOMAIN, key=f"{key}_{ALARMTYPE_ALARM}"
         ).lower()
         dispatcher_send(hass, event, topic, message, messagetype)
 
-    async def _async_alarm_message(self, hass, key, topic, payload, messagetype):
+    async def _async_alarm_message(
+        self, hass: HomeAssistant, key: str, topic: str, payload: dict, messagetype: str
+    ) -> None:
         if payload[MQTT_INSIGHTID]:
             alarm_type = ALARMTYPE_ENVIRONMENT
         else:
@@ -145,7 +148,9 @@ class HomeLINKWebhook:
         ).lower()
         dispatcher_send(hass, event, topic, payload, messagetype)
 
-    async def _async_device_message(self, hass, topic, message, messagetype):
+    async def _async_device_message(
+        self, hass: HomeAssistant, topic: str, message: dict, messagetype: str
+    ) -> None:
         serialnumber = message[WEBHOOK_DEVICESERIALNUMBER]
         event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=serialnumber).lower()
         dispatcher_send(hass, event, message, topic, messagetype)
