@@ -159,7 +159,6 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
 
     def __init__(self, config_entry: ConfigEntry):
         """Initialize HomeLINK options flow."""
-        self._entry = config_entry
         options = config_entry.options
         self._properties = options.get(CONF_PROPERTIES, {})
         self._mqtt_enable = options.get(CONF_MQTT_ENABLE, False)
@@ -266,15 +265,15 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         )
 
     async def _async_get_properties(self) -> List[str]:
-        # Perform authentication and fail is not possible
+        # Perform authentication and fail if not possible
         # Then retrieve the property list
         implementation = (
             await config_entry_oauth2_flow.async_get_config_entry_implementation(
-                self.hass, self._entry
+                self.hass, self.config_entry
             )
         )
         session = config_entry_oauth2_flow.OAuth2Session(
-            self.hass, self._entry, implementation
+            self.hass, self.config_entry, implementation
         )
         try:
             await session.async_ensure_token_valid()
