@@ -1,7 +1,7 @@
 """Support for HomeLINK sensors."""
 
 from collections.abc import Callable
-from typing import Any, List
+from typing import Any
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
@@ -270,10 +270,10 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         alarm_type: str,
     ) -> None:
         """Property entity object for HomeLINK sensor."""
-        self._alerts: List[dict] = []
+        self._alerts: list[dict] = []
         self._status: bool | None = None
-        self._alarms_devices: List[str | None] | str = []
-        self._alarms_rooms: List[str | None] | str = []
+        self._alarms_devices: list[str | None] | str = []
+        self._alarms_rooms: list[str | None] | str = []
         self._dev_reg = device_registry.async_get(hass)
         super().__init__(coordinator, hl_property_key, alarm_type)
         self._entry = entry
@@ -375,7 +375,7 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             alarms_rooms or ALARMS_NONE,
         )
 
-    def _set_alerts(self) -> List[dict]:
+    def _set_alerts(self) -> list[dict]:
         # Alerts relate to devices on than environment sensor
         # so there is no location
         return [
@@ -393,7 +393,7 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             if not alert.location
         ]
 
-    def _get_alerts(self) -> List[Alert]:
+    def _get_alerts(self) -> list[Alert]:
         # Retrieve the alert if:
         # - Device is environment and the alert is and insight
         # - Device is alarm and alert is not environment and not an insight
@@ -463,7 +463,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         device_key: str,
     ) -> None:
         """Device entity object for HomeLINK sensor."""
-        self._alerts: List[dict] = []
+        self._alerts: list[dict] = []
         super().__init__(coordinator, hl_property_key, device_key)
         self._entry = entry
 
@@ -576,7 +576,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
     def _set_status(self) -> bool:
         return bool(self._get_alerts())
 
-    def _set_alerts(self) -> List[dict]:
+    def _set_alerts(self) -> list[dict]:
         alerts = self._get_alerts()
         return [
             {
@@ -592,7 +592,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             for alert in alerts
         ]
 
-    def _get_alerts(self) -> List[Alert]:
+    def _get_alerts(self) -> list[Alert]:
         # Retrieve the alert if:
         # - The alert is a device and is for the entity device
         # - The alert location is entity location and there is no serialnumber

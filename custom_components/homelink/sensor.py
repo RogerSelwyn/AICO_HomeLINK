@@ -418,7 +418,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
 
 
 class HomeLINKEnergyReadingSensor(HomeLINKReadingSensor):
-    """An energy Reading Sensor"""
+    """An energy Reading Sensor."""
 
     @property
     def translation_key(self) -> str:

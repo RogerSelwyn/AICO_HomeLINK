@@ -5,7 +5,7 @@ import logging
 import traceback
 from copy import deepcopy
 from datetime import date, datetime, timedelta
-from typing import Any, List
+from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -190,7 +190,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
 
     async def _async_retrieve_readings(
         self, hl_property: Property, property_devices: dict[str, Device]
-    ) -> List[PropertyReading]:
+    ) -> list[PropertyReading]:
         readings = []
         for device in property_devices.values():
             if hasattr(device.rel, ATTR_READINGS):

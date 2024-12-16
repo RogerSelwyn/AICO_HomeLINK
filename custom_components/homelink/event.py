@@ -1,7 +1,5 @@
 """Support for HomeLINK events."""
 
-from typing import List
-
 from homeassistant.components.event import DOMAIN as EVENT_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
@@ -126,7 +124,7 @@ class HomeLINKPropertyEvent(HomeLINKEventEntity):
     """Event entity for HomeLINK Property."""
 
     def __init__(
-        self, entry: HLConfigEntry, hl_property_key: str, eventtypes: List[str]
+        self, entry: HLConfigEntry, hl_property_key: str, eventtypes: list[str]
     ) -> None:
         """Property event entity object for HomeLINK sensor."""
         super().__init__(entry, hl_property_key, eventtypes, hl_property_key)
@@ -147,7 +145,7 @@ class HomeLINKDeviceEvent(HomeLINKEventEntity):
         device_key: str,
         device: Device,
         gateway_key: str,
-        eventtypes: List[str],
+        eventtypes: list[str],
     ) -> None:
         """Device event entity object for HomeLINK sensor."""
         mqtt_key = build_mqtt_device_key(device, device_key, gateway_key)

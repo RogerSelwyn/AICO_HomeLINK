@@ -2,7 +2,6 @@
 
 from abc import abstractmethod
 from collections.abc import Callable
-from typing import List
 
 from homeassistant.components.event import EventEntity
 from homeassistant.core import callback
@@ -147,7 +146,7 @@ class HomeLINKEventEntity(EventEntity):
     _attr_should_poll = False
 
     def __init__(
-        self, entry: HLConfigEntry, key: str, eventtypes: List[str], mqtt_key: str
+        self, entry: HLConfigEntry, key: str, eventtypes: list[str], mqtt_key: str
     ) -> None:
         """Property event entity object for HomeLINK sensor."""
         self._key = key

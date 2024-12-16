@@ -7,7 +7,7 @@ import logging
 import time
 from collections.abc import Mapping
 from copy import deepcopy
-from typing import Any, List, Self
+from typing import Any, Self
 
 import aiohttp
 import homeassistant.helpers.config_validation as cv
@@ -173,7 +173,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         self._webhook_id = options.get(CONF_WEBHOOK_ID, None)
         self._user_input: dict[str, Any] | None = None
         self._webhook_displayed = False
-        self._property_list: List[str] = []
+        self._property_list: list[str] = []
 
     async def async_step_init(
         self,
@@ -264,7 +264,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             errors=errors,
         )
 
-    async def _async_get_properties(self) -> List[str]:
+    async def _async_get_properties(self) -> list[str]:
         # Perform authentication and fail if not possible
         # Then retrieve the property list
         implementation = (
