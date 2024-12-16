@@ -71,5 +71,33 @@
         "title": "Use the URL below for your webhooks"
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "last_tested_date": {
+        "name": "Last Tested Date"
+      },
+      "replace_by_date": {
+        "name": "Replace By Date"
+      },
+      "electricity": {
+        "name": "Electricity"
+      },
+      "gas": {
+        "name": "Gas"
+      },
+      "electricity_tariff": {
+        "name": "Electricity Tariff"
+      },
+      "gas_tariff": {
+        "name": "Gas Tariff"
+      }
+    }
+  },
+  "exceptions": {
+    "homelink_mqtt_invalid": "HomeLink MQTT credentials/topic are invalid. Please reconfigure",
+    "homelink_mqtt_unavailable": "HomeLink MQTT server not available",
+    "error_communicating_with_api": "Error communicating with HL API: {api_err}",
+    "timeout_communicating_with_api": "Timeout communicating with HL API: {err_traceback}"
   }
 }

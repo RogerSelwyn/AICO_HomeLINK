@@ -1,21 +1,24 @@
 """Support for HomeLINK sensors."""
 
-import logging
+from collections.abc import Callable
+from typing import Any, List
 
 from homeassistant.components.binary_sensor import (
     BinarySensorDeviceClass,
     BinarySensorEntity,
 )
-
-# from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect, dispatcher_send
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
 
-from . import HLConfigEntry
+from pyhomelink.alert import Alert
+from pyhomelink.device import Device
+
 from .const import (
     ALARMS_NONE,
     ALARMTYPE_ALARM,
@@ -61,6 +64,7 @@ from .const import (
     HOMELINK_ADD_PROPERTY,
     HOMELINK_MESSAGE_MQTT,
     MODELLIST_ALARMS,
+    MODELLIST_ENERGY,
     MODELLIST_ENVIRONMENT,
     MODELLIST_PROBLEMS,
     MODELTYPE_COALARM,
@@ -69,20 +73,22 @@ from .const import (
     WEBHOOK_READINGTYPEID,
     HomeLINKMessageType,
 )
+from .helpers.config_data import HLConfigEntry
 from .helpers.coordinator import HomeLINKDataCoordinator
 from .helpers.entity import (
     HomeLINKAlarmEntity,
     HomeLINKDeviceEntity,
-    HomeLINKPropertyEntity,
 )
-from .helpers.events import raise_device_event, raise_property_event
 from .helpers.utils import (
     build_device_identifiers,
     build_mqtt_device_key,
     get_message_date,
+    property_device_info,
+    raise_device_event,
+    raise_property_alarm_event,
 )
 
-_LOGGER = logging.getLogger(__name__)
+PARALLEL_UPDATES = 1
 
 
 async def async_setup_entry(
@@ -91,8 +97,15 @@ async def async_setup_entry(
     """HomeLINK Sensor Setup."""
     hl_coordinator: HomeLINKDataCoordinator = entry.runtime_data.coordinator
 
+    # Process each property which has binary_sensor for:
+    # - Property
+    # - Property (Fire) Alarm
+    # - Property (Environment) Alarm - if there are eny environment devices
+    # - Each device (apart from energy devices since they have no alert status)
+
     @callback
     def async_add_property(hl_property):
+        # Callback since this can be initiated post setup by coordinator
         async_add_entities([HomeLINKProperty(hass, entry, hl_coordinator, hl_property)])
         async_add_entities(
             [HomeLINKAlarm(hass, entry, hl_coordinator, hl_property, ALARMTYPE_ALARM)]
@@ -101,7 +114,8 @@ async def async_setup_entry(
         for device_key, device in hl_coordinator.data[COORD_PROPERTIES][hl_property][
             COORD_DEVICES
         ].items():
-            async_add_device(hl_property, device_key, None, None)
+            if device.modeltype not in MODELLIST_ENERGY:
+                async_add_device(hl_property, device_key, None, None)
             if device.modeltype in MODELLIST_ENVIRONMENT:
                 environment = True
 
@@ -115,7 +129,13 @@ async def async_setup_entry(
             )
 
     @callback
-    def async_add_device(hl_property, device_key, device, gateway_key):  # pylint: disable=unused-argument
+    def async_add_device(
+        hl_property: str,
+        device_key: str,
+        device: Device,  # pylint: disable=unused-argument
+        gateway_key: str,  # pylint: disable=unused-argument
+    ) -> None:
+        # Callback since this can be initiated post setup by coordinator
         async_add_entities(
             [HomeLINKDevice(entry, hl_coordinator, hl_property, device_key)]
         )
@@ -135,7 +155,7 @@ async def async_setup_entry(
     )
 
 
-class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
+class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorEntity):
     """Property entity object for HomeLINK sensor."""
 
     _attr_has_entity_name = True
@@ -147,30 +167,43 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
     def __init__(
         self,
         hass: HomeAssistant,
-        entry,
+        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
-        hl_property_key,
+        hl_property_key: str,
     ) -> None:
         """Property entity object for HomeLINK sensor."""
-
-        self._status = None
-        self._alarms = []
+        super().__init__(coordinator)
+        self._status: bool | None = None
+        self._alarms: list[str | None] | str = []
         self._dev_reg = device_registry.async_get(hass)
-        super().__init__(coordinator, hl_property_key)
+        self._key = hl_property_key
+        self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
+        self._gateway_key = self._property[COORD_GATEWAY_KEY]
+        self._update_attributes()
         self._entry = entry
         self._attr_unique_id = f"{self._key}"
         if entry.options.get(CONF_MQTT_ENABLE):
-            self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
+            self._root_topic = _get_mqtt_topic(entry)
 
     @property
-    def name(self) -> str:
+    def name(self) -> None:
         """Return the name of the sensor as device name."""
         return None
 
     @property
-    def is_on(self) -> str:
+    def is_on(self) -> bool | None:
         """Return the state of the sensor."""
         return self._status
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return True
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Entity device information."""
+        return property_device_info(self._key)
 
     @property
     def device_class(self) -> BinarySensorDeviceClass:
@@ -178,7 +211,7 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
         return BinarySensorDeviceClass.SAFETY
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict[str, Any]:
         """Return entity specific state attributes."""
         hl_property = self._property[COORD_PROPERTY]
         return {
@@ -190,15 +223,22 @@ class HomeLINKProperty(HomeLINKPropertyEntity, BinarySensorEntity):
             ATTR_ALARMED_DEVICES: self._alarms,
         }
 
-    def _update_attributes(self):
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle data update."""
+        self._update_attributes()
+        self.async_write_ha_state()
+
+    def _update_attributes(self) -> None:
         if self._key in self.coordinator.data[COORD_PROPERTIES]:
             self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
             self._gateway_key = self._property[COORD_GATEWAY_KEY]
             self._status, self._alarms = self._set_status()
 
-    def _set_status(self) -> bool:
+    def _set_status(self) -> tuple[bool, list[str | None] | str]:
         status = STATUS_GOOD
         alarms = []
+        # Identify if there are any alerts for the property and set status accordingly
         for alert in self.coordinator.data[COORD_PROPERTIES][self._key][COORD_ALERTS]:
             if alert.rel.hl_property == f"property/{self._key}" and hasattr(
                 alert.rel, ATTR_DEVICE
@@ -224,32 +264,32 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
     def __init__(
         self,
         hass: HomeAssistant,
-        entry,
+        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
-        hl_property_key,
-        alarm_type,
+        hl_property_key: str,
+        alarm_type: str,
     ) -> None:
         """Property entity object for HomeLINK sensor."""
-        self._alerts = None
-        self._status = None
-        self._alarms_devices = []
-        self._alarms_rooms = []
+        self._alerts: List[dict] = []
+        self._status: bool | None = None
+        self._alarms_devices: List[str | None] | str = []
+        self._alarms_rooms: List[str | None] | str = []
         self._dev_reg = device_registry.async_get(hass)
         super().__init__(coordinator, hl_property_key, alarm_type)
         self._entry = entry
         self._attr_unique_id = f"{self._key}_{alarm_type}"
         self._lastdate = dt_util.utcnow()
-        self._unregister_message_handler = None
+        self._unregister_message_handler: Callable[[], None] | None = None
         if entry.options.get(CONF_MQTT_ENABLE):
-            self._root_topic = entry.options.get(CONF_MQTT_TOPIC).removesuffix("#")
+            self._root_topic = _get_mqtt_topic(entry)
 
     @property
-    def name(self) -> str:
+    def name(self) -> None:
         """Return the name of the sensor as device name."""
         return None
 
     @property
-    def is_on(self) -> str:
+    def is_on(self) -> bool | None:
         """Return the state of the sensor."""
         return self._status
 
@@ -259,22 +299,25 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         return BinarySensorDeviceClass.SAFETY
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict[str, Any]:
         """Return entity specific state attributes."""
         attributes = {ATTR_ALARMED_DEVICES: self._alarms_devices}
+        # If this is an environment sensor, then alerts link to 'virtual' rooms.
         if self._alarm_type == ALARMTYPE_ENVIRONMENT:
             attributes[ATTR_ALARMED_ROOMS] = self._alarms_rooms
         if self._alerts:
-            attributes[ATTR_ALERTS] = self._alerts
+            attributes[ATTR_ALERTS] = self._alerts  # type: ignore[assignment]
 
         return attributes
 
     async def async_added_to_hass(self) -> None:
         """Register MQTT handler."""
+        # If MQTT or webhooks is enabled then we need the handler for message processing
         await super().async_added_to_hass()
         if self._entry.options.get(CONF_MQTT_ENABLE) or self._entry.options.get(
             CONF_WEBHOOK_ENABLE
         ):
+            # Build the unique key for the event
             event = HOMELINK_MESSAGE_MQTT.format(
                 domain=DOMAIN, key=f"{self._key}_{self._alarm_type}"
             ).lower()
@@ -288,19 +331,28 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         if self._unregister_message_handler:
             self._unregister_message_handler()
 
-    def _update_attributes(self):
-        if self._key in self.coordinator.data[COORD_PROPERTIES]:
+    def _update_attributes(self) -> None:
+        if self._is_data_in_coordinator():
             self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
             self._gateway_key = self._property[COORD_GATEWAY_KEY]
             self._alerts = self._set_alerts()
             self._status, self._alarms_devices, self._alarms_rooms = self._set_status()
 
-    def _set_status(self) -> bool:
+    def _is_data_in_coordinator(self) -> bool:
+        if self._key in self.coordinator.data[COORD_PROPERTIES]:
+            return True
+        return False
+
+    def _set_status(self) -> tuple[bool, list[str | None] | str, list[Any] | str]:
         status = STATUS_GOOD
         if self._alerts:
             status = STATUS_NOT_GOOD
         alarms_devices = []
         alarms_rooms = []
+        # Identify if there are any alerts for the device and set status accordingly
+        # If there is no serial number of location on the alert then it is not for a device
+        # If it is for an environment sensor, then there will be no serial number, so allocate
+        # to a 'virtual' room.
         for alert in self._get_alerts():
             status = STATUS_NOT_GOOD
             if not alert.serialnumber and not alert.location:
@@ -323,7 +375,9 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             alarms_rooms or ALARMS_NONE,
         )
 
-    def _set_alerts(self):
+    def _set_alerts(self) -> List[dict]:
+        # Alerts relate to devices on than environment sensor
+        # so there is no location
         return [
             {
                 ATTR_ALERTID: alert.alertid,
@@ -339,7 +393,11 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             if not alert.location
         ]
 
-    def _get_alerts(self):
+    def _get_alerts(self) -> List[Alert]:
+        # Retrieve the alert if:
+        # - Device is environment and the alert is and insight
+        # - Device is alarm and alert is not environment and not an insight
+        # - Device is environment and alert is environment and not an insight
         return [
             alert
             for alert in self.coordinator.data[COORD_PROPERTIES][self._key][
@@ -362,25 +420,25 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         ]
 
     @callback
-    async def _async_message_handle(self, topic, payload, messagetype):
+    async def _async_message_handle(
+        self, topic: str, payload: dict, messagetype: str
+    ) -> None:
+        # Process message if it is new (so as to ignore messages retained on the MQTT broker)
+        # Initiates a co-ordinator refresh for Device/Property/Alert
         msgdate = get_message_date(payload)
         if msgdate < self._lastdate:
             return
         self._lastdate = msgdate
 
-        raise_property_event(self.hass, messagetype, topic, payload)
+        raise_property_alarm_event(self.hass, messagetype, topic, payload)
 
         if messagetype in [
             HomeLINKMessageType.MESSAGE_DEVICE,
             HomeLINKMessageType.MESSAGE_PROPERTY,
-        ]:
-            await self.coordinator.async_refresh()
-            return
-
-        if messagetype in [
             HomeLINKMessageType.MESSAGE_ALERT,
         ]:
             await self.coordinator.async_refresh()
+            return
 
 
 class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
@@ -399,39 +457,38 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
 
     def __init__(
         self,
-        entry,
+        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
-        hl_property_key,
-        device_key,
+        hl_property_key: str,
+        device_key: str,
     ) -> None:
         """Device entity object for HomeLINK sensor."""
-        self._alerts = None
+        self._alerts: List[dict] = []
         super().__init__(coordinator, hl_property_key, device_key)
         self._entry = entry
 
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
         self._lastdate = dt_util.utcnow()
-        self._unregister_message_handler = None
+        self._unregister_message_handler: Callable[[], None] | None = None
         self._device_class = self._build_device_class()
 
     @property
-    def name(self) -> str:
+    def name(self) -> None:
         """Return the name of the sensor."""
-
         return None
 
     @property
-    def is_on(self) -> str:
+    def is_on(self) -> bool | None:
         """Return the state of the sensor."""
         return self._status
 
     @property
-    def device_class(self) -> BinarySensorDeviceClass:
+    def device_class(self) -> BinarySensorDeviceClass | None:
         """Return the device_class."""
         return self._device_class
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict[str, Any]:
         """Return entity specific state attributes."""
         attributes = {
             ATTR_SERIALNUMBER: self._device.serialnumber,
@@ -456,16 +513,19 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
 
     async def async_added_to_hass(self) -> None:
         """Register message handler."""
+        # If MQTT or webhooks is enabled then we need the handler for message processing
         await super().async_added_to_hass()
         if self._entry.options.get(CONF_MQTT_ENABLE) or self._entry.options.get(
             CONF_WEBHOOK_ENABLE
         ):
+            # Build the unique key for the event
             key = build_mqtt_device_key(self._device, self._key, self._gateway_key)
-
             event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
             self._unregister_message_handler = async_dispatcher_connect(
                 self.hass, event, self._async_message_handle
             )
+
+            # Also add a handler on location for environment sensor
             if self._device.modeltype in MODELLIST_ENVIRONMENT:
                 event = HOMELINK_MESSAGE_MQTT.format(
                     domain=DOMAIN, key=self._device.location
@@ -479,7 +539,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         if self._unregister_message_handler:
             self._unregister_message_handler()
 
-    def _build_device_class(self):
+    def _build_device_class(self) -> BinarySensorDeviceClass | None:
         modeltype = self._device.modeltype
         if modeltype in MODELLIST_ALARMS:
             return BinarySensorDeviceClass.SMOKE
@@ -489,14 +549,8 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             return BinarySensorDeviceClass.PROBLEM
         return None
 
-    def _update_attributes(self):
-        if (
-            self._parent_key not in self.coordinator.data[COORD_PROPERTIES]
-            or self._key
-            not in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-                COORD_DEVICES
-            ]
-        ):
+    def _update_attributes(self) -> None:
+        if not self._is_data_in_coordinator():
             return
 
         self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
@@ -508,10 +562,21 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         self._alerts = self._set_alerts()
         self._status = self._set_status()
 
+    def _is_data_in_coordinator(self) -> bool:
+        if (
+            self._parent_key not in self.coordinator.data[COORD_PROPERTIES]
+            or self._key
+            not in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+                COORD_DEVICES
+            ]
+        ):
+            return False
+        return True
+
     def _set_status(self) -> bool:
         return bool(self._get_alerts())
 
-    def _set_alerts(self):
+    def _set_alerts(self) -> List[dict]:
         alerts = self._get_alerts()
         return [
             {
@@ -527,7 +592,11 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             for alert in alerts
         ]
 
-    def _get_alerts(self):
+    def _get_alerts(self) -> List[Alert]:
+        # Retrieve the alert if:
+        # - The alert is a device and is for the entity device
+        # - The alert location is entity location and there is no serialnumber
+        #   (which indicates it is an environment alert)
         return [
             alert
             for alert in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
@@ -547,7 +616,12 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         ]
 
     @callback
-    async def _async_message_handle(self, payload, topic, messagetype):
+    async def _async_message_handle(
+        self, payload: dict, topic: str, messagetype: str
+    ) -> None:
+        # Process message if it is new (so as to ignore messages retained on the MQTT broker)
+        # If it is a reading then pass it over to the reading sensor by dispatch
+        # Otherwise initiates a co-ordinator refresh for Alert
         msgdate = get_message_date(payload)
         if msgdate < self._lastdate and messagetype not in [
             HomeLINKMessageType.MESSAGE_READING,
@@ -567,8 +641,8 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         ]:
             await self.coordinator.async_refresh()
 
-    def _process_reading(self, payload, topic, messagetype):
-        # If msg is null then it is a webhook rather than a mqtt
+    def _process_reading(self, payload: dict, topic: str, messagetype: str) -> None:
+        # Dispatch to reading sensor
         readingtype = payload[WEBHOOK_READINGTYPEID].replace(".", "-")
 
         key = build_mqtt_device_key(
@@ -577,3 +651,8 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
 
         event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
         dispatcher_send(self.hass, event, payload, topic, messagetype, readingtype)
+
+
+def _get_mqtt_topic(entry: HLConfigEntry) -> str:
+    mqtt_topic: Any = entry.options.get(CONF_MQTT_TOPIC)
+    return mqtt_topic.removesuffix("#")

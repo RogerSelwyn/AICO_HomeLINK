@@ -10,8 +10,8 @@ from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClien
 from custom_components.homelink import async_setup_entry
 from custom_components.homelink.const import CONF_PROPERTIES
 from custom_components.homelink.helpers import api
-from homeassistant.config import async_process_ha_core_config
 from homeassistant.core import HomeAssistant
+from homeassistant.core_config import async_process_ha_core_config
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import (
     config_entry_oauth2_flow,
@@ -67,6 +67,7 @@ async def test_full_init(
     hass: HomeAssistant,
     setup_base_integration: None,
     base_config_entry: HomelinkMockConfigEntry,
+    entity_registry: er.EntityRegistry,
 ):
     """Test full HomeLINK initialisation."""
 
@@ -78,6 +79,11 @@ async def test_full_init(
         hass.states.get("sensor.dummy_user_my_house_hallway1_envco2sensor_abandonment")
         is None
     )
+
+    entities = er.async_entries_for_config_entry(
+        entity_registry, base_config_entry.entry_id
+    )
+    assert len(entities) == 31
 
 
 @pytest.mark.filterwarnings(

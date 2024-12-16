@@ -1,5 +1,75 @@
 [
     {
+        "unit": "n/a",
+        "type": "electricity-power-hour",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+            {
+                "count": 11,
+                "serialNumber": "299991234567",
+                "_rel": {
+                    "property": "property/DUMMY_USER_My_House",
+                    "device": "device/299991234567"
+                },
+                "values": [
+                    {
+                        "value": 0.112,
+                        "readingDate": "2024-10-29T04:00:00.000Z"
+                    },
+                    {
+                        "value": 0.096,
+                        "readingDate": "2024-10-29T04:30:00.000Z"
+                    },
+                    {
+                        "value": 0.105,
+                        "readingDate": "2024-10-29T05:00:00.000Z"
+                    },
+                    {
+                        "value": 0.101,
+                        "readingDate": "2024-10-29T00:00:00.000Z"
+                    },
+                    {
+                        "value": 0.089,
+                        "readingDate": "2024-10-29T00:30:00.000Z"
+                    },
+                    {
+                        "value": 0.12,
+                        "readingDate": "2024-10-29T01:00:00.000Z"
+                    },
+                    {
+                        "value": 0.124,
+                        "readingDate": "2024-10-29T01:30:00.000Z"
+                    },
+                    {
+                        "value": 0.103,
+                        "readingDate": "2024-10-29T02:00:00.000Z"
+                    },
+                    {
+                        "value": 0.089,
+                        "readingDate": "2024-10-29T02:30:00.000Z"
+                    },
+                    {
+                        "value": 0.115,
+                        "readingDate": "2024-10-29T03:00:00.000Z"
+                    },
+                    {
+                        "value": 0.127,
+                        "readingDate": "2024-10-29T03:30:00.000Z"
+                    }
+                ]
+            },
+            {
+                "count": 0,
+                "serialNumber": "C3CEC7FB-001FD75F",
+                "_rel": {
+                    "property": "property/DUMMY_USER_My_House",
+                    "device": "device/C3CEC7FB-001FD75F"
+                },
+                "values": []
+            }
+        ]
+    },
+    {
         "unit": "ppm",
         "type": "environment-co2-indoor",
         "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
@@ -508,6 +578,68 @@
     },
     {
         "unit": "n/a",
+        "type": "gas-power-hour",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+            {
+                "count": 9,
+                "serialNumber": "299991234567",
+                "_rel": {
+                    "property": "property/DUMMY_USER_My_House",
+                    "device": "device/299991234567"
+                },
+                "values": [
+                    {
+                        "value": 0.010972222,
+                        "readingDate": "2024-10-29T04:00:00.000Z"
+                    },
+                    {
+                        "value": 0.56,
+                        "readingDate": "2024-10-29T04:30:00.000Z"
+                    },
+                    {
+                        "value": 0,
+                        "readingDate": "2024-10-29T00:00:00.000Z"
+                    },
+                    {
+                        "value": 0,
+                        "readingDate": "2024-10-29T00:30:00.000Z"
+                    },
+                    {
+                        "value": 0.010972222,
+                        "readingDate": "2024-10-29T01:00:00.000Z"
+                    },
+                    {
+                        "value": 0,
+                        "readingDate": "2024-10-29T01:30:00.000Z"
+                    },
+                    {
+                        "value": 0.010972222,
+                        "readingDate": "2024-10-29T02:30:00.000Z"
+                    },
+                    {
+                        "value": 0,
+                        "readingDate": "2024-10-29T03:00:00.000Z"
+                    },
+                    {
+                        "value": 0,
+                        "readingDate": "2024-10-29T03:30:00.000Z"
+                    }
+                ]
+            },
+            {
+                "count": 0,
+                "serialNumber": "C3CEC7FB-001FD75F",
+                "_rel": {
+                    "property": "property/DUMMY_USER_My_House",
+                    "device": "device/C3CEC7FB-001FD75F"
+                },
+                "values": []
+            }
+        ]
+    },
+    {
+        "unit": "n/a",
         "type": "environment-absolutehumidity-indoor",
         "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
         "devices": [
@@ -672,6 +804,66 @@
                         "readingDate": "2024-09-07T07:22:04.000Z"
                     }
                 ]
+            }
+        ]
+    },
+    {
+        "unit": "n/a",
+        "type": "tariff-electricity-power-hour",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+            {
+                "count": 1,
+                "serialNumber": "299991234567",
+                "_rel": {
+                    "property": "property/DUMMY_USER_My_House",
+                    "device": "device/299991234567"
+                },
+                "values": [
+                    {
+                        "value": 22.49,
+                        "readingDate": "2024-10-29T00:00:00.000Z"
+                    }
+                ]
+            },
+            {
+                "count": 0,
+                "serialNumber": "C3CEC7FB-001FD75F",
+                "_rel": {
+                    "property": "property/DUMMY_USER_My_House",
+                    "device": "device/C3CEC7FB-001FD75F"
+                },
+                "values": []
+            }
+        ]
+    },
+    {
+        "unit": "n/a",
+        "type": "tariff-gas-power-hour",
+        "dataAvailability": "Only the last 30days of readings are available via this api. See: https://homelinkhelp.zendesk.com/hc/en-us/articles/6906536639249-Data-Availability-and-Retention",
+        "devices": [
+            {
+                "count": 1,
+                "serialNumber": "299991234567",
+                "_rel": {
+                    "property": "property/DUMMY_USER_My_House",
+                    "device": "device/299991234567"
+                },
+                "values": [
+                    {
+                        "value": 5.56,
+                        "readingDate": "2024-10-29T00:00:00.000Z"
+                    }
+                ]
+            },
+            {
+                "count": 0,
+                "serialNumber": "C3CEC7FB-001FD75F",
+                "_rel": {
+                    "property": "property/DUMMY_USER_My_House",
+                    "device": "device/C3CEC7FB-001FD75F"
+                },
+                "values": []
             }
         ]
     }

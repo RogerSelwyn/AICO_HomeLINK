@@ -1,7 +1,12 @@
 """HomeLINK entity."""
 
+from abc import abstractmethod
+from collections.abc import Callable
+from typing import List
+
 from homeassistant.components.event import EventEntity
 from homeassistant.core import callback
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
@@ -29,51 +34,27 @@ from ..const import (
     MQTT_SOURCEMODELTYPE,
     MQTT_STATUSID,
 )
+from .config_data import HLConfigEntry
 from .coordinator import HomeLINKDataCoordinator
 from .utils import (
     alarm_device_info,
     build_device_identifiers,
     device_device_info,
     get_message_date,
-    property_device_info,
 )
 
 
-class HomeLINKPropertyEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
-    """HomeLINK Property Entity."""
-
-    _attr_attribution = ATTRIBUTION
-
-    def __init__(self, coordinator: HomeLINKDataCoordinator, hl_property_key) -> None:
-        """Property entity object for HomeLINK sensor."""
-        super().__init__(coordinator)
-        self._key = hl_property_key
-        self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
-        self._gateway_key = self._property[COORD_GATEWAY_KEY]
-        self._update_attributes()
-
-    @property
-    def device_info(self):
-        """Entity device information."""
-        return property_device_info(self._key)
-
-    @callback
-    def _handle_coordinator_update(self) -> None:
-        """Handle data update."""
-        self._update_attributes()
-        self.async_write_ha_state()
-
-    def _update_attributes(self):
-        """Overloaded in sub entities."""
-
-
+# Supports binary_sensor and sensor for Alarm type entity
 class HomeLINKAlarmEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
     """HomeLINK Property Entity."""
 
     _attr_attribution = ATTRIBUTION
 
     def __init__(
-        self, coordinator: HomeLINKDataCoordinator, hl_property_key, alarm_type
+        self,
+        coordinator: HomeLINKDataCoordinator,
+        hl_property_key: str,
+        alarm_type: str,
     ) -> None:
         """Property entity object for HomeLINK sensor."""
         super().__init__(coordinator)
@@ -84,7 +65,12 @@ class HomeLINKAlarmEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         self._update_attributes()
 
     @property
-    def device_info(self):
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return super().available and self._is_data_in_coordinator()
+
+    @property
+    def device_info(self) -> DeviceInfo:
         """Entity device information."""
         return alarm_device_info(self._key, self._alarm_type)
 
@@ -94,17 +80,26 @@ class HomeLINKAlarmEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         self._update_attributes()
         self.async_write_ha_state()
 
-    def _update_attributes(self):
+    @abstractmethod
+    def _update_attributes(self) -> None:
+        """Overloaded in sub entities."""
+
+    @abstractmethod
+    def _is_data_in_coordinator(self) -> bool:
         """Overloaded in sub entities."""
 
 
+# Supports binary_sensor and sensor for Device type entity
 class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
     """HomeLINK Device Entity."""
 
     _attr_attribution = ATTRIBUTION
 
     def __init__(
-        self, coordinator: HomeLINKDataCoordinator, hl_property_key, device_key
+        self,
+        coordinator: HomeLINKDataCoordinator,
+        hl_property_key: str,
+        device_key: str,
     ) -> None:
         """Device entity object for HomeLINK sensor."""
         super().__init__(coordinator)
@@ -120,7 +115,12 @@ class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         self._update_attributes()
 
     @property
-    def device_info(self):
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return super().available and self._is_data_in_coordinator()
+
+    @property
+    def device_info(self) -> DeviceInfo:
         """Entity device information."""
         return device_device_info(self._identifiers, self._parent_key, self._device)
 
@@ -130,30 +130,42 @@ class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         self._update_attributes()
         self.async_write_ha_state()
 
-    def _update_attributes(self):
+    @abstractmethod
+    def _update_attributes(self) -> None:
+        """Overloaded in sub entities."""
+
+    @abstractmethod
+    def _is_data_in_coordinator(self) -> bool:
         """Overloaded in sub entities."""
 
 
+# Supports event for Property and Device type entity
 class HomeLINKEventEntity(EventEntity):
     """Event entity for HomeLINK ."""
 
     _attr_has_entity_name = True
-    _attr_name = "Event"
     _attr_should_poll = False
 
-    def __init__(self, entry, key, eventtypes, mqtt_key) -> None:
+    def __init__(
+        self, entry: HLConfigEntry, key: str, eventtypes: List[str], mqtt_key: str
+    ) -> None:
         """Property event entity object for HomeLINK sensor."""
         self._key = key
         self._attr_event_types = eventtypes
         self._entry = entry
         self._mqtt_key = mqtt_key
-        self._unregister_event_handler = None
+        self._unregister_event_handler: Callable[[], None] | None = None
         self._lastdate = dt_util.utcnow()
+
+    @property
+    def name(self) -> None:
+        """Return the name of the sensor as device name."""
+        return None
 
     @property
     def unique_id(self) -> str:
         """Return the unique_id of the event entity."""
-        return f"{self._key}_event"
+        return f"{self._key}"
 
     async def async_added_to_hass(self) -> None:
         """Register Event handler."""
@@ -164,12 +176,12 @@ class HomeLINKEventEntity(EventEntity):
         )
 
     async def async_will_remove_from_hass(self) -> None:
-        """Unregister Evemt handler."""
+        """Unregister Event handler."""
         if self._unregister_event_handler:
             self._unregister_event_handler()
 
     @callback
-    def _handle_event(self, event) -> None:
+    def _handle_event(self, event: dict) -> None:
         """Handle status event for this resource."""
         msgdate = get_message_date(event)
         if msgdate < self._lastdate:

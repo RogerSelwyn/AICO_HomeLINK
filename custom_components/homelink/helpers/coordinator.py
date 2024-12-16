@@ -1,13 +1,11 @@
 """HomeLINK coordinators."""
 
 import asyncio
-from copy import deepcopy
-from datetime import date, datetime, timedelta
 import logging
 import traceback
-
-from pyhomelink import HomeLINKApi
-from pyhomelink.exceptions import ApiException, AuthException
+from copy import deepcopy
+from datetime import date, datetime, timedelta
+from typing import Any, List
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -15,6 +13,13 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry, entity_registry
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+
+from pyhomelink import HomeLINKApi
+from pyhomelink.device import Device
+from pyhomelink.exceptions import ApiException, AuthException
+from pyhomelink.lookup import Lookup, LookupEventType
+from pyhomelink.property import Property
+from pyhomelink.reading import PropertyReading
 
 from ..const import (
     ATTR_ALARM,
@@ -30,6 +35,7 @@ from ..const import (
     COORD_PROPERTIES,
     COORD_PROPERTY,
     COORD_READINGS,
+    DOMAIN,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
     HOMELINK_LOOKUP_EVENTTYPE,
@@ -62,18 +68,28 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._hass = hass
         self._hl_api = hl_api
         self._entry = entry
-        self._known_properties = {}
+        self._known_properties: dict = {}
         self._dev_reg = device_registry.async_get(hass)
         self._first_refresh = True
-        self._eventtypes = []
+        self._eventtypes: list[Lookup] | list[LookupEventType] = []
         self._error = False
         self._throttle = datetime.now() - RETRIEVAL_INTERVAL_READINGS
 
     async def _async_setup(self) -> None:
-        await self._async_get_eventtypes_lookup()
+        # As a one off activity retrieve the eventtypes lookup
+        try:
+            await self._async_get_eventtypes_lookup()
 
-    async def _async_update_data(self):
+        except AuthException as auth_err:
+            if not self._error:
+                _LOGGER.warning("Error authenticating with HL API: %s", auth_err)
+                self._error = True
+            raise ConfigEntryAuthFailed from auth_err
+
+    async def _async_update_data(self) -> dict[str, Any]:
         """Fetch data from API endpoint."""
+
+        # Retrieve the core data and then check if there are any changes in properties or devices
 
         try:
             async with asyncio.timeout(10):
@@ -86,10 +102,14 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             raise ConfigEntryAuthFailed from auth_err
         except ApiException as api_err:
             if not self._error:
-                _LOGGER.warning("Error communicating with HL API: %s", api_err)
+                _LOGGER.warning("Error communicating with HL API: %s", str(api_err))
                 self._error = True
             raise UpdateFailed(
-                f"Error communicating with HL API: {api_err}"
+                translation_domain=DOMAIN,
+                translation_key="error_communicating_with_api",
+                translation_placeholders={
+                    "api_err": str(api_err),
+                },
             ) from api_err
         except asyncio.TimeoutError as timeout_err:
             err_traceback = traceback.format_exc()
@@ -97,7 +117,11 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 _LOGGER.warning("Timeout communicating with HL API: %s", err_traceback)
                 self._error = True
             raise UpdateFailed(
-                f"Timeout communicating with HL API: {err_traceback}"
+                translation_domain=DOMAIN,
+                translation_key="timeout_communicating_with_api",
+                translation_placeholders={
+                    "err_traceback": err_traceback,
+                },
             ) from timeout_err
         await self._async_check_for_changes(coord_properties)
         config_entry = self._entry.options
@@ -109,7 +133,15 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             COORD_CONFIG_ENTRY_OPTIONS: config_entry,
         }
 
-    async def _async_get_core_data(self):
+    async def _async_get_core_data(self) -> Any:
+        # Use a self built throttle since readings method can be
+        # called once for each property and  we need them all to be retrieved
+        # - Get all properties
+        # - Get all devices
+        # - Get all insights
+        # - For each property
+        #   - Get readings (throttled)
+        #   - Get alerts
         throttle = self._check_throttle()
         properties = await self._hl_api.async_get_properties()
         devices = await self._hl_api.async_get_devices()
@@ -140,23 +172,25 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 for insight in insights
                 if insight.rel.hl_property == hl_property.rel.self
             ]
+            readings: list[PropertyReading] = []
+            if not throttle:
+                readings = await self._async_retrieve_readings(
+                    hl_property, property_devices
+                )
             coord_properties[hl_property.reference] = {
                 COORD_GATEWAY_KEY: gateway_key,
                 COORD_PROPERTY: hl_property,
                 COORD_DEVICES: property_devices,
                 COORD_INSIGHTS: property_insights,
                 COORD_ALERTS: await hl_property.async_get_alerts(),
+                COORD_READINGS: readings,
             }
 
-            readings = []
-            if not throttle:
-                readings = await self._async_retrieve_readings(
-                    hl_property, property_devices
-                )
-            coord_properties[hl_property.reference][COORD_READINGS] = readings
         return coord_properties
 
-    async def _async_retrieve_readings(self, hl_property, property_devices):
+    async def _async_retrieve_readings(
+        self, hl_property: Property, property_devices: dict[str, Device]
+    ) -> List[PropertyReading]:
         readings = []
         for device in property_devices.values():
             if hasattr(device.rel, ATTR_READINGS):
@@ -164,18 +198,18 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 break
         return readings
 
-    async def _async_get_eventtypes_lookup(self):
+    async def _async_get_eventtypes_lookup(self) -> None:
         self._eventtypes = await self._hl_api.async_get_lookups(
             HOMELINK_LOOKUP_EVENTTYPE
         )
 
-    def _check_throttle(self):
+    def _check_throttle(self) -> bool:
         if datetime.now() >= self._throttle + RETRIEVAL_INTERVAL_READINGS:
             self._throttle = datetime.now()
             return False
         return True
 
-    async def _async_check_for_changes(self, coord_properties):
+    async def _async_check_for_changes(self, coord_properties: dict[str, Any]) -> None:
         if not self._known_properties:
             self._build_known_properties()
 
@@ -183,26 +217,33 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         await self._async_check_for_deletes(known_properties, coord_properties)
         self._check_for_adds(known_properties, coord_properties)
 
-    def _build_known_properties(self):
+    def _build_known_properties(self) -> None:
+        # Build list of known properties as a one time activity (which is maintained)
         devices = device_registry.async_entries_for_config_entry(
             self._dev_reg, self._entry.entry_id
         )
+
         for device in devices:
             if device.model == ATTR_PROPERTY.capitalize():
                 children = {
-                    list(device_child.identifiers)[0][2]: {
+                    list(device_child.identifiers)[0][1]: {
                         KNOWN_DEVICES_DEVICEID: device_child.id,
                         KNOWN_DEVICES_MODEL: device_child.model,
                     }
                     for device_child in devices
                     if device_child.via_device_id == device.id
                 }
-                self._known_properties[list(device.identifiers)[0][2]] = {
+
+                self._known_properties[list(device.identifiers)[0][1]] = {
                     KNOWN_DEVICES_ID: device.id,
                     KNOWN_DEVICES_CHILDREN: children,
                 }
 
-    async def _async_check_for_deletes(self, known_properties, coord_properties):
+    async def _async_check_for_deletes(
+        self, known_properties: dict, coord_properties: dict[str, Any]
+    ) -> None:
+        # If an existing property is not in the new list then delete its entities and devices
+        # If it is in the new list, check its devices are in the new list, if not then delete
         for known_property, device_key in known_properties.items():
             if known_property not in coord_properties:
                 for known_device, child_device in device_key[
@@ -236,7 +277,13 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                         known_device
                     )
 
-    def _check_for_adds(self, known_properties, coord_properties):
+    def _check_for_adds(
+        self, known_properties: dict, coord_properties: dict[str, Any]
+    ) -> None:
+        # Don't do this for first refresh, because that will be done by platform setup
+        # If a new property is found, dispatch out to all platforms to create it
+        # If property exists, but new devices found, dispatch out to all platforms to create it
+
         if not self._first_refresh:
             added = False
             for hl_property_key, hl_property in coord_properties.items():
@@ -265,7 +312,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
 
         self._first_refresh = False
 
-    async def _async_delete_device_and_entities(self, device):
+    async def _async_delete_device_and_entities(self, device: str) -> None:
         ent_reg = entity_registry.async_get(self._hass)
         entities = entity_registry.async_entries_for_device(ent_reg, device, True)
         for entity in entities:

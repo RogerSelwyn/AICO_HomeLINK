@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from datetime import date
 import sys
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, PropertyMock, patch
 
 from aiohttp import ClientSession
 from aiohttp.test_utils import TestClient
@@ -20,8 +20,8 @@ from homeassistant.components.application_credentials import (
     async_import_client_credential,
 )
 from homeassistant.components.webhook import async_generate_url
-from homeassistant.config import async_process_ha_core_config
 from homeassistant.core import Event, HomeAssistant
+from homeassistant.core_config import async_process_ha_core_config
 from homeassistant.setup import async_setup_component
 
 from .helpers.const import (  # MQTT_HA_OPTIONS,; MQTT_HL_OPTIONS,
@@ -180,10 +180,12 @@ async def setup_base_integration(
     base_config_entry: HomelinkMockConfigEntry,
 ) -> None:
     """Fixture for setting up the component."""
-    if hasattr(request, "param"):
-        method_name = request.param
-    else:
-        method_name = "standard_mocks"
+    method_name = "standard_mocks"
+    if hasattr(request, "param") and "method_name" in request.param:
+        method_name = request.param["method_name"]
+    enabled = False
+    if hasattr(request, "param") and "enabled" in request.param:
+        enabled = request.param["enabled"]
 
     mock_method = getattr(THIS_MODULE, method_name)
     mock_method(aioclient_mock)
@@ -195,7 +197,14 @@ async def setup_base_integration(
         {"external_url": EXTERNAL_URL},
     )
 
-    await hass.config_entries.async_setup(base_config_entry.entry_id)
+    if enabled:
+        with patch(
+            "homeassistant.helpers.entity.Entity.entity_registry_enabled_default",
+            PropertyMock(return_value=enabled),
+        ):
+            await hass.config_entries.async_setup(base_config_entry.entry_id)
+    else:
+        await hass.config_entries.async_setup(base_config_entry.entry_id)
 
 
 @pytest.fixture

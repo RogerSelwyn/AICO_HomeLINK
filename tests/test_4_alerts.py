@@ -11,7 +11,9 @@ from .helpers.utils import async_check_sensor, check_entity_state
 
 
 @pytest.mark.parametrize(
-    "setup_base_integration", ["environment_alert_mocks"], indirect=True
+    "setup_base_integration",
+    [{"method_name": "environment_alert_mocks", "enabled": True}],
+    indirect=True,
 )
 async def test_environment_entity_alert_states(
     hass: HomeAssistant,
@@ -33,7 +35,11 @@ async def test_environment_entity_alert_states(
     )
 
 
-@pytest.mark.parametrize("setup_base_integration", ["alarm_alert_mocks"], indirect=True)
+@pytest.mark.parametrize(
+    "setup_base_integration",
+    [{"method_name": "alarm_alert_mocks", "enabled": True}],
+    indirect=True,
+)
 async def test_alarm_alert_state(
     hass: HomeAssistant,
     setup_base_integration: None,

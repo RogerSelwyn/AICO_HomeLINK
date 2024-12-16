@@ -36,6 +36,6 @@ async def async_get_authorization_server(
 ) -> AuthorizationServer:
     """Return authorization server."""
     return AuthorizationServer(
-        authorize_url=None,
+        authorize_url="None",
         token_url=AUTH_URL,
     )

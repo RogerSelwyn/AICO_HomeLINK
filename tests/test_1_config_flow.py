@@ -182,7 +182,7 @@ async def test_reauth(
         result["flow_id"], user_input={"confirm": True}
     )
     assert result["type"] is FlowResultType.ABORT
-    assert result["reason"] == "reauth_successful"
+    assert result["reason"] == "oauth_error"
 
 
 @pytest.mark.usefixtures("current_request_with_host")

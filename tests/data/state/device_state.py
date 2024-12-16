@@ -265,3 +265,37 @@ TEMPERATURE = {
     "device_class": "temperature",
     "friendly_name": "DUMMY_USER_My_House HALLWAY1 ENVCO2SENSOR Temperature",
 }
+ELECTRICITY = {
+    "state_class": "total",
+    "readingdate": datetime.datetime(2024, 10, 29, 5, 0, tzinfo=tzutc()),
+    "type": "reading",
+    "unit_of_measurement": "kWh",
+    "attribution": "Data provided by AICO HomeLINK",
+    "device_class": "energy",
+    "friendly_name": "DUMMY_USER_My_House ELEC SMARTMETERGASELEC Electricity",
+}
+ELECTRICITY_TARIFF = {
+    "readingdate": datetime.datetime(2024, 10, 29, 0, 0, tzinfo=tzutc()),
+    "type": "reading",
+    "unit_of_measurement": "GBp/kWh",
+    "attribution": "Data provided by AICO HomeLINK",
+    "device_class": "monetary",
+    "friendly_name": "DUMMY_USER_My_House ELEC SMARTMETERGASELEC Electricity Tariff",
+}
+GAS = {
+    "state_class": "total",
+    "readingdate": datetime.datetime(2024, 10, 29, 4, 30, tzinfo=tzutc()),
+    "type": "reading",
+    "unit_of_measurement": "kWh",
+    "attribution": "Data provided by AICO HomeLINK",
+    "device_class": "energy",
+    "friendly_name": "DUMMY_USER_My_House ELEC SMARTMETERGASELEC Gas",
+}
+GAS_TARIFF = {
+    "readingdate": datetime.datetime(2024, 10, 29, 0, 0, tzinfo=tzutc()),
+    "type": "reading",
+    "unit_of_measurement": "GBp/kWh",
+    "attribution": "Data provided by AICO HomeLINK",
+    "device_class": "monetary",
+    "friendly_name": "DUMMY_USER_My_House ELEC SMARTMETERGASELEC Gas Tariff",
+}
