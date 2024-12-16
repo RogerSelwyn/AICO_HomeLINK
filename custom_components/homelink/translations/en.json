@@ -95,9 +95,17 @@
     }
   },
   "exceptions": {
-    "homelink_mqtt_invalid": "HomeLink MQTT credentials/topic are invalid. Please reconfigure",
-    "homelink_mqtt_unavailable": "HomeLink MQTT server not available",
-    "error_communicating_with_api": "Error communicating with HL API: {api_err}",
-    "timeout_communicating_with_api": "Timeout communicating with HL API: {err_traceback}"
+    "homelink_mqtt_invalid": {
+      "message": "HomeLink MQTT credentials/topic are invalid. Please reconfigure"
+    },
+    "homelink_mqtt_unavailable": {
+      "message": "HomeLink MQTT server not available"
+    },
+    "error_communicating_with_api": {
+      "message": "Error communicating with HL API: {api_err}"
+    },
+    "timeout_communicating_with_api": {
+      "message": "Timeout communicating with HL API: {err_traceback}"
+    }
   }
 }
