@@ -1,5 +1,27 @@
 # Changelog
 
+## v2.0.0 (2024/12/16)
+### 💥 Breaking Changes
+This release introduces a breaking change in that event entities no longer have `_event` on the end of the entity id. This was an unnecessary since they are `event.` type entities anyway.
+
+### 🧰 Maintenance
+- [Updated in line with HA quality_scale](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/19dae0b5d4e6b3d00633ac165bb983943ff9298f) - @RogerSelwyn
+- [Add quality scale](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a7576f888da5cda1a5c766ba658acf5b909e19a3) - @RogerSelwyn
+- [Add quality scale](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4da764987e49cf018ba1a86bfaa0394e8e9d0c8c) - @RogerSelwyn
+- [Use attributes from base class](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7c2dc9c83711cf9063730d21fa4951586cbd9069) - @RogerSelwyn
+- [Remove linting errors](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/98ddaefa11eafb2e5208a5222db6eb8dea7d0eb7) - @RogerSelwyn
+- [Fix hassfest errors](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0a4b729925fcc9af409b7f517dfda85fd611034e) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [Bump phyhomelink to 0.2.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/455ee30d7aaf37a314a7e162ff31c1af3b59ff5f) - @RogerSelwyn
+
+### ✅ Test
+- [Added testing](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e5edc477b25aa6d1f1d470550132448a92c08922) - @RogerSelwyn
+- [Correct testing setup](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b13564e24bda3eaca1f59f7f4eea5ae3eaa7be27) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v2.0.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3881038199c2120c7f9359949995f38fe48af762) - @RogerSelwyn
+
 ## v1.6.1 (2024/10/29)
 ### 🐛 Fixes
 - [Correct handling of readings at startup](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ff28c1209e2717c66dcdedad447b88be5c0bae9e) - @RogerSelwyn
