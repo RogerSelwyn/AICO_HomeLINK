@@ -3,7 +3,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/rogerselwyn/AICO_HomeLINK/badge)](https://www.codefactor.io/repository/github/rogerselwyn/AICO_HomeLINK) [![Downloads for latest release](https://img.shields.io/github/downloads/RogerSelwyn/AICO_HomeLINK/latest/total.svg)](https://github.com/RogerSelwyn/AICO_HomeLINK/releases/latest) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/RogerSelwyn/AICO_HomeLINK/total?label=downloads%40all)](https://github.com/RogerSelwyn/AICO_HomeLINK/releases)
 
 
-![GitHub release](https://img.shields.io/github/v/release/RogerSelwyn/AICO_HomeLINK) [![maintained](https://img.shields.io/maintenance/yes/2024.svg)](#) [![maintainer](https://img.shields.io/badge/maintainer-%20%40RogerSelwyn-blue.svg)](https://github.com/RogerSelwyn) [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://github.com/hacs/integration)
+![GitHub release](https://img.shields.io/github/v/release/RogerSelwyn/AICO_HomeLINK) [![maintained](https://img.shields.io/maintenance/yes/2025.svg)](#) [![maintainer](https://img.shields.io/badge/maintainer-%20%40RogerSelwyn-blue.svg)](https://github.com/RogerSelwyn) [![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://github.com/hacs/integration)
 
 
 # AICO HomeLINK integration for Home Assistant 
