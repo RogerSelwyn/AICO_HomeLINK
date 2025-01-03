@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.0.1 (2025/01/03)
+### 🧰 Maintenance
+- [Update manifest.json](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/9616a2f3580535d020e8a8d52ab897e8e05cc600) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [Bump minimum HA Core to 2024.12.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/58a39a8b80cd5308f058216e4930f5ae851327e8) - @RogerSelwyn
+
+### 📚 Documentation
+- [Update CHANGELOG.MD](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7c166ed96a45c743ba8ce2c007d20a15475da075) - @RogerSelwyn
+- [Update README.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/772002fe61208d22ecf38c49bcd8846ad67d5a51) - @RogerSelwyn
+- [Update README.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1e194d308304ceaec5908020336425d55b52b4bf) - @RogerSelwyn
+- [Update README.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/217ddd8fe554ee436cfff21711033499bae28b7a) - @RogerSelwyn
+- [Update README.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/06abee850eda28e324706215c7354be433645338) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v2.0.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/bcdeeb43c5ec2f5e07c2dfe91bf8317f1b84c2f5) - @actions-user
+
+
 ## v2.0.0 (2024/12/16)
 ### 💥 Breaking Changes
 This release introduces a breaking change in that event entities no longer have `_event` on the end of the entity id. This was an unnecessary since they are `event.` type entities anyway.
