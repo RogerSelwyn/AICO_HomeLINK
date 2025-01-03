@@ -10,10 +10,10 @@
     "mqtt",
     "webhook"
   ],
-  "documentation": "https://github.com/RogerSelwyn/HomeLINK",
+  "documentation": "https://github.com/RogerSelwyn/AICO_HomeLINK",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/RogerSelwyn/HomeLINK/issues",
+  "issue_tracker": "https://github.com/RogerSelwyn/AICO_HomeLINK/issues",
   "loggers": [
     "custom_components.homelink",
     "pyhomelink"
