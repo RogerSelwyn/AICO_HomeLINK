@@ -339,9 +339,7 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             self._status, self._alarms_devices, self._alarms_rooms = self._set_status()
 
     def _is_data_in_coordinator(self) -> bool:
-        if self._key in self.coordinator.data[COORD_PROPERTIES]:
-            return True
-        return False
+        return self._key in self.coordinator.data[COORD_PROPERTIES]
 
     def _set_status(self) -> tuple[bool, list[str | None] | str, list[Any] | str]:
         status = STATUS_GOOD
@@ -563,15 +561,11 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         self._status = self._set_status()
 
     def _is_data_in_coordinator(self) -> bool:
-        if (
-            self._parent_key not in self.coordinator.data[COORD_PROPERTIES]
-            or self._key
-            not in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-                COORD_DEVICES
-            ]
-        ):
-            return False
-        return True
+        return (
+            self._parent_key in self.coordinator.data[COORD_PROPERTIES]
+            and self._key
+            in self.coordinator.data[COORD_PROPERTIES][self._parent_key][COORD_DEVICES]
+        )
 
     def _set_status(self) -> bool:
         return bool(self._get_alerts())

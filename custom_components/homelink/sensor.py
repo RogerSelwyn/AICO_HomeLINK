@@ -368,15 +368,11 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
                 break
 
     def _is_data_in_coordinator(self) -> bool:
-        if (
-            self._parent_key not in self.coordinator.data[COORD_PROPERTIES]
-            or self._key
-            not in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-                COORD_DEVICES
-            ]
-        ):
-            return False
-        return True
+        return (
+            self._parent_key in self.coordinator.data[COORD_PROPERTIES]
+            and self._key
+            in self.coordinator.data[COORD_PROPERTIES][self._parent_key][COORD_DEVICES]
+        )
 
     def _update_values(self, value: Any) -> None:
         self._state = value.value
@@ -475,15 +471,15 @@ class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
                 self._insight = insight
 
     def _is_data_in_coordinator(self) -> bool:
-        for insight in self.coordinator.data[COORD_PROPERTIES][self._key][
-            COORD_INSIGHTS
-        ]:
-            if (
+        return any(
+            (
                 insight.appliesto == APPLIESTO_PROPERTY
                 and insight.hl_type == self._insight.hl_type
-            ):
-                return True
-        return False
+            )
+            for insight in self.coordinator.data[COORD_PROPERTIES][self._key][
+                COORD_INSIGHTS
+            ]
+        )
 
 
 class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
@@ -557,13 +553,13 @@ class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
                 self._insight = insight
 
     def _is_data_in_coordinator(self) -> bool:
-        for insight in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
-            COORD_INSIGHTS
-        ]:
-            if (
+        return any(
+            (
                 insight.appliesto == APPLIESTO_ROOM
                 and insight.location == self._insight.location
                 and insight.hl_type == self._insight.hl_type
-            ):
-                return True
-        return False
+            )
+            for insight in self.coordinator.data[COORD_PROPERTIES][self._parent_key][
+                COORD_INSIGHTS
+            ]
+        )

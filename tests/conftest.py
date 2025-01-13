@@ -1,20 +1,14 @@
 # pylint: disable=protected-access,redefined-outer-name
 """Global fixtures for integration."""
 
+import sys
 from dataclasses import dataclass
 from datetime import date
-import sys
 from unittest.mock import Mock, PropertyMock, patch
 
+import pytest
 from aiohttp import ClientSession
 from aiohttp.test_utils import TestClient
-import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
-from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
-from pytest_homeassistant_custom_component.typing import ClientSessionGenerator
-
-from custom_components.homelink import HLData
-from custom_components.homelink.const import DOMAIN
 from homeassistant.components.application_credentials import (
     ClientCredential,
     async_import_client_credential,
@@ -23,6 +17,12 @@ from homeassistant.components.webhook import async_generate_url
 from homeassistant.core import Event, HomeAssistant
 from homeassistant.core_config import async_process_ha_core_config
 from homeassistant.setup import async_setup_component
+from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
+from pytest_homeassistant_custom_component.typing import ClientSessionGenerator
+
+from custom_components.homelink import HLData
+from custom_components.homelink.const import DOMAIN
 
 from .helpers.const import (  # MQTT_HA_OPTIONS,; MQTT_HL_OPTIONS,
     BASE_CONFIG_ENTRY,
@@ -216,10 +216,7 @@ async def setup_webhook_integration(
     webhook_config_entry: HomelinkMockConfigEntry,
 ) -> None:
     """Fixture for setting up the component."""
-    if hasattr(request, "param"):
-        method_name = request.param
-    else:
-        method_name = "standard_mocks"
+    method_name = request.param if hasattr(request, "param") else "standard_mocks"
 
     mock_method = getattr(THIS_MODULE, method_name)
     mock_method(aioclient_mock)
@@ -243,10 +240,7 @@ async def setup_insight_integration(
     insight_config_entry: HomelinkMockConfigEntry,
 ) -> None:
     """Fixture for setting up the component."""
-    if hasattr(request, "param"):
-        method_name = request.param
-    else:
-        method_name = "standard_mocks"
+    method_name = request.param if hasattr(request, "param") else "standard_mocks"
 
     mock_method = getattr(THIS_MODULE, method_name)
     mock_method(aioclient_mock)
