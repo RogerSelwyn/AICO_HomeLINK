@@ -21,7 +21,7 @@
   "quality_scale": "platinum",
   "requirements": [
     "pyhomelink==0.2.1",
-    "paho-mqtt==1.6.1"
+    "paho-mqtt>=1.6.1"
   ],
   "single_config_entry": true,
   "version": "v2.0.1"
