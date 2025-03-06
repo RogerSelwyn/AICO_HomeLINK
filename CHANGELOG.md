@@ -1,5 +1,28 @@
 # Changelog
 
+## v2.0.2 (2025/03/06)
+### 🧰 Maintenance
+- [Add sourcery](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f527abab58ba12e2fdda902835e9dca32144e87d) - @RogerSelwyn
+- [Sourcery recommendations](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/06edb16c0921d6c8bf624133f16179b43730857f) - @RogerSelwyn
+- [Workflow ordering](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/57232315394a68d4f31a2c33f42052e031aad1b0) - @RogerSelwyn
+- [Update and rename CHANGELOG.MD to CHANGELOG.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/03a790201e25725eb0caa0e883c29c296b47a7c0) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [Unpin paho-mqtt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ff308084d782053403a104adb476dfbae386045d) - @RogerSelwyn
+- [Auto update requirements.txt](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b413d40f395afab208961f761e2d06ddef4d338c) - @actions-user
+
+### 🔖 Release
+- [Release v2.0.2](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c797335a9143fb54e57871de2e3e017f682754ab) - @RogerSelwyn
+- [Auto update manifest.json](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/dc10cce17f92fccab9ee2cdd7845f317400b9583) - @actions-user
+
+### Other
+- [build(deps): bump ruff from 0.8.4 to 0.8.6](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/cc3f8cb1965762b876db6178b52427293d4b7c21) - @dependabot[bot]
+- [build(deps): bump ruff from 0.8.6 to 0.9.6](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6acca2002b33e4002ec183bf78e6be03f8f24257) - @dependabot[bot]
+- [build(deps): bump ruff from 0.9.6 to 0.9.7](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/29f8d65ed486daa8df0d60d24398e4acd071d2ad) - @dependabot[bot]
+
+
+
+
 ## v2.0.1 (2025/01/03)
 ### 🧰 Maintenance
 - [Update manifest.json](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/9616a2f3580535d020e8a8d52ab897e8e05cc600) - @RogerSelwyn
