@@ -45,8 +45,8 @@ class HomeLINKOAuth2Implementation(AuthImplementation):
         url = self.token_url.format(self.client_id, self.client_secret)
         resp = await session.get(url)
         resp.raise_for_status()
-        token = cast(dict, await resp.json())
-        # HomeLINK has has non-standard OAUTH implementation since no `refresh`
+        token = cast("dict", await resp.json())
+        # HomeLINK hasnon-standard OAUTH implementation since no `refresh`
         # token is used and there is no authorisation to the scope.
         # In effect client id/secret is just a userid/password that provides
         # a token that expires in the way a normal access token expires.

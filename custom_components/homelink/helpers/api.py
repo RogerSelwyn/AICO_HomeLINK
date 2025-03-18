@@ -1,4 +1,5 @@
 """API access for HomeLINk service."""
+
 from typing import cast
 
 from aiohttp import ClientSession
@@ -24,4 +25,4 @@ class AsyncConfigEntryAuth(AbstractAuth):
         if not self._oauth_session.valid_token:
             await self._oauth_session.async_ensure_token_valid()
 
-        return cast(str, self._oauth_session.token["access_token"])
+        return cast("str", self._oauth_session.token["access_token"])
