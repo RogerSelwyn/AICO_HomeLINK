@@ -284,8 +284,11 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self, known_properties: dict, coord_properties: dict[str, Any]
     ) -> None:
         # Don't do this for first refresh, because that will be done by platform setup
-        # If a new property is found, dispatch out to all platforms to create it
-        # If property exists, but new devices found, dispatch out to all platforms to create it
+        # If a new property is found, create property device
+        #   and dispatch out to all platforms to create sensors
+        # If property exists, but new devices found, dispatch out to all platforms to create sensors
+
+        # If first refresh, create property devices
 
         if not self._first_refresh:
             added = False
@@ -314,7 +317,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             if added:
                 self._known_properties = {}
         else:
-            for hl_property_key, hl_property in coord_properties.items():
+            for hl_property_key in coord_properties:
                 self._create_property_device(hl_property_key)
 
         self._first_refresh = False
