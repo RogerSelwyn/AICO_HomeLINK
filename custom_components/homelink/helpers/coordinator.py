@@ -10,7 +10,8 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
-from homeassistant.helpers import device_registry, entity_registry
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -23,6 +24,7 @@ from pyhomelink.reading import PropertyReading
 
 from ..const import (
     ATTR_ALARM,
+    ATTR_HOMELINK,
     ATTR_PROPERTY,
     ATTR_READINGS,
     CONF_INSIGHTS_ENABLE,
@@ -35,6 +37,7 @@ from ..const import (
     COORD_PROPERTIES,
     COORD_PROPERTY,
     COORD_READINGS,
+    DASHBOARD_URL,
     DOMAIN,
     HOMELINK_ADD_DEVICE,
     HOMELINK_ADD_PROPERTY,
@@ -69,7 +72,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._hl_api = hl_api
         self._entry = entry
         self._known_properties: dict = {}
-        self._dev_reg = device_registry.async_get(hass)
+        self._device_registry = dr.async_get(hass)
         self._first_refresh = True
         self._eventtypes: list[Lookup] | list[LookupEventType] = []
         self._error = False
@@ -219,8 +222,8 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
 
     def _build_known_properties(self) -> None:
         # Build list of known properties as a one time activity (which is maintained)
-        devices = device_registry.async_entries_for_config_entry(
-            self._dev_reg, self._entry.entry_id
+        devices = dr.async_entries_for_config_entry(
+            self._device_registry, self._entry.entry_id
         )
 
         for device in devices:
@@ -288,6 +291,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             added = False
             for hl_property_key, hl_property in coord_properties.items():
                 if hl_property_key not in known_properties:
+                    self._create_property_device(hl_property_key)
                     dispatcher_send(self.hass, HOMELINK_ADD_PROPERTY, hl_property_key)
                     added = True
                 else:
@@ -309,12 +313,25 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                             added = True
             if added:
                 self._known_properties = {}
+        else:
+            for hl_property_key, hl_property in coord_properties.items():
+                self._create_property_device(hl_property_key)
 
         self._first_refresh = False
 
+    def _create_property_device(self, property_key):
+        self._device_registry.async_get_or_create(
+            config_entry_id=self._entry.entry_id,
+            identifiers={(DOMAIN, property_key)},
+            manufacturer=ATTR_HOMELINK,
+            name=property_key,
+            model=ATTR_PROPERTY.capitalize(),
+            configuration_url=DASHBOARD_URL,
+        )
+
     async def _async_delete_device_and_entities(self, device: str) -> None:
-        ent_reg = entity_registry.async_get(self._hass)
-        entities = entity_registry.async_entries_for_device(ent_reg, device, True)
+        entity_registry = er.async_get(self._hass)
+        entities = er.async_entries_for_device(entity_registry, device, True)
         for entity in entities:
-            ent_reg.async_remove(entity.entity_id)
-        self._dev_reg.async_remove_device(device)
+            entity_registry.async_remove(entity.entity_id)
+        self._device_registry.async_remove_device(device)
