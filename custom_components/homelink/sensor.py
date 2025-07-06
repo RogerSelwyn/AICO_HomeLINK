@@ -149,7 +149,7 @@ async def async_setup_entry(
         # Non-energy devices
         # - Adds replace by date and last tested date sensors
         # - Adds Reading sensors (if it is an environment device)
-        # Energy (virtual) devices - Adds gas/electrix senors as needed based on model type
+        # Energy (virtual) devices - Adds gas/electric sensors as needed based on model type
 
         if device.modeltype not in MODELLIST_ENERGY:
             async_add_entities(
