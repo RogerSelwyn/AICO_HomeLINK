@@ -1,5 +1,30 @@
 # Changelog
 
+## v2.0.3 (2025/07/06)
+### 🐛 Fixes
+- [Create property devices on discovery](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/382be3376b0d223381cea71c2fb2c9416e1aaa8c) - @RogerSelwyn
+
+### 🧰 Maintenance
+- [Ruff linting error fixes](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/aefaed58483f1b13156b08cf639d465757e96a5b) - @RogerSelwyn
+- [Code tidy up](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1d21939df7370eeb8ee27755fdedb03d0d63bdaf) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [Update ruff to 0.11.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/319e705d5f5bfae44e5fe2d535872daab132f130) - @RogerSelwyn
+
+### ✅ Test
+- [Update python to 3.13](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ee05fd95ada9a339cb7c5a5d5e9371f5a31436e5) - @RogerSelwyn
+- [Update python setup](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4e86c6bf1b54343c79733f88f209d3bffecbbbe3) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v2.0.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/50c65a71f980eae299a9d38a8edd1e9453fbfca9) - @RogerSelwyn
+
+### Other
+- [build(deps): bump ruff from 0.11.0 to 0.11.4](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/98dc44508b3f8d4e7cb7a90f27dedf85320f9ae6) - @dependabot[bot]
+- [build(deps): bump ruff from 0.11.4 to 0.12.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/eb459e58cff161fa24d64601678977d8a82b86f2) - @dependabot[bot]
+
+
+
+
 ## v2.0.2 (2025/03/06)
 ### 🧰 Maintenance
 - [Add sourcery](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f527abab58ba12e2fdda902835e9dca32144e87d) - @RogerSelwyn
