@@ -320,8 +320,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
             if added:
                 self._known_properties = {}
         else:
-            for hl_property_key in coord_properties:
-                new_properties.append(hl_property_key)
+            new_properties.extend(iter(coord_properties))
 
             self._first_refresh = False
         return new_properties
