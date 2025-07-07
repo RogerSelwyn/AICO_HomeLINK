@@ -50,10 +50,6 @@ def property_device_info(key: str) -> DeviceInfo:
     """Property device information."""
     return DeviceInfo(
         identifiers={(DOMAIN, key)},
-        name=key,
-        manufacturer=ATTR_HOMELINK,
-        model=ATTR_PROPERTY.capitalize(),
-        configuration_url=DASHBOARD_URL,
     )
 
 

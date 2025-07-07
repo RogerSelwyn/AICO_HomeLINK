@@ -218,7 +218,9 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
 
         known_properties = deepcopy(self._known_properties)
         await self._async_check_for_deletes(known_properties, coord_properties)
-        self._check_for_adds(known_properties, coord_properties)
+        new_properties = self._check_for_adds(known_properties, coord_properties)
+        for new_property in new_properties:
+            self._create_property_device(new_property)
 
     def _build_known_properties(self) -> None:
         # Build list of known properties as a one time activity (which is maintained)
@@ -290,11 +292,12 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
 
         # If first refresh, create property devices
 
+        new_properties = []
         if not self._first_refresh:
             added = False
             for hl_property_key, hl_property in coord_properties.items():
                 if hl_property_key not in known_properties:
-                    self._create_property_device(hl_property_key)
+                    new_properties.append(hl_property_key)
                     dispatcher_send(self.hass, HOMELINK_ADD_PROPERTY, hl_property_key)
                     added = True
                 else:
@@ -318,9 +321,10 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 self._known_properties = {}
         else:
             for hl_property_key in coord_properties:
-                self._create_property_device(hl_property_key)
+                new_properties.append(hl_property_key)
 
-        self._first_refresh = False
+            self._first_refresh = False
+        return new_properties
 
     def _create_property_device(self, property_key):
         self._device_registry.async_get_or_create(
