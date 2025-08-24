@@ -64,6 +64,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         super().__init__(
             hass,
             _LOGGER,
+            config_entry=entry,
             name="HomeLINK",
             update_interval=timedelta(seconds=30),
             always_update=False,
