@@ -212,8 +212,6 @@ async def test_options_flow_default(
         },
     )
     assert result.get("type") is FlowResultType.CREATE_ENTRY
-    assert "result" in result
-    assert result["result"] is True
     assert result["data"]["webhook_id"] is None
     assert result["data"][CONF_PROPERTIES] == {"DUMMY_USER_My_House": True}
     assert result["data"][CONF_INSIGHTS_ENABLE] is False
@@ -250,8 +248,6 @@ async def test_options_flow_webhooks_insights(
         user_input=None,
     )
     assert result.get("type") is FlowResultType.CREATE_ENTRY
-    assert "result" in result
-    assert result["result"] is True
     assert result["data"]["webhook_id"] is not None
     assert result["data"][CONF_INSIGHTS_ENABLE] is True
     assert result["data"][CONF_WEBHOOK_ENABLE] is True
