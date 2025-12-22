@@ -40,7 +40,10 @@ These are the presented as the following entity types within Home Assistant:
 - Sensor 
   - Device last tested date
   - Device replace by date
-  - CO2, Humidity, Temperature (with MQTT enabled)
+  - CO2, Humidity, Temperature
+  - Insights (with Insights enabled)
+  - Electricity/Gas Consumption
+  - Electricity/Gas Tariff
 
 ### [Buy Me A Beer 🍻](https://buymeacoffee.com/rogtp)
 I work on this integration because I like things to work well for myself and others, and for it to deliver as much as is achievable with the API. Please don't feel you are obligated to donate, but of course it is appreciated.
