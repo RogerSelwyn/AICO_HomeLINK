@@ -1,5 +1,34 @@
 # Changelog
 
+## v2.0.4 (2025/12/22)
+### 🧰 Maintenance
+- [Correct description](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/624b96c891ee19c783c55e5c0a351c96ff8990e5) - @RogerSelwyn
+- [Remove redudant code](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a28e604681e484bba63805bfdc4503eaac5481b9) - @RogerSelwyn
+- [Code improvements](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/98531e175ef0a95e651d6bd41f5ec81e0144f446) - @RogerSelwyn
+- [Remove deprecation notice](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/291fc99be7fddd6c438a29ca4f7b69d56527c1ce) - @RogerSelwyn
+- [Add improved oauth handling](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/73733010c6095733ecc5a4e46d905f1b043d82ad) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [bump actions/checkout from 4 to 5](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d5031760b08138f16a3418f6a3a2419cb4b9b8c9) - @dependabot[bot]
+- [bump actions/setup-python from 5 to 6](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/fc0dd4d55e53382b8b34a4d6ad1d961d9186e7bd) - @dependabot[bot]
+- [bump actions/stale from 9 to 10](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f4d6c9d411bd6da51f6b52c4de29a17a1bc0235d) - @dependabot[bot]
+- [bump ruff from 0.12.1 to 0.13.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8385d06e42d7041a5a9013f6dc5a31854816a8b6) - @dependabot[bot]
+- [bump ruff from 0.13.1 to 0.14.4](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8f68a4915a8388d0302535874e88a98c7c1c65a2) - @dependabot[bot]
+- [bump actions/checkout from 5 to 6](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1dfc30e1dcf2ec4c0a2d0661aa263f373cef731d) - @dependabot[bot]
+
+### 📚 Documentation
+- [Doc update](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2d400056ea17be59f148b1fd7b63ebf815f2e76c) - @RogerSelwyn
+- [Update readme](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3fdb9647a9bbfc2959faa34da67491d1c5858d97) - @RogerSelwyn
+
+### ✅ Test
+- [Adpat for changes in FlowResult](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/5ee03a774c54601c3e66f313abaf8ae7e2c6647a) - @RogerSelwyn
+
+### 🔖 Release
+- [Auto update manifest.json](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2c683a8cc2a2b294eada3a24695b5ba1ec26d510) - @actions-user
+
+
+
+
 ## v2.0.3 (2025/07/06)
 ### 🐛 Fixes
 - [Create property devices on discovery](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/382be3376b0d223381cea71c2fb2c9416e1aaa8c) - @RogerSelwyn
