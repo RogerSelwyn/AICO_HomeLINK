@@ -9,19 +9,24 @@ from collections.abc import Mapping
 from copy import deepcopy
 from typing import Any, Self
 
-import aiohttp
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
+from aiohttp.client_exceptions import ClientConnectorError, ClientResponseError
 from homeassistant import config_entries
 from homeassistant.components import webhook
 from homeassistant.config_entries import ConfigEntry, ConfigFlowResult
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_WEBHOOK_ID
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import AbortFlow
-from homeassistant.helpers import aiohttp_client, config_entry_oauth2_flow
+from homeassistant.helpers import aiohttp_client
+from homeassistant.helpers.config_entry_oauth2_flow import (
+    AbstractOAuth2FlowHandler,
+    ImplementationUnavailableError,
+    OAuth2Session,
+    async_get_config_entry_implementation,
+)
 from homeassistant.helpers.network import NoURLAvailableError, get_url
 from homeassistant.helpers.selector import BooleanSelector, TextSelector
-
 from pyhomelink.api import HomeLINKApi
 
 from .const import (
@@ -49,9 +54,7 @@ TEXT_SELECTOR = TextSelector()
 _LOGGER = logging.getLogger(__name__)
 
 
-class OAuth2FlowHandler(
-    config_entry_oauth2_flow.AbstractOAuth2FlowHandler, domain=DOMAIN
-):
+class OAuth2FlowHandler(AbstractOAuth2FlowHandler, domain=DOMAIN):
     """Config flow to handle Google Calendars OAuth2 authentication."""
 
     DOMAIN = DOMAIN
@@ -91,11 +94,11 @@ class OAuth2FlowHandler(
         except asyncio.TimeoutError as err:
             _LOGGER.error("Timeout resolving OAuth token: %s", err)
             return self.async_abort(reason="timeout_connect")
-        except aiohttp.client_exceptions.ClientResponseError as err:
+        except ClientResponseError as err:
             if err.status == 401:
                 return self.async_abort(reason="oauth_error")
             raise
-        except aiohttp.client_exceptions.ClientConnectorError:
+        except ClientConnectorError:
             return self.async_abort(reason="cannot_connect")
 
         try:
@@ -267,17 +270,17 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
     async def _async_get_properties(self) -> list[str]:
         # Perform authentication and fail if not possible
         # Then retrieve the property list
-        implementation = (
-            await config_entry_oauth2_flow.async_get_config_entry_implementation(
+        try:
+            implementation = await async_get_config_entry_implementation(
                 self.hass, self.config_entry
             )
-        )
-        session = config_entry_oauth2_flow.OAuth2Session(
-            self.hass, self.config_entry, implementation
-        )
+        except ImplementationUnavailableError as err:
+            raise AbortFlow("homelink_oauth__retry") from err
+
+        session = OAuth2Session(self.hass, self.config_entry, implementation)
         try:
             await session.async_ensure_token_valid()
-        except aiohttp.client_exceptions.ClientResponseError as err:
+        except ClientResponseError as err:
             if err.status == 401:
                 errmsg = CONF_INVALID_APPLICATION_CREDENTIALS
 
@@ -286,7 +289,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
             _LOGGER.error(errmsg)
             raise AbortFlow(errmsg) from err
 
-        except aiohttp.client_exceptions.ClientConnectorError as err:
+        except ClientConnectorError as err:
             errmsg = CONF_ERROR_AUTHENTICATING
             _LOGGER.error(errmsg)
             raise AbortFlow(errmsg) from err

@@ -2,16 +2,19 @@
 
 import logging
 
-import aiohttp
+from aiohttp.client_exceptions import ClientConnectorError, ClientResponseError
 from homeassistant.const import CONF_WEBHOOK_ID, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import (
     aiohttp_client,
-    config_entry_oauth2_flow,
     device_registry,
 )
-
+from homeassistant.helpers.config_entry_oauth2_flow import (
+    ImplementationUnavailableError,
+    OAuth2Session,
+    async_get_config_entry_implementation,
+)
 from pyhomelink.api import HomeLINKApi
 
 from .const import (
@@ -33,21 +36,23 @@ PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.E
 
 async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:
     """Set up HomeLINK from a config entry."""
-    implementation = (
-        await config_entry_oauth2_flow.async_get_config_entry_implementation(
-            hass, entry
-        )
-    )
+
+    try:
+        implementation = await async_get_config_entry_implementation(hass, entry)
+    except ImplementationUnavailableError as err:
+        raise ConfigEntryNotReady(
+            translation_domain=DOMAIN, translation_key="homelink_oauth_unavailable"
+        ) from err
 
     # Retrieve OAUTH sesion and make sure token is valid.
-    session = config_entry_oauth2_flow.OAuth2Session(hass, entry, implementation)
+    session = OAuth2Session(hass, entry, implementation)
     try:
         await session.async_ensure_token_valid()
-    except aiohttp.client_exceptions.ClientResponseError as err:
+    except ClientResponseError as err:
         if err.status == 401:
             raise ConfigEntryAuthFailed from err
         raise
-    except aiohttp.client_exceptions.ClientConnectorError as err:
+    except ClientConnectorError as err:
         raise ConfigEntryNotReady from err
 
     # Initiate api connection

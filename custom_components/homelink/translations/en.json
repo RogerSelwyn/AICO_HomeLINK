@@ -6,7 +6,8 @@
     "abort": {
       "cannot_connect": "Failed to connect",
       "oauth_error": "Client ID and Secret are invalid. If you have deleted your HomeLINK Web Api integration you will need to delete and reinstall this HA integration. If you have not yet installed the HA integration, go to [Application Credentials](/config/application_credentials), delete the HomeLINK credentials and then retry installation.",
-      "timeout_connect": "Timeout establishing connection"
+      "timeout_connect": "Timeout establishing connection",
+      "homelink_oauth_retry": "OAuth2 implementation temporarily unavailable, please retry"
     },
     "create_entry": {
       "default": "Successfully authenticated"
@@ -95,6 +96,9 @@
     }
   },
   "exceptions": {
+    "homelink_oauth_unavailable": {
+      "message": "OAuth2 implementation temporarily unavailable, will retry"
+    },
     "homelink_mqtt_invalid": {
       "message": "HomeLink MQTT credentials/topic are invalid. Please reconfigure"
     },
