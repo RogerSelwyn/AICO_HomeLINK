@@ -15,7 +15,6 @@ from homeassistant.helpers.dispatcher import async_dispatcher_connect, dispatche
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
-
 from pyhomelink.alert import Alert
 from pyhomelink.device import Device
 
@@ -617,22 +616,19 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         # If it is a reading then pass it over to the reading sensor by dispatch
         # Otherwise initiates a co-ordinator refresh for Alert
         msgdate = get_message_date(payload)
-        if msgdate < self._lastdate and messagetype not in [
-            HomeLINKMessageType.MESSAGE_READING,
-        ]:
+        if (
+            msgdate < self._lastdate
+            and messagetype != HomeLINKMessageType.MESSAGE_READING
+        ):
             return
         self._lastdate = msgdate
 
-        if messagetype in [
-            HomeLINKMessageType.MESSAGE_READING,
-        ]:
+        if messagetype == HomeLINKMessageType.MESSAGE_READING:
             self._process_reading(payload, topic, messagetype)
             return
 
         raise_device_event(self.hass, self.device_info, messagetype, topic, payload)
-        if messagetype in [
-            HomeLINKMessageType.MESSAGE_ALERT,
-        ]:
+        if messagetype == HomeLINKMessageType.MESSAGE_ALERT:
             await self.coordinator.async_refresh()
 
     def _process_reading(self, payload: dict, topic: str, messagetype: str) -> None:

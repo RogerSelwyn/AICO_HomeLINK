@@ -120,7 +120,7 @@ class OAuth2FlowHandler(AbstractOAuth2FlowHandler, domain=DOMAIN):
     ) -> ConfigFlowResult:
         """Perform reauth upon an API authentication error."""
 
-        # No (re-)auth is provide by HomeLINK (see not earlier)
+        # No (re-)auth is provide by HomeLINK (see note earlier)
         # This process guides user to delete and re-add the integration.
         # Unless they know how to hack the application credentials with a new
         # client id/secret

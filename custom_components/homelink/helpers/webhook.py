@@ -105,7 +105,7 @@ class HomeLINKWebhook:
             return
 
         # Property alert so route to 'alarm' binary sensor
-        if messagetype in [HomeLINKMessageType.MESSAGE_ALERT]:
+        if messagetype == HomeLINKMessageType.MESSAGE_ALERT:
             await self._async_alarm_message(hass, key, actiontype, message, messagetype)
             return
 

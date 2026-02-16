@@ -253,7 +253,7 @@ async def _async_forward_message(
         return
 
     # Event Message so route to event sensor
-    if messagetype in [HomeLINKMessageType.MESSAGE_EVENT]:
+    if messagetype == HomeLINKMessageType.MESSAGE_EVENT:
         await _async_event_message(hass, key, payload)
         return
 
@@ -268,7 +268,7 @@ async def _async_forward_message(
         return
 
     # Property alert so route to 'alarm' binary sensor
-    if messagetype in [HomeLINKMessageType.MESSAGE_ALERT]:
+    if messagetype == HomeLINKMessageType.MESSAGE_ALERT:
         await _async_alarm_message(hass, key, topic, payload, messagetype)
         return
 
@@ -332,7 +332,7 @@ def _extract_property(
 
 
 def _extract_message_type(topic: str) -> str:
-    messagetype = topic.split("/")[0]
+    messagetype = topic.split("/", maxsplit=1)[0]
     messagetypes = [item.value for item in HomeLINKMessageType]
     if messagetype in messagetypes:
         return messagetype
