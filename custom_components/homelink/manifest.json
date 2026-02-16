@@ -1,28 +1,16 @@
 {
   "domain": "homelink",
   "name": "AICO HomeLINK",
-  "codeowners": [
-    "@rogerselwyn"
-  ],
+  "codeowners": ["@rogerselwyn"],
   "config_flow": true,
-  "dependencies": [
-    "application_credentials",
-    "mqtt",
-    "webhook"
-  ],
+  "dependencies": ["application_credentials", "mqtt", "webhook"],
   "documentation": "https://github.com/RogerSelwyn/AICO_HomeLINK",
   "integration_type": "hub",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/RogerSelwyn/AICO_HomeLINK/issues",
-  "loggers": [
-    "custom_components.homelink",
-    "pyhomelink"
-  ],
+  "loggers": ["custom_components.homelink", "pyhomelink"],
   "quality_scale": "platinum",
-  "requirements": [
-    "pyhomelink==0.2.1",
-    "paho-mqtt>=1.6.1"
-  ],
+  "requirements": ["pyhomelink==0.2.1", "paho-mqtt>=1.6.1"],
   "single_config_entry": true,
   "version": "v2.0.4"
 }
