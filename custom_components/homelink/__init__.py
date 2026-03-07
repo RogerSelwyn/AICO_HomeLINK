@@ -2,12 +2,12 @@
 
 import logging
 
-from aiohttp.client_exceptions import ClientError
 from homeassistant.const import CONF_WEBHOOK_ID, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import (
     ConfigEntryAuthFailed,
     ConfigEntryNotReady,
+    OAuth2TokenRequestError,
     OAuth2TokenRequestReauthError,
     OAuth2TokenRequestTransientError,
 )
@@ -54,10 +54,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:
     try:
         await session.async_ensure_token_valid()
     except OAuth2TokenRequestReauthError as err:
-        if err.status == 401:
-            raise ConfigEntryAuthFailed from err
-        raise
-    except (OAuth2TokenRequestTransientError, ClientError) as err:
+        raise ConfigEntryAuthFailed from err
+    except (OAuth2TokenRequestError, OAuth2TokenRequestTransientError) as err:
         raise ConfigEntryNotReady from err
 
     # Initiate api connection
