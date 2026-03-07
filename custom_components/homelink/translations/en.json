@@ -99,6 +99,9 @@
     "homelink_oauth_unavailable": {
       "message": "OAuth2 implementation temporarily unavailable, will retry"
     },
+    "homelink_auth_required": {
+      "message": "HomeLink authentication required. Please reconfigure"
+    },
     "homelink_mqtt_invalid": {
       "message": "HomeLink MQTT credentials/topic are invalid. Please reconfigure"
     },

@@ -54,9 +54,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:
     try:
         await session.async_ensure_token_valid()
     except OAuth2TokenRequestReauthError as err:
-        raise ConfigEntryAuthFailed from err
+        raise ConfigEntryAuthFailed(
+            translation_domain=DOMAIN, translation_key="homelink_oauth_required"
+        ) from err
     except (OAuth2TokenRequestError, OAuth2TokenRequestTransientError) as err:
-        raise ConfigEntryNotReady from err
+        raise ConfigEntryNotReady(
+            translation_domain=DOMAIN, translation_key="homelink_oauth_unavailable"
+        ) from err
 
     # Initiate api connection
     hl_api = HomeLINKApi(
