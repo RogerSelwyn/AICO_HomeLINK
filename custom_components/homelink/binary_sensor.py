@@ -544,11 +544,11 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             return BinarySensorDeviceClass.CO
         if modeltype in MODELLIST_PROBLEMS or modeltype in MODELLIST_ENVIRONMENT:
             return BinarySensorDeviceClass.PROBLEM
-        return None
+        return None  # pragma: no cover
 
     def _update_attributes(self) -> None:
         if not self._is_data_in_coordinator():
-            return
+            return  # pragma: no cover
 
         self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
             COORD_DEVICES

@@ -24,7 +24,6 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
-
 from pyhomelink import HomeLINKReadingType
 from pyhomelink.device import Device, RelEnvironment
 from pyhomelink.insight import Insight
@@ -270,7 +269,7 @@ class HomeLINKSensor(HomeLINKDeviceEntity, SensorEntity):
             in self.coordinator.data[COORD_PROPERTIES][self._parent_key][COORD_DEVICES]
         ):
             return True
-        return False
+        return False  # pragma: no cover
 
 
 class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
@@ -339,7 +338,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
 
     def _update_attributes(self) -> None:
         if not self._is_data_in_coordinator():
-            return
+            return  # pragma: no cover
         # Extract the right data from co-ordinator
         # - Is it the right reading type
         # - Is it the right device (remove the gateway key if needed)

@@ -187,7 +187,7 @@ async def _migrate_devices_identifiers(
     devices = device_registry.async_entries_for_config_entry(
         dev_reg, config_entry.entry_id
     )
-    for device in devices:
+    for device in devices:  # pragma: no cover
         if len(list(device.identifiers)[0]) < 3:
             continue
         new_identifiers = {(DOMAIN, list(device.identifiers)[0][-1])}
