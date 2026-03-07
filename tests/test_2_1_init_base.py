@@ -3,7 +3,7 @@
 from copy import deepcopy
 from unittest.mock import Mock, patch
 
-from aiohttp import ClientConnectorError, ClientResponseError, ClientSession
+from aiohttp import ClientSession
 import pytest
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
@@ -12,7 +12,13 @@ from custom_components.homelink.const import CONF_PROPERTIES
 from custom_components.homelink.helpers import api
 from homeassistant.core import HomeAssistant
 from homeassistant.core_config import async_process_ha_core_config
-from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
+from homeassistant.exceptions import (
+    ConfigEntryAuthFailed,
+    ConfigEntryNotReady,
+    OAuth2TokenRequestReauthError,
+    OAuth2TokenRequestTransientError,
+    OAuth2TokenRequestError,
+)
 from homeassistant.helpers import (
     config_entry_oauth2_flow,
     device_registry as dr,
@@ -34,9 +40,9 @@ async def test_setup_errors(
     with (
         patch(
             "homeassistant.helpers.config_entry_oauth2_flow.OAuth2Session.async_ensure_token_valid",
-            side_effect=ClientResponseError(
-                None,
-                None,
+            side_effect=OAuth2TokenRequestReauthError(
+                domain=DOMAIN,
+                request_info=Mock(),
                 status=401,
             ),
         ),
@@ -47,16 +53,24 @@ async def test_setup_errors(
     with (
         patch(
             "homeassistant.helpers.config_entry_oauth2_flow.OAuth2Session.async_ensure_token_valid",
-            side_effect=ClientResponseError(None, None, status=500),
+            side_effect=OAuth2TokenRequestTransientError(
+                domain=DOMAIN,
+                request_info=Mock(),
+                status=500,
+            ),
         ),
-        pytest.raises(ClientResponseError),
+        pytest.raises(ConfigEntryNotReady),
     ):
         await async_setup_entry(hass, base_config_entry)
 
     with (
         patch(
             "homeassistant.helpers.config_entry_oauth2_flow.OAuth2Session.async_ensure_token_valid",
-            side_effect=ClientConnectorError(Mock(), OSError()),
+            side_effect=OAuth2TokenRequestError(
+                domain=DOMAIN,
+                request_info=Mock(),
+                status=301,
+            ),
         ),
         pytest.raises(ConfigEntryNotReady),
     ):
