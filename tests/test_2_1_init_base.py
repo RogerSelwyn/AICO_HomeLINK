@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from aiohttp import ClientSession
 import pytest
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
-
+from pyhomelink.exceptions import AuthException
 from custom_components.homelink import async_setup_entry
 from custom_components.homelink.const import CONF_PROPERTIES
 from custom_components.homelink.helpers import api
@@ -34,21 +34,36 @@ from .helpers.const import DOMAIN, EXTERNAL_URL, REFRESH_CONFIG_ENTRY, TITLE, TO
 from .helpers.utils import add_property_mocks, check_entity_state, mock_token_call
 
 
+# async def test_setup_implementation_error(
+#     hass: HomeAssistant,
+#     setup_credentials: None,
+#     base_config_entry: HomelinkMockConfigEntry,
+# ):
+#     """Test for implementation setup error."""
+#     #  For some reason the side_effect does not work
+#     base_config_entry.add_to_hass(hass)
+
+#     await async_process_ha_core_config(
+#         hass,
+#         {"external_url": EXTERNAL_URL},
+#     )
+
+#     with (
+#         patch(
+#             "homeassistant.helpers.config_entry_oauth2_flow.async_get_config_entry_implementation",
+#             side_effect=ImplementationUnavailableError(),
+#         ),
+#         pytest.raises(ConfigEntryNotReady),
+#     ):
+#         await async_setup_entry(hass, base_config_entry)
+
+
 async def test_setup_errors(
     hass: HomeAssistant,
     setup_credentials: None,
     base_config_entry: HomelinkMockConfigEntry,
 ):
     """Test for setup errors."""
-    # Not sure why, this causes a code error - need to investigate
-    # with (
-    #     patch(
-    #         "homeassistant.helpers.config_entry_oauth2_flow.async_get_config_entry_implementation",
-    #         side_effect=ImplementationUnavailableError(),
-    #     ),
-    #     pytest.raises(ConfigEntryNotReady),
-    # ):
-    #     await async_setup_entry(hass, base_config_entry)
 
     with (
         patch(
@@ -88,6 +103,31 @@ async def test_setup_errors(
         pytest.raises(ConfigEntryNotReady),
     ):
         await async_setup_entry(hass, base_config_entry)
+
+
+async def test_coordinator_setup_errors(
+    hass: HomeAssistant,
+    setup_credentials: None,
+    base_config_entry: HomelinkMockConfigEntry,
+    caplog: pytest.LogCaptureFixture,
+):
+    """Test for setup errors."""
+
+    base_config_entry.add_to_hass(hass)
+
+    await async_process_ha_core_config(
+        hass,
+        {"external_url": EXTERNAL_URL},
+    )
+    with (
+        patch(
+            "pyhomelink.api.HomeLINKApi.async_get_lookups",
+            side_effect=AuthException(),
+        ),
+    ):
+        await hass.config_entries.async_setup(base_config_entry.entry_id)
+
+    assert "Error authenticating with HL API" in caplog.text
 
 
 async def test_full_init(

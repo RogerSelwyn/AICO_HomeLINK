@@ -1,5 +1,5 @@
 """Test odds and sods."""
-
+from asyncio import TimeoutError
 from unittest.mock import patch
 
 from pyhomelink.exceptions import ApiException, AuthException
@@ -65,3 +65,23 @@ async def test_coordinator_api_error(
         await coordinator.async_refresh()
 
     assert "Error communicating with HL API" in caplog.text
+
+
+async def test_coordinator_timeout_error(
+    hass: HomeAssistant,
+    setup_base_integration: None,
+    base_config_entry: HomelinkMockConfigEntry,
+    caplog: pytest.LogCaptureFixture,
+):
+    """Test for coordinator api timeout error."""
+    coordinator = base_config_entry.runtime_data.coordinator
+
+    with (
+        patch(
+            "custom_components.homelink.helpers.coordinator.HomeLINKDataCoordinator._async_get_core_data",
+            side_effect=TimeoutError(),
+        ),
+    ):
+        await coordinator.async_refresh()
+
+    assert "Timeout communicating with HL API" in caplog.text
