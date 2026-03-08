@@ -1,5 +1,35 @@
 # Changelog
 
+## v2.0.5 (2026/03/08)
+### 🧰 Maintenance
+- [Remove ruff linting errors](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f2196c6c03a2cc6e639a7f871c87261bd3961ee2) - @RogerSelwyn
+- [Prettier manifest.json](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/659821ad528efa5d140fffefdd1e5048f83cac5f) - @RogerSelwyn
+- [Use new OAuth exceptions](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/73cc77ebdb60ab09e7bd9138fdd3334221ee747d) - @RogerSelwyn
+- [Add local brand logos](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ff476ffa2495b489c96bdd35f0f8045e546e3cbb) - @RogerSelwyn
+- [Update to python 3.14](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/35ac80e2902fe9ddb582a42ed979a656cddb1e02) - @RogerSelwyn
+- [Handle OAuth Exceptions](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/51c0406391d1b48945ec71a05908b2eb30e12fb1) - @RogerSelwyn
+- [Provide more detail on OAuth exceptions](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/87981f6bd74f8a53c4ba49f8b872852907cfd6ab) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [bump ruff from 0.14.4 to 0.15.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8f2e0305b2c2986bf7d1662e12e8c06e4dede7ae) - @dependabot[bot]
+- [bump ruff from 0.15.1 to 0.15.2](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3b4d7ff825e008c67f33eb8725e12892d43e5e35) - @dependabot[bot]
+- [bump ruff from 0.15.2 to 0.15.4](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e556ac73e7f08fd8755d258468812b5527ea8c6d) - @dependabot[bot]
+- [Bump HA Core to 2026.3.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/21318e13adf6db2c4c4314f9a7e8f308f2375bbe) - @RogerSelwyn
+
+### 📚 Documentation
+- [Update README.md](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/341ca1112b741b1d6fd46041d1ec3ebf6133f6c0) - @RogerSelwyn
+
+### ✅ Test
+- [Update testing for OAuth exceptions](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/cde8dc08ba839ae91a797f6ddf9064933ae8180f) - @RogerSelwyn
+- [Update coverage reporting](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e85e901186931971a226e6684f590515a51343cb) - @RogerSelwyn
+- [Tweak test coverage](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0f44c7ec2dcfd2b8c2630881a89563620b5c90c3) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v2.0.5](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/95925f1af4052a421ad9a18d34df6a3bec1011a4) - @RogerSelwyn
+
+
+
+
 ## v2.0.4 (2025/12/22)
 ### 🧰 Maintenance
 - [Correct description](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/624b96c891ee19c783c55e5c0a351c96ff8990e5) - @RogerSelwyn
