@@ -13,10 +13,10 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.const import (
-    CONCENTRATION_PARTS_PER_MILLION,
     PERCENTAGE,
     EntityCategory,
     UnitOfEnergy,
+    UnitOfRatio,
     UnitOfTemperature,
 )
 from homeassistant.core import HomeAssistant, callback
@@ -298,7 +298,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         # There is probably a better way of doing this.
         if readingtype == HomeLINKReadingType.CO2:
             self._attr_device_class = SensorDeviceClass.CO2
-            self._attr_native_unit_of_measurement = CONCENTRATION_PARTS_PER_MILLION
+            self._attr_native_unit_of_measurement = UnitOfRatio.PARTS_PER_MILLION
             self._attr_state_class = SensorStateClass.MEASUREMENT
         elif readingtype == HomeLINKReadingType.HUMIDITY:
             self._attr_device_class = SensorDeviceClass.HUMIDITY
