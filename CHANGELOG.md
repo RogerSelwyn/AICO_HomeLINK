@@ -1,5 +1,26 @@
 # Changelog
 
+## v2.1.0 (2026/07/07)
+### 🧰 Maintenance
+- [Remove deprecated constant CONCENTRATION_PARTS_PER_MILLION](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a30e390b5ba33414593830593653299ab17ed7e2) - @RogerSelwyn
+- [Remove deprecated Percentage constant](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/16a4bbb1ba010856370a67c8df3913c1a804d86f) - @RogerSelwyn
+- [Don't create environment device test sensor](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2a2e4c27003fffcf6c2c7d31fdd226193cac9cb0) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [update pygithub requirement from >=1.51 to >=2.9.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e4c0f7a8617dede09f61d6e1d6c8a08021fcda97) - @dependabot[bot]
+- [update pytest-homeassistant-custom-component requirement](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8525fec63ff9786ca4633db5aeb5e0a7317372c9) - @dependabot[bot]
+- [bump actions/checkout from 6 to 7](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4cf7fb30b0233eeae1c2b40734a54bea9d3b0ca9) - @dependabot[bot]
+- [update pytest-homeassistant-custom-component requirement](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/828a2ad86e2b20853ef49ebbbfe4d9bbbbfea875) - @dependabot[bot]
+
+### ✅ Test
+- [Change to use UV for workflows](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f2fb1540e9e332e5ee461c9d71ab08f24901357c) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v2.1.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3201618231c0649735e1f44c727daaa02b41ffc2) - @RogerSelwyn
+
+
+
+
 ## v2.0.5 (2026/03/08)
 ### 🧰 Maintenance
 - [Remove ruff linting errors](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f2196c6c03a2cc6e639a7f871c87261bd3961ee2) - @RogerSelwyn
