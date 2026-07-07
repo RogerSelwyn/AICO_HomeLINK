@@ -13,7 +13,6 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.const import (
-    PERCENTAGE,
     EntityCategory,
     UnitOfEnergy,
     UnitOfRatio,
@@ -302,7 +301,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
             self._attr_state_class = SensorStateClass.MEASUREMENT
         elif readingtype == HomeLINKReadingType.HUMIDITY:
             self._attr_device_class = SensorDeviceClass.HUMIDITY
-            self._attr_native_unit_of_measurement = PERCENTAGE
+            self._attr_native_unit_of_measurement = UnitOfRatio.PERCENTAGE
             self._attr_state_class = SensorStateClass.MEASUREMENT
         elif readingtype == HomeLINKReadingType.TEMPERATURE:
             self._attr_device_class = SensorDeviceClass.TEMPERATURE
@@ -426,7 +425,7 @@ class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
 
     _attr_has_entity_name = True
     _attr_state_class = SensorStateClass.MEASUREMENT
-    _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_native_unit_of_measurement = UnitOfRatio.PERCENTAGE
 
     def __init__(
         self,
@@ -486,7 +485,7 @@ class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
 
     _attr_has_entity_name = True
     _attr_state_class = SensorStateClass.MEASUREMENT
-    _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_native_unit_of_measurement = UnitOfRatio.PERCENTAGE
 
     def __init__(
         self,
