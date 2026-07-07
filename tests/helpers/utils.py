@@ -69,11 +69,12 @@ async def async_check_sensor(
         entity_state,
         entity_attributes,
     )
-    check_entity_state(
-        hass,
-        f"sensor.dummy_user_my_house_{device_name}_last_tested_date",
-        last_tested_date,
-    )
+    if last_tested_date:
+        check_entity_state(
+            hass,
+            f"sensor.dummy_user_my_house_{device_name}_last_tested_date",
+            last_tested_date,
+        )
     check_entity_state(
         hass,
         f"sensor.dummy_user_my_house_{device_name}_replace_by_date",

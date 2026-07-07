@@ -50,7 +50,7 @@ async def test_core_entities(
     entities = er.async_entries_for_config_entry(
         entity_registry, base_config_entry.entry_id
     )
-    assert len(entities) == 31
+    assert len(entities) == 30
     entry = entity_registry.async_get(
         "sensor.dummy_user_my_house_livingroom_firealarm_last_tested_date"
     )
@@ -126,7 +126,7 @@ async def test_ei1025(
         "hallway1_envco2sensor",
         "off",
         HALLWAY1_ENVCO2SENSOR_GOOD,
-        "unknown",
+        None,
         "2033-08-15",
     )
 

@@ -27,7 +27,7 @@ async def test_add_property(
     entities = er.async_entries_for_config_entry(
         entity_registry, insight_config_entry.entry_id
     )
-    assert len(entities) == 45
+    assert len(entities) == 44
 
     aioclient_mock.clear_requests()
     add_property_mocks(aioclient_mock)
@@ -42,7 +42,7 @@ async def test_add_property(
     entities = er.async_entries_for_config_entry(
         entity_registry, insight_config_entry.entry_id
     )
-    assert len(entities) == 60
+    assert len(entities) == 58
 
 
 async def test_add_device(
@@ -63,7 +63,7 @@ async def test_add_device(
     entities = er.async_entries_for_config_entry(
         entity_registry, base_config_entry.entry_id
     )
-    assert len(entities) == 31
+    assert len(entities) == 30
 
     aioclient_mock.clear_requests()
     add_device_mocks(aioclient_mock)
@@ -78,7 +78,7 @@ async def test_add_device(
     entities = er.async_entries_for_config_entry(
         entity_registry, base_config_entry.entry_id
     )
-    assert len(entities) == 34
+    assert len(entities) == 33
 
 
 async def test_delete_device(
@@ -104,7 +104,7 @@ async def test_delete_device(
     entities = er.async_entries_for_config_entry(
         entity_registry, base_config_entry.entry_id
     )
-    assert len(entities) == 34
+    assert len(entities) == 33
 
     aioclient_mock.clear_requests()
     standard_mocks(aioclient_mock)
@@ -118,7 +118,7 @@ async def test_delete_device(
     entities = er.async_entries_for_config_entry(
         entity_registry, base_config_entry.entry_id
     )
-    assert len(entities) == 31
+    assert len(entities) == 30
 
 
 async def test_delete_property(
@@ -144,7 +144,7 @@ async def test_delete_property(
     entities = er.async_entries_for_config_entry(
         entity_registry, insight_config_entry.entry_id
     )
-    assert len(entities) == 60
+    assert len(entities) == 58
 
     aioclient_mock.clear_requests()
     standard_mocks(aioclient_mock)
@@ -158,4 +158,4 @@ async def test_delete_property(
     entities = er.async_entries_for_config_entry(
         entity_registry, insight_config_entry.entry_id
     )
-    assert len(entities) == 45
+    assert len(entities) == 44

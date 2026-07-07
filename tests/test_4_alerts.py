@@ -30,7 +30,7 @@ async def test_environment_entity_alert_states(
         "hallway1_envco2sensor",
         "on",
         HALLWAY1_ENVCO2SENSOR_BAD,
-        "unknown",
+        None,
         "2033-08-15",
     )
 

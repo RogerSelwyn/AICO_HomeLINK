@@ -93,13 +93,15 @@ class HomeLINKEntityDescription(
     """Describes HomeLINK sensor entity."""
 
 
-SENSOR_TYPES: tuple[HomeLINKEntityDescription, ...] = (
+SENSOR_TYPES_REPLACE: tuple[HomeLINKEntityDescription, ...] = (
     HomeLINKEntityDescription(  # pylint: disable=unexpected-keyword-arg
         key=ATTR_REPLACEDATE,
         device_class=SensorDeviceClass.DATE,
         translation_key="replace_by_date",
         value_fn=lambda data: data.replacedate.date() or None,
     ),
+)
+SENSOR_TYPES_TEST: tuple[HomeLINKEntityDescription, ...] = (
     HomeLINKEntityDescription(  # pylint: disable=unexpected-keyword-arg
         key=ATTR_LASTTESTDATE,
         device_class=SensorDeviceClass.TIMESTAMP,
@@ -150,17 +152,21 @@ async def async_setup_entry(
         # Energy (virtual) devices - Adds gas/electric sensors as needed based on model type
 
         if device.modeltype not in MODELLIST_ENERGY:
-            async_add_entities(
-                [
-                    HomeLINKSensor(hl_coordinator, hl_property, device_key, description)
-                    for description in SENSOR_TYPES
-                ]
-            )
+            sensor_types = SENSOR_TYPES_REPLACE
+
             if isinstance(device.rel, RelEnvironment):
                 for reading, reading_type in READINGS_ENVIRONMENT.items():
                     if hasattr(device.rel.readings, reading):
                         _add_sensor_reading(hl_property, reading_type, device_key)
+            else:
+                sensor_types += SENSOR_TYPES_TEST
 
+            async_add_entities(
+                [
+                    HomeLINKSensor(hl_coordinator, hl_property, device_key, description)
+                    for description in sensor_types
+                ]
+            )
         else:
             if device.modeltype in [
                 MODELTYPE_SMARTMETERGASELEC,

@@ -150,7 +150,7 @@ async def test_full_init(
     entities = er.async_entries_for_config_entry(
         entity_registry, base_config_entry.entry_id
     )
-    assert len(entities) == 31
+    assert len(entities) == 30
 
 
 @pytest.mark.filterwarnings(
@@ -250,4 +250,4 @@ async def test_ignore_property(
     entities = er.async_entries_for_config_entry(
         entity_registry, insight_config_entry.entry_id
     )
-    assert len(entities) == 15
+    assert len(entities) == 14
