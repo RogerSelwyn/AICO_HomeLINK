@@ -6,6 +6,7 @@ from types import MappingProxyType
 from typing import Any
 
 from dateutil import parser
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -52,13 +53,15 @@ def property_device_info(key: str) -> DeviceInfo:
     )
 
 
-def alarm_device_info(hass: HomeAssistant, key: str, alarm_type: str) -> DeviceInfo:
+def alarm_device_info(
+    hass: HomeAssistant, entry: ConfigEntry, key: str, alarm_type: str
+) -> DeviceInfo:
     """Property device information."""
 
     return DeviceInfo(
         identifiers={(DOMAIN, f"{key} {alarm_type}")},
         name=f"{key} {alarm_type}",
-        via_device_id=_get_via_device_id(hass, {(DOMAIN, key)}).id,
+        via_device_id=_get_via_device_id(hass, entry, (DOMAIN, key)).id,
         manufacturer=ATTR_HOMELINK,
         model=ATTR_ALARM.capitalize(),
     )
@@ -66,6 +69,7 @@ def alarm_device_info(hass: HomeAssistant, key: str, alarm_type: str) -> DeviceI
 
 def device_device_info(
     hass: HomeAssistant,
+    entry: ConfigEntry,
     identifiers: set[tuple[str, str]],
     parent_key: str,
     device: Device,
@@ -74,7 +78,7 @@ def device_device_info(
     return DeviceInfo(
         identifiers=identifiers,
         name=f"{parent_key} {device.location} {device.modeltype}",
-        via_device_id=_get_via_device_id(hass, {(DOMAIN, parent_key)}).id,
+        via_device_id=_get_via_device_id(hass, entry, (DOMAIN, parent_key)).id,
         manufacturer=device.manufacturer,
         model=device.modeltype,
         model_id=device.model,
@@ -152,6 +156,6 @@ def raise_reading_event(
     )
 
 
-def _get_via_device_id(hass, identifiers) -> DeviceInfo:
+def _get_via_device_id(hass, entry: ConfigEntry, identifiers) -> DeviceInfo:
     dev_reg = dr.async_get(hass)
-    return dev_reg.async_get_device(identifiers)
+    return dev_reg.async_get_device_by_identifier(identifiers, entry.entry_id)

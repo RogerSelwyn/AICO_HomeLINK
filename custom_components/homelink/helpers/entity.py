@@ -51,12 +51,14 @@ class HomeLINKAlarmEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
 
     def __init__(
         self,
+        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
         hl_property_key: str,
         alarm_type: str,
     ) -> None:
         """Property entity object for HomeLINK sensor."""
         super().__init__(coordinator)
+        self._entry = entry
         self._key = hl_property_key
         self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
         self._gateway_key = self._property[COORD_GATEWAY_KEY]
@@ -71,7 +73,7 @@ class HomeLINKAlarmEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
     @property
     def device_info(self) -> DeviceInfo:
         """Entity device information."""
-        return alarm_device_info(self.hass, self._key, self._alarm_type)
+        return alarm_device_info(self.hass, self._entry, self._key, self._alarm_type)
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -96,12 +98,14 @@ class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
 
     def __init__(
         self,
+        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
         hl_property_key: str,
         device_key: str,
     ) -> None:
         """Device entity object for HomeLINK sensor."""
         super().__init__(coordinator)
+        self._entry = entry
         self._parent_key = hl_property_key
         self._key = device_key
         self._device = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
@@ -122,7 +126,7 @@ class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
     def device_info(self) -> DeviceInfo:
         """Entity device information."""
         return device_device_info(
-            self.hass, self._identifiers, self._parent_key, self._device
+            self.hass, self._entry, self._identifiers, self._parent_key, self._device
         )
 
     @callback

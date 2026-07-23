@@ -163,7 +163,9 @@ async def async_setup_entry(
 
             async_add_entities(
                 [
-                    HomeLINKSensor(hl_coordinator, hl_property, device_key, description)
+                    HomeLINKSensor(
+                        entry, hl_coordinator, hl_property, device_key, description
+                    )
                     for description in sensor_types
                 ]
             )
@@ -214,11 +216,15 @@ async def async_setup_entry(
         # otherwise create a property insight sensor
         if insight.appliesto == APPLIESTO_ROOM:
             async_add_entities(
-                [HomeLINKRoomInsightSensor(hl_coordinator, hl_property, insight)]
+                [HomeLINKRoomInsightSensor(entry, hl_coordinator, hl_property, insight)]
             )
         else:
             async_add_entities(
-                [HomeLINKPropertyInsightSensor(hl_coordinator, hl_property, insight)]
+                [
+                    HomeLINKPropertyInsightSensor(
+                        entry, hl_coordinator, hl_property, insight
+                    )
+                ]
             )
 
     for property_ref in hl_coordinator.data[COORD_PROPERTIES]:
@@ -243,13 +249,14 @@ class HomeLINKSensor(HomeLINKDeviceEntity, SensorEntity):
 
     def __init__(
         self,
+        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
         hl_property_key: str,
         device_key: str,
         description: HomeLINKEntityDescription,
     ) -> None:
         """Device entity object for HomeLINK sensor."""
-        super().__init__(coordinator, hl_property_key, device_key)
+        super().__init__(entry, coordinator, hl_property_key, device_key)
         self._attr_unique_id = f"{self._parent_key}_{self._key} {description.key}"
         self.entity_description = description
 
@@ -294,9 +301,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         self._readingtype = readingtype
         self._state = None
         self._readingdate: datetime | None = None
-        super().__init__(coordinator, hl_property_key, device_key)
-
-        self._entry = entry
+        super().__init__(entry, coordinator, hl_property_key, device_key)
 
         self._attr_unique_id = f"{self._parent_key}_{self._key} {readingtype}"
         # Setup the HA attributes based on type of sensor.
@@ -340,7 +345,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
     def device_info(self) -> DeviceInfo:
         """Entity device information."""
         return device_device_info(
-            self.hass, self._identifiers, self._parent_key, self._device
+            self.hass, self._entry, self._identifiers, self._parent_key, self._device
         )
 
     def _update_attributes(self) -> None:
@@ -437,13 +442,14 @@ class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
 
     def __init__(
         self,
+        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
         hl_property_key: str,
         insight: Insight,
     ) -> None:
         """Insight entity object for HomeLINK sensor."""
         self._insight = insight
-        super().__init__(coordinator, hl_property_key, ALARMTYPE_ENVIRONMENT)
+        super().__init__(entry, coordinator, hl_property_key, ALARMTYPE_ENVIRONMENT)
         self._attr_unique_id = f"{self._key}_{ALARMTYPE_ENVIRONMENT} {insight.hl_type}"
 
     @property
@@ -497,6 +503,7 @@ class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
 
     def __init__(
         self,
+        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
         hl_property_key: str,
         insight: Insight,
@@ -506,7 +513,7 @@ class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
         device_key = self._get_device_key(
             coordinator, hl_property_key, insight.location
         )
-        super().__init__(coordinator, hl_property_key, device_key)
+        super().__init__(entry, coordinator, hl_property_key, device_key)
         self._attr_unique_id = f"{self._parent_key}_{self._key} {insight.hl_type}"
 
     def _get_device_key(

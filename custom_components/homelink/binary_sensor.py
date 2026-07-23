@@ -274,8 +274,7 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         self._alarms_devices: list[str | None] | str = []
         self._alarms_rooms: list[str | None] | str = []
         self._dev_reg = device_registry.async_get(hass)
-        super().__init__(coordinator, hl_property_key, alarm_type)
-        self._entry = entry
+        super().__init__(entry, coordinator, hl_property_key, alarm_type)
         self._attr_unique_id = f"{self._key}_{alarm_type}"
         self._lastdate = dt_util.utcnow()
         self._unregister_message_handler: Callable[[], None] | None = None
@@ -461,8 +460,7 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
     ) -> None:
         """Device entity object for HomeLINK sensor."""
         self._alerts: list[dict] = []
-        super().__init__(coordinator, hl_property_key, device_key)
-        self._entry = entry
+        super().__init__(entry, coordinator, hl_property_key, device_key)
 
         self._attr_unique_id = f"{self._parent_key}_{self._key}".rstrip()
         self._lastdate = dt_util.utcnow()
