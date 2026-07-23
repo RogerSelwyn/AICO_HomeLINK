@@ -339,7 +339,9 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Entity device information."""
-        return device_device_info(self._identifiers, self._parent_key, self._device)
+        return device_device_info(
+            self.hass, self._identifiers, self._parent_key, self._device
+        )
 
     def _update_attributes(self) -> None:
         if not self._is_data_in_coordinator():

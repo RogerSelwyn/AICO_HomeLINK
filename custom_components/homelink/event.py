@@ -7,7 +7,6 @@ from homeassistant.helpers import entity_registry
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
 from pyhomelink.device import Device
 
 from .const import (
@@ -157,7 +156,9 @@ class HomeLINKDeviceEvent(HomeLINKEventEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Entity device information."""
-        return device_device_info(self._identifiers, self._parent_key, self._device)
+        return device_device_info(
+            self.hass, self._identifiers, self._parent_key, self._device
+        )
 
 
 def _filter_eventtypes(eventtypes, filtertypes):

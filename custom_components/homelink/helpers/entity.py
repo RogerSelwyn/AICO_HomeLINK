@@ -71,7 +71,7 @@ class HomeLINKAlarmEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
     @property
     def device_info(self) -> DeviceInfo:
         """Entity device information."""
-        return alarm_device_info(self._key, self._alarm_type)
+        return alarm_device_info(self.hass, self._key, self._alarm_type)
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -121,7 +121,9 @@ class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
     @property
     def device_info(self) -> DeviceInfo:
         """Entity device information."""
-        return device_device_info(self._identifiers, self._parent_key, self._device)
+        return device_device_info(
+            self.hass, self._identifiers, self._parent_key, self._device
+        )
 
     @callback
     def _handle_coordinator_update(self) -> None:

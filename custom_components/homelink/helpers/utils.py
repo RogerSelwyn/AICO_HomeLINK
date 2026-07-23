@@ -7,8 +7,8 @@ from typing import Any
 
 from dateutil import parser
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
-
 from pyhomelink.device import Device
 
 from ..const import (
@@ -52,25 +52,29 @@ def property_device_info(key: str) -> DeviceInfo:
     )
 
 
-def alarm_device_info(key: str, alarm_type: str) -> DeviceInfo:
+def alarm_device_info(hass: HomeAssistant, key: str, alarm_type: str) -> DeviceInfo:
     """Property device information."""
+
     return DeviceInfo(
         identifiers={(DOMAIN, f"{key} {alarm_type}")},
         name=f"{key} {alarm_type}",
-        via_device=(DOMAIN, key),
+        via_device_id=_get_via_device_id(hass, {(DOMAIN, key)}).id,
         manufacturer=ATTR_HOMELINK,
         model=ATTR_ALARM.capitalize(),
     )
 
 
 def device_device_info(
-    identifiers: set[tuple[str, str]], parent_key: str, device: Device
+    hass: HomeAssistant,
+    identifiers: set[tuple[str, str]],
+    parent_key: str,
+    device: Device,
 ) -> DeviceInfo:
     """Device device information."""
     return DeviceInfo(
         identifiers=identifiers,
         name=f"{parent_key} {device.location} {device.modeltype}",
-        via_device=(DOMAIN, parent_key),
+        via_device_id=_get_via_device_id(hass, {(DOMAIN, parent_key)}).id,
         manufacturer=device.manufacturer,
         model=device.modeltype,
         model_id=device.model,
@@ -146,3 +150,8 @@ def raise_reading_event(
         readingtype,
         payload,
     )
+
+
+def _get_via_device_id(hass, identifiers) -> DeviceInfo:
+    dev_reg = dr.async_get(hass)
+    return dev_reg.async_get_device(identifiers)
