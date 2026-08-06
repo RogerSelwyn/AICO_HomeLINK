@@ -80,11 +80,12 @@ class HomeLINKMQTT:
         self._client.loop_start()
         try:
             self._result.get(timeout=MQTT_TIMEOUT)
-            return None
         except queue.Empty:
             if not self._socket_open:
                 return CONF_ERROR_UNAVAILABLE
             return CONF_ERROR_TOPIC if self._connected else CONF_ERROR_CREDENTIALS
+        else:
+            return None
 
     async def async_stop(self) -> None:
         """Stop up the MQTT client."""
@@ -101,11 +102,12 @@ class HomeLINKMQTT:
         self._client.loop_start()
         try:
             self._result.get(timeout=MQTT_TIMEOUT)
-            return None
         except queue.Empty:
             if not self._socket_open:
                 return CONF_ERROR_UNAVAILABLE
             return CONF_ERROR_TOPIC if self._connected else CONF_ERROR_CREDENTIALS
+        else:
+            return None
         finally:
             if self._connected:
                 self._client.disconnect()
