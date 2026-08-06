@@ -4,7 +4,7 @@ import asyncio
 import logging
 import traceback
 from copy import deepcopy
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -14,7 +14,7 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-
+from homeassistant.util import dt as dt_util
 from pyhomelink import HomeLINKApi
 from pyhomelink.device import Device
 from pyhomelink.exceptions import ApiException, AuthException
@@ -77,7 +77,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._first_refresh = True
         self._eventtypes: list[Lookup] | list[LookupEventType] = []
         self._error = False
-        self._throttle = datetime.now() - RETRIEVAL_INTERVAL_READINGS
+        self._throttle = datetime.now(dt_util.UTC) - RETRIEVAL_INTERVAL_READINGS
 
     async def _async_setup(self) -> None:
         # As a one off activity retrieve the eventtypes lookup
@@ -94,11 +94,40 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         """Fetch data from API endpoint."""
 
         # Retrieve the core data and then check if there are any changes in properties or devices
-
         try:
             async with asyncio.timeout(10):
-                coord_properties = await self._async_get_core_data()
+                coord_properties = await self._async_handle_core_data()
+        except asyncio.TimeoutError:
+            try:
+                async with asyncio.timeout(10):
+                    coord_properties = await self._async_handle_core_data()
+            except asyncio.TimeoutError as timeout_err:
+                err_traceback = traceback.format_exc()
+                if not self._error:
+                    _LOGGER.warning(
+                        "Timeout communicating with HL API: %s", err_traceback
+                    )
+                    self._error = True
+                raise UpdateFailed(
+                    translation_domain=DOMAIN,
+                    translation_key="timeout_communicating_with_api",
+                    translation_placeholders={
+                        "err_traceback": err_traceback,
+                    },
+                ) from timeout_err
+        await self._async_check_for_changes(coord_properties)
+        config_entry = self._entry.options
 
+        self._error = False
+        return {
+            COORD_PROPERTIES: coord_properties,
+            COORD_LOOKUP_EVENTTYPE: self._eventtypes,
+            COORD_CONFIG_ENTRY_OPTIONS: config_entry,
+        }
+
+    async def _async_handle_core_data(self) -> Any:
+        try:
+            return await self._async_get_core_data()
         except AuthException as auth_err:
             if not self._error:
                 _LOGGER.warning("Error authenticating with HL API: %s", auth_err)
@@ -115,27 +144,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                     "api_err": str(api_err),
                 },
             ) from api_err
-        except asyncio.TimeoutError as timeout_err:
-            err_traceback = traceback.format_exc()
-            if not self._error:
-                _LOGGER.warning("Timeout communicating with HL API: %s", err_traceback)
-                self._error = True
-            raise UpdateFailed(
-                translation_domain=DOMAIN,
-                translation_key="timeout_communicating_with_api",
-                translation_placeholders={
-                    "err_traceback": err_traceback,
-                },
-            ) from timeout_err
-        await self._async_check_for_changes(coord_properties)
-        config_entry = self._entry.options
-
-        self._error = False
-        return {
-            COORD_PROPERTIES: coord_properties,
-            COORD_LOOKUP_EVENTTYPE: self._eventtypes,
-            COORD_CONFIG_ENTRY_OPTIONS: config_entry,
-        }
 
     async def _async_get_core_data(self) -> Any:
         # Use a self built throttle since readings method can be
@@ -190,6 +198,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 COORD_READINGS: readings,
             }
 
+        self._throttle = datetime.now(dt_util.UTC)
         return coord_properties
 
     async def _async_retrieve_readings(
@@ -198,7 +207,9 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         readings = []
         for device in property_devices.values():
             if hasattr(device.rel, ATTR_READINGS):
-                readings = await hl_property.async_get_readings(date.today())
+                readings = await hl_property.async_get_readings(
+                    datetime.now(dt_util.UTC).date()
+                )
                 break
         return readings
 
@@ -208,10 +219,10 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         )
 
     def _check_throttle(self) -> bool:
-        if datetime.now() >= self._throttle + RETRIEVAL_INTERVAL_READINGS:
-            self._throttle = datetime.now()
-            return False
-        return True
+        return (
+            not datetime.now(dt_util.UTC)
+            >= self._throttle + RETRIEVAL_INTERVAL_READINGS
+        )
 
     async def _async_check_for_changes(self, coord_properties: dict[str, Any]) -> None:
         if not self._known_properties:
@@ -232,7 +243,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         for device in devices:
             if device.model == ATTR_PROPERTY.capitalize():
                 children = {
-                    list(device_child.identifiers)[0][1]: {
+                    next(iter(device_child.identifiers))[1]: {
                         KNOWN_DEVICES_DEVICEID: device_child.id,
                         KNOWN_DEVICES_MODEL: device_child.model,
                     }
@@ -240,7 +251,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                     if device_child.via_device_id == device.id
                 }
 
-                self._known_properties[list(device.identifiers)[0][1]] = {
+                self._known_properties[next(iter(device.identifiers))[1]] = {
                     KNOWN_DEVICES_ID: device.id,
                     KNOWN_DEVICES_CHILDREN: children,
                 }
