@@ -6,7 +6,6 @@ from homeassistant.components.application_credentials import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_entry_oauth2_flow
-
 from pyhomelink import AUTH_URL
 
 from .const import ATTR_INTEGRATIONS_URL, INTEGRATIONS_URL

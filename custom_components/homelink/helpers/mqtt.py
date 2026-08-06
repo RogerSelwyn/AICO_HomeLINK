@@ -80,7 +80,7 @@ class HomeLINKMQTT:
         self._client.loop_start()
         try:
             self._result.get(timeout=MQTT_TIMEOUT)
-            return None  # noqa: TRY300
+            return None
         except queue.Empty:
             if not self._socket_open:
                 return CONF_ERROR_UNAVAILABLE
@@ -101,7 +101,7 @@ class HomeLINKMQTT:
         self._client.loop_start()
         try:
             self._result.get(timeout=MQTT_TIMEOUT)
-            return None  # noqa: TRY300
+            return None
         except queue.Empty:
             if not self._socket_open:
                 return CONF_ERROR_UNAVAILABLE

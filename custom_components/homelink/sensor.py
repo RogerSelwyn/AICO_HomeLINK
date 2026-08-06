@@ -275,13 +275,11 @@ class HomeLINKSensor(HomeLINKDeviceEntity, SensorEntity):
             ][COORD_GATEWAY_KEY]
 
     def _is_data_in_coordinator(self) -> bool:
-        if (
+        return (
             self._parent_key in self.coordinator.data[COORD_PROPERTIES]
             and self._key
             in self.coordinator.data[COORD_PROPERTIES][self._parent_key][COORD_DEVICES]
-        ):
-            return True
-        return False  # pragma: no cover
+        )
 
 
 class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
