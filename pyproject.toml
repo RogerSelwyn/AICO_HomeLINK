@@ -1,5 +1,3 @@
-[project]
-name = "aico_homelink"
 requires-python = ">=3.14"
 
 
