@@ -198,7 +198,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 COORD_READINGS: readings,
             }
 
-        self._throttle = datetime.now(dt_util.UTC)
         return coord_properties
 
     async def _async_retrieve_readings(
@@ -219,10 +218,10 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         )
 
     def _check_throttle(self) -> bool:
-        return (
-            not datetime.now(dt_util.UTC)
-            >= self._throttle + RETRIEVAL_INTERVAL_READINGS
-        )
+        if datetime.now(dt_util.UTC) >= self._throttle + RETRIEVAL_INTERVAL_READINGS:
+            self._throttle = datetime.now(dt_util.UTC)
+            return False
+        return True
 
     async def _async_check_for_changes(self, coord_properties: dict[str, Any]) -> None:
         if not self._known_properties:
