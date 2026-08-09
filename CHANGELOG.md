@@ -1,5 +1,32 @@
 # Changelog
 
+## v2.1.1 (2026/08/08)
+### 🐛 Fixes
+- [Fix throttle not allowing reading updates](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b30e8c4a98b55c8653f17bb9e497926a0915044a) - @RogerSelwyn
+
+### 🧰 Maintenance
+- [Retry on timeout and remove ruff errors](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3a348973070915564788d0f693b996189463d148) - @RogerSelwyn
+- [Implement ruff recommendations](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2ef0ccccd741cd162186cc4a9cf358a794473039) - @RogerSelwyn
+- [Implement another ruff recommendation](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7f4348caa7297e0e58eed8fe0a6d0225e57b812c) - @RogerSelwyn
+- [Add required field](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4b749f7cb72913f59f1fbf871a5f916daba46689) - @RogerSelwyn
+- [Correct the name](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a8032ce6768fa81eb7913c8dfd8383236aeaf49c) - @RogerSelwyn
+- [Remove [project] section](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4c47fa79878d775b98bb7c2851615a42dec74baf) - @RogerSelwyn
+- [Correct the ruff version](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8944e53631d6e2a09a6e67c2188d0d42b83a8ddc) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [bump ruff from 0.15.4 to 0.16.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/cd06a5ab78fb381a50230d64e283514b63064d1b) - @dependabot[bot]
+
+### ✅ Test
+- [Update pyproject.toml inline with HA](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/5f622bce2d54865b6a45810f94fffc3b3a7a4b3a) - @RogerSelwyn
+- [Reset pyptoject.toml](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0ed96e7fe02789c587c717c26691d4c80be037c5) - @RogerSelwyn
+- [Really reset it](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/13af1194146a2a38d8281c1cd891ba847b501e23) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v2.1.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/fa7f203facb954653ed37a312b5b1b0f0ab9924c) - @RogerSelwyn
+
+
+
+
 ## v2.1.0 (2026/08/06)
 ### 🧰 Maintenance
 - [Remove deprecated constant CONCENTRATION_PARTS_PER_MILLION](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a30e390b5ba33414593830593653299ab17ed7e2) - @RogerSelwyn
