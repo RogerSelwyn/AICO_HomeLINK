@@ -3,7 +3,7 @@
 
 import sys
 from dataclasses import dataclass
-from datetime import date
+from datetime import datetime
 from unittest.mock import Mock, PropertyMock, patch
 
 import pytest
@@ -17,6 +17,7 @@ from homeassistant.components.webhook import async_generate_url
 from homeassistant.core import Event, HomeAssistant
 from homeassistant.core_config import async_process_ha_core_config
 from homeassistant.setup import async_setup_component
+from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 from pytest_homeassistant_custom_component.typing import ClientSessionGenerator
@@ -295,7 +296,7 @@ def standard_mocks(
     )
     create_mock(
         aioclient_mock,
-        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
+        f"/property/DUMMY_USER_My_House/readings?date={datetime.now(dt_util.UTC).date()}",
         "base/readings.json",
     )
     create_mock(aioclient_mock, "/insight", "base/insight.json")
@@ -315,7 +316,7 @@ def environment_alert_mocks(
     )
     create_mock(
         aioclient_mock,
-        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
+        f"/property/DUMMY_USER_My_House/readings?date={datetime.now(dt_util.UTC).date()}",
         "base/readings.json",
     )
 
@@ -332,7 +333,7 @@ def alarm_alert_mocks(
         "/property/DUMMY_USER_My_House/alerts",
         "base/alerts_alarm.json",
     )
-    url = f"/property/DUMMY_USER_My_House/readings?date={date.today()}"
+    url = f"/property/DUMMY_USER_My_House/readings?date={datetime.now(dt_util.UTC).date()}"
     create_mock(aioclient_mock, url, "base/readings.json")
 
 

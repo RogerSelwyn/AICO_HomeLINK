@@ -1,9 +1,10 @@
 """Utilities for HomeLINK testing."""
 
-from datetime import date
+from datetime import datetime
 import json
 import pathlib
 
+from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
 from .const import BASE_API_URL, TOKEN_URL
@@ -47,7 +48,7 @@ def load_json(filename):
 def load_webhook_json(filename):
     """Load a json file."""
     return json.load(
-        open(
+        open(  # noqa: PTH123
             pathlib.Path(__file__).parent.joinpath("../data/webhook/", filename),
             encoding="utf8",
         )
@@ -127,12 +128,12 @@ def add_property_mocks(
     )
     create_mock(
         aioclient_mock,
-        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
+        f"/property/DUMMY_USER_My_House/readings?date={datetime.now(dt_util.UTC).date()}",
         "base/readings.json",
     )
     create_mock(
         aioclient_mock,
-        f"/property/DUMMY_USER_My_New_House/readings?date={date.today()}",
+        f"/property/DUMMY_USER_My_New_House/readings?date={datetime.now(dt_util.UTC).date()}",
         "base/readingsx2.json",
     )
     create_mock(aioclient_mock, "/insight", "base/insight.json")
@@ -150,7 +151,7 @@ def add_device_mocks(
     )
     create_mock(
         aioclient_mock,
-        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
+        f"/property/DUMMY_USER_My_House/readings?date={datetime.now(dt_util.UTC).date()}",
         "base/readings.json",
     )
     create_mock(aioclient_mock, "/insight", "base/insight.json")
@@ -168,7 +169,7 @@ def ignore_reading_mocks(
     )
     create_mock(
         aioclient_mock,
-        f"/property/DUMMY_USER_My_House/readings?date={date.today()}",
+        f"/property/DUMMY_USER_My_House/readings?date={datetime.now(dt_util.UTC).date()}",
         "base/readings_ignore.json",
     )
     create_mock(aioclient_mock, "/insight", "base/insight.json")
