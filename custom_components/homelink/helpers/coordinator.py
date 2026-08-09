@@ -37,7 +37,6 @@ from ..const import (
     COORD_PROPERTIES,
     COORD_PROPERTY,
     COORD_READINGS,
-    CORE_RETRIES,
     DASHBOARD_URL,
     DOMAIN,
     HOMELINK_ADD_DEVICE,
@@ -95,30 +94,27 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         """Fetch data from API endpoint."""
 
         # Retrieve the core data and then check if there are any changes in properties or devices
-        coord_properties = None
-
-        retries = CORE_RETRIES
-        while retries and not coord_properties:
+        try:
+            async with asyncio.timeout(10):
+                coord_properties = await self._async_handle_core_data()
+        except asyncio.TimeoutError:
             try:
                 async with asyncio.timeout(10):
                     coord_properties = await self._async_handle_core_data()
             except asyncio.TimeoutError as timeout_err:
-                if not retries:
-                    err_traceback = traceback.format_exc()
-                    if not self._error:
-                        _LOGGER.warning(
-                            "Timeout communicating with HL API: %s", err_traceback
-                        )
-                        self._error = True
-                    raise UpdateFailed(
-                        translation_domain=DOMAIN,
-                        translation_key="timeout_communicating_with_api",
-                        translation_placeholders={
-                            "err_traceback": err_traceback,
-                        },
-                    ) from timeout_err
-
-                await asyncio.sleep(10)
+                err_traceback = traceback.format_exc()
+                if not self._error:
+                    _LOGGER.warning(
+                        "Timeout communicating with HL API: %s", err_traceback
+                    )
+                    self._error = True
+                raise UpdateFailed(
+                    translation_domain=DOMAIN,
+                    translation_key="timeout_communicating_with_api",
+                    translation_placeholders={
+                        "err_traceback": err_traceback,
+                    },
+                ) from timeout_err
         await self._async_check_for_changes(coord_properties)
         config_entry = self._entry.options
 
@@ -202,6 +198,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 COORD_READINGS: readings,
             }
 
+        self._throttle = datetime.now(dt_util.UTC)
         return coord_properties
 
     async def _async_retrieve_readings(
@@ -222,10 +219,10 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         )
 
     def _check_throttle(self) -> bool:
-        if datetime.now(dt_util.UTC) >= self._throttle + RETRIEVAL_INTERVAL_READINGS:
-            self._throttle = datetime.now(dt_util.UTC)
-            return False
-        return True
+        return (
+            not datetime.now(dt_util.UTC)
+            >= self._throttle + RETRIEVAL_INTERVAL_READINGS
+        )
 
     async def _async_check_for_changes(self, coord_properties: dict[str, Any]) -> None:
         if not self._known_properties:
