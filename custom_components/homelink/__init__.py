@@ -139,12 +139,13 @@ async def _async_start_mqtt(
             raise ConfigEntryNotReady(
                 translation_domain=DOMAIN, translation_key="homelink_mqtt_invalid"
             )
-        return hl_mqtt  # noqa: TRY300
 
     except ConnectionRefusedError as err:
         raise ConfigEntryNotReady(
             translation_domain=DOMAIN, translation_key="homelink_mqtt_unavailable"
         ) from err
+    else:
+        return hl_mqtt
 
 
 async def async_migrate_entry(hass: HomeAssistant, config_entry: HLConfigEntry) -> bool:
