@@ -78,6 +78,7 @@ CONF_MQTT_TOPIC = "mqtt_topic"
 CONF_PROPERTIES = "properties"
 CONF_WEBHOOK_ENABLE = "webhook_enable"
 
+CORE_RETRIES = 5
 
 COORD_ALERTS = "alerts"
 COORD_CONFIG_ENTRY_OPTIONS = "config_entry_options"

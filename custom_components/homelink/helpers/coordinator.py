@@ -37,6 +37,7 @@ from ..const import (
     COORD_PROPERTIES,
     COORD_PROPERTY,
     COORD_READINGS,
+    CORE_RETRIES,
     DASHBOARD_URL,
     DOMAIN,
     HOMELINK_ADD_DEVICE,
@@ -94,27 +95,30 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         """Fetch data from API endpoint."""
 
         # Retrieve the core data and then check if there are any changes in properties or devices
-        try:
-            async with asyncio.timeout(10):
-                coord_properties = await self._async_handle_core_data()
-        except asyncio.TimeoutError:
+        coord_properties = None
+
+        retries = CORE_RETRIES
+        while retries and not coord_properties:
             try:
                 async with asyncio.timeout(10):
                     coord_properties = await self._async_handle_core_data()
             except asyncio.TimeoutError as timeout_err:
-                err_traceback = traceback.format_exc()
-                if not self._error:
-                    _LOGGER.warning(
-                        "Timeout communicating with HL API: %s", err_traceback
-                    )
-                    self._error = True
-                raise UpdateFailed(
-                    translation_domain=DOMAIN,
-                    translation_key="timeout_communicating_with_api",
-                    translation_placeholders={
-                        "err_traceback": err_traceback,
-                    },
-                ) from timeout_err
+                if not retries:
+                    err_traceback = traceback.format_exc()
+                    if not self._error:
+                        _LOGGER.warning(
+                            "Timeout communicating with HL API: %s", err_traceback
+                        )
+                        self._error = True
+                    raise UpdateFailed(
+                        translation_domain=DOMAIN,
+                        translation_key="timeout_communicating_with_api",
+                        translation_placeholders={
+                            "err_traceback": err_traceback,
+                        },
+                    ) from timeout_err
+
+                await asyncio.sleep(10)
         await self._async_check_for_changes(coord_properties)
         config_entry = self._entry.options
 
