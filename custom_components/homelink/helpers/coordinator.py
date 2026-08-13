@@ -96,38 +96,8 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         # Retrieve the core data and then check if there are any changes in properties or devices
         try:
             async with asyncio.timeout(10):
-                coord_properties = await self._async_handle_core_data()
-        except asyncio.TimeoutError:
-            try:
-                async with asyncio.timeout(10):
-                    coord_properties = await self._async_handle_core_data()
-            except asyncio.TimeoutError as timeout_err:
-                err_traceback = traceback.format_exc()
-                if not self._error:
-                    _LOGGER.warning(
-                        "Timeout communicating with HL API: %s", err_traceback
-                    )
-                    self._error = True
-                raise UpdateFailed(
-                    translation_domain=DOMAIN,
-                    translation_key="timeout_communicating_with_api",
-                    translation_placeholders={
-                        "err_traceback": err_traceback,
-                    },
-                ) from timeout_err
-        await self._async_check_for_changes(coord_properties)
-        config_entry = self._entry.options
+                coord_properties = await self._async_get_core_data()
 
-        self._error = False
-        return {
-            COORD_PROPERTIES: coord_properties,
-            COORD_LOOKUP_EVENTTYPE: self._eventtypes,
-            COORD_CONFIG_ENTRY_OPTIONS: config_entry,
-        }
-
-    async def _async_handle_core_data(self) -> Any:
-        try:
-            return await self._async_get_core_data()
         except AuthException as auth_err:
             if not self._error:
                 _LOGGER.warning("Error authenticating with HL API: %s", auth_err)
@@ -144,6 +114,27 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                     "api_err": str(api_err),
                 },
             ) from api_err
+        except asyncio.TimeoutError as timeout_err:
+            err_traceback = traceback.format_exc()
+            if not self._error:
+                _LOGGER.warning("Timeout communicating with HL API: %s", err_traceback)
+                self._error = True
+            raise UpdateFailed(
+                translation_domain=DOMAIN,
+                translation_key="timeout_communicating_with_api",
+                translation_placeholders={
+                    "err_traceback": err_traceback,
+                },
+            ) from timeout_err
+        await self._async_check_for_changes(coord_properties)
+        config_entry = self._entry.options
+
+        self._error = False
+        return {
+            COORD_PROPERTIES: coord_properties,
+            COORD_LOOKUP_EVENTTYPE: self._eventtypes,
+            COORD_CONFIG_ENTRY_OPTIONS: config_entry,
+        }
 
     async def _async_get_core_data(self) -> Any:
         # Use a self built throttle since readings method can be
@@ -198,7 +189,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 COORD_READINGS: readings,
             }
 
-        self._throttle = datetime.now(dt_util.UTC)
         return coord_properties
 
     async def _async_retrieve_readings(
@@ -219,10 +209,10 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         )
 
     def _check_throttle(self) -> bool:
-        return (
-            not datetime.now(dt_util.UTC)
-            >= self._throttle + RETRIEVAL_INTERVAL_READINGS
-        )
+        if datetime.now(dt_util.UTC) >= self._throttle + RETRIEVAL_INTERVAL_READINGS:
+            self._throttle = datetime.now(dt_util.UTC)
+            return False
+        return True
 
     async def _async_check_for_changes(self, coord_properties: dict[str, Any]) -> None:
         if not self._known_properties:
