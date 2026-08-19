@@ -48,7 +48,7 @@ def load_json(filename):
 def load_webhook_json(filename):
     """Load a json file."""
     return json.load(
-        open(  # noqa: PTH123
+        open(
             pathlib.Path(__file__).parent.joinpath("../data/webhook/", filename),
             encoding="utf8",
         )
