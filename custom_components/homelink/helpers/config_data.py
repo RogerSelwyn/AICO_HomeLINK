@@ -11,7 +11,7 @@ from .coordinator import HomeLINKDataCoordinator
 from .mqtt import HAMQTT, HomeLINKMQTT
 from .webhook import HomeLINKWebhook
 
-PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.EVENT]
+PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.EVENT, Platform.SENSOR]
 
 HLConfigEntry = ConfigEntry["HLData"]
 

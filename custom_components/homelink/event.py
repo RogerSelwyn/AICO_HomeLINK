@@ -3,7 +3,7 @@
 from homeassistant.components.event import DOMAIN as EVENT_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import entity_registry
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -111,9 +111,9 @@ async def _async_create_entities(
     )
 
 
-async def _async_delete_entities(hass, entry: HLConfigEntry):
-    ent_reg = entity_registry.async_get(hass)
-    entities = entity_registry.async_entries_for_config_entry(ent_reg, entry.entry_id)
+async def _async_delete_entities(hass: HomeAssistant, entry: HLConfigEntry):
+    ent_reg = er.async_get(hass)
+    entities = er.async_entries_for_config_entry(ent_reg, entry.entry_id)
     for entity in entities:
         if entity.domain == EVENT_DOMAIN:
             ent_reg.async_remove(entity.entity_id)

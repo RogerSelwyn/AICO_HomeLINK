@@ -1,11 +1,12 @@
 """HomeLINK utilities."""
 
-import logging
 from datetime import datetime
+import logging
 from types import MappingProxyType
 from typing import Any
 
 from dateutil import parser
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
@@ -156,6 +157,8 @@ def raise_reading_event(
     )
 
 
-def _get_via_device_id(hass, entry: ConfigEntry, identifiers) -> DeviceInfo:
+def _get_via_device_id(
+    hass: HomeAssistant, entry: ConfigEntry, identifiers
+) -> DeviceInfo:
     dev_reg = dr.async_get(hass)
     return dev_reg.async_get_device_by_identifier(identifiers, entry.entry_id)

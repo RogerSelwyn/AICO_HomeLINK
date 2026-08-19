@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Any
 
 from dateutil import parser
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -408,7 +409,6 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         if self._unregister_message_handler:
             self._unregister_message_handler()
 
-    @callback
     async def _async_message_handle(
         self, payload: dict, topic: str, messagetype: str, readingtype: str
     ) -> None:

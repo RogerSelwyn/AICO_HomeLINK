@@ -1,17 +1,15 @@
 """Config flow for HomeLINK integration."""
 
-from __future__ import annotations
-
 import asyncio
-import logging
-import time
 from collections.abc import Mapping
 from copy import deepcopy
+import logging
+import time
 from typing import Any, Self
 
-import homeassistant.helpers.config_validation as cv
-import voluptuous as vol
 from aiohttp.client_exceptions import ClientConnectorError, ClientResponseError
+import voluptuous as vol
+
 from homeassistant import config_entries
 from homeassistant.components import webhook
 from homeassistant.config_entries import ConfigEntry, ConfigFlowResult
@@ -25,6 +23,7 @@ from homeassistant.helpers.config_entry_oauth2_flow import (
     OAuth2Session,
     async_get_config_entry_implementation,
 )
+import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.network import NoURLAvailableError, get_url
 from homeassistant.helpers.selector import BooleanSelector, TextSelector
 from pyhomelink.api import HomeLINKApi
@@ -91,7 +90,7 @@ class OAuth2FlowHandler(AbstractOAuth2FlowHandler, domain=DOMAIN):
             if not token:
                 _LOGGER.error("Error authenticating: %s", "token")
                 return self.async_abort(reason="oauth_error")
-        except asyncio.TimeoutError as err:
+        except TimeoutError as err:
             _LOGGER.error("Timeout resolving OAuth token: %s", err)
             return self.async_abort(reason="timeout_connect")
         except ClientResponseError as err:
@@ -160,7 +159,7 @@ class OAuth2FlowHandler(AbstractOAuth2FlowHandler, domain=DOMAIN):
 class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
     """Config flow options for HomeLINK."""
 
-    def __init__(self, config_entry: ConfigEntry):
+    def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize HomeLINK options flow."""
         options = config_entry.options
         self._properties = options.get(CONF_PROPERTIES, {})

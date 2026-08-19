@@ -1,7 +1,5 @@
 """Diagnostics support for HomeLINK."""
 
-from __future__ import annotations
-
 from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.const import CONF_ACCESS_TOKEN
 from homeassistant.core import HomeAssistant

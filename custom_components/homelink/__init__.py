@@ -11,10 +11,7 @@ from homeassistant.exceptions import (
     OAuth2TokenRequestReauthError,
     OAuth2TokenRequestTransientError,
 )
-from homeassistant.helpers import (
-    aiohttp_client,
-    device_registry,
-)
+from homeassistant.helpers import aiohttp_client, device_registry as dr
 from homeassistant.helpers.config_entry_oauth2_flow import (
     ImplementationUnavailableError,
     OAuth2Session,
@@ -36,7 +33,7 @@ from .helpers.mqtt import HAMQTT, HomeLINKMQTT
 from .helpers.webhook import HomeLINKWebhook
 
 _LOGGER = logging.getLogger(__name__)
-PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.SENSOR, Platform.EVENT]
+PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.EVENT, Platform.SENSOR]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:
@@ -184,10 +181,8 @@ async def _migrate_devices_identifiers(
 ) -> None:
     # Original device identifiers were created with an extra (second) item in the tuple.
     # This removes it
-    dev_reg = device_registry.async_get(hass)
-    devices = device_registry.async_entries_for_config_entry(
-        dev_reg, config_entry.entry_id
-    )
+    dev_reg = dr.async_get(hass)
+    devices = dr.async_entries_for_config_entry(dev_reg, config_entry.entry_id)
     for device in devices:  # pragma: no cover
         if len(next(iter(device.identifiers))) < 3:
             continue

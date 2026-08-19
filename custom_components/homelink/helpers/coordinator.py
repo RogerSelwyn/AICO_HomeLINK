@@ -1,26 +1,26 @@
 """HomeLINK coordinators."""
 
 import asyncio
+from copy import deepcopy
+from datetime import timedelta
 import logging
 import traceback
-from copy import deepcopy
-from datetime import datetime, timedelta
 from typing import Any
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryAuthFailed
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.dispatcher import dispatcher_send
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-from homeassistant.util import dt as dt_util
 from pyhomelink import HomeLINKApi
 from pyhomelink.device import Device
 from pyhomelink.exceptions import ApiException, AuthException
 from pyhomelink.lookup import Lookup, LookupEventType
 from pyhomelink.property import Property
 from pyhomelink.reading import PropertyReading
+
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers.dispatcher import dispatcher_send
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 
 from ..const import (
     ATTR_ALARM,
@@ -77,7 +77,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._first_refresh = True
         self._eventtypes: list[Lookup] | list[LookupEventType] = []
         self._error = False
-        self._throttle = datetime.now(dt_util.UTC) - RETRIEVAL_INTERVAL_READINGS
+        self._throttle = dt_util.utcnow() - RETRIEVAL_INTERVAL_READINGS
 
     async def _async_setup(self) -> None:
         # As a one off activity retrieve the eventtypes lookup
@@ -114,7 +114,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                     "api_err": str(api_err),
                 },
             ) from api_err
-        except asyncio.TimeoutError as timeout_err:
+        except TimeoutError as timeout_err:
             err_traceback = traceback.format_exc()
             if not self._error:
                 _LOGGER.warning("Timeout communicating with HL API: %s", err_traceback)
@@ -197,9 +197,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         readings = []
         for device in property_devices.values():
             if hasattr(device.rel, ATTR_READINGS):
-                readings = await hl_property.async_get_readings(
-                    datetime.now(dt_util.UTC).date()
-                )
+                readings = await hl_property.async_get_readings(dt_util.utcnow().date())
                 break
         return readings
 
@@ -209,8 +207,8 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         )
 
     def _check_throttle(self) -> bool:
-        if datetime.now(dt_util.UTC) >= self._throttle + RETRIEVAL_INTERVAL_READINGS:
-            self._throttle = datetime.now(dt_util.UTC)
+        if dt_util.utcnow() >= self._throttle + RETRIEVAL_INTERVAL_READINGS:
+            self._throttle = dt_util.utcnow()
             return False
         return True
 

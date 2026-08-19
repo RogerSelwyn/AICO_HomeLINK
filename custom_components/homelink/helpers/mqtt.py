@@ -1,13 +1,14 @@
 """MQTT client for HomeLINK."""
 
+from collections.abc import Callable
 import json
 import logging
 import queue
-from collections.abc import Callable
 from types import MappingProxyType
 from typing import Any
 
 import paho.mqtt.client as paho_mqtt
+
 from homeassistant.components import mqtt
 from homeassistant.components.mqtt import DOMAIN as MQTT_DOMAIN
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
@@ -155,7 +156,6 @@ class HomeLINKMQTT:
                     OTHER_ERROR, "HomeLINK MQTT disconnected with result code:", ret
                 )
 
-    @callback
     async def _on_message(self, client, userdata, msg) -> None:  # pylint: disable=unused-argument
         await _async_forward_message(
             self._hass, msg, self._root_topic, self._properties
@@ -206,7 +206,6 @@ class HAMQTT:
         _LOGGER.debug("HA MQTT unsubscribed: %s", self._mqtt_root_topic)
         self._unsubscribe_task()  # type: ignore[misc]
 
-    @callback
     async def _async_subscribe(
         self,
         hass: HomeAssistant,  # pylint: disable=unused-argument
@@ -217,7 +216,6 @@ class HAMQTT:
             self._hass, self._mqtt_root_topic, self._async_message_received, qos=2
         )
 
-    @callback
     async def _async_message_received(self, msg: Any) -> None:
         await _async_forward_message(
             self._hass, msg, self._root_topic, self._properties

@@ -9,7 +9,7 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import device_registry
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.dispatcher import async_dispatcher_connect, dispatcher_send
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -74,10 +74,7 @@ from .const import (
 )
 from .helpers.config_data import HLConfigEntry
 from .helpers.coordinator import HomeLINKDataCoordinator
-from .helpers.entity import (
-    HomeLINKAlarmEntity,
-    HomeLINKDeviceEntity,
-)
+from .helpers.entity import HomeLINKAlarmEntity, HomeLINKDeviceEntity
 from .helpers.utils import (
     build_device_identifiers,
     build_mqtt_device_key,
@@ -174,7 +171,7 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         super().__init__(coordinator)
         self._status: bool | None = None
         self._alarms: list[str | None] | str = []
-        self._dev_reg = device_registry.async_get(hass)
+        self._dev_reg = dr.async_get(hass)
         self._key = hl_property_key
         self._property = self.coordinator.data[COORD_PROPERTIES][self._key]
         self._gateway_key = self._property[COORD_GATEWAY_KEY]
@@ -273,7 +270,7 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         self._status: bool | None = None
         self._alarms_devices: list[str | None] | str = []
         self._alarms_rooms: list[str | None] | str = []
-        self._dev_reg = device_registry.async_get(hass)
+        self._dev_reg = dr.async_get(hass)
         super().__init__(entry, coordinator, hl_property_key, alarm_type)
         self._attr_unique_id = f"{self._key}_{alarm_type}"
         self._lastdate = dt_util.utcnow()
@@ -415,7 +412,6 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             )
         ]
 
-    @callback
     async def _async_message_handle(
         self, topic: str, payload: dict, messagetype: str
     ) -> None:
@@ -606,7 +602,6 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
             )
         ]
 
-    @callback
     async def _async_message_handle(
         self, payload: dict, topic: str, messagetype: str
     ) -> None:

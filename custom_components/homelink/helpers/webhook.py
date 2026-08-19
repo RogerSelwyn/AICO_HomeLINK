@@ -5,6 +5,7 @@ from typing import Any
 
 import aiohttp
 from aiohttp.hdrs import METH_POST
+
 from homeassistant.components import webhook
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
