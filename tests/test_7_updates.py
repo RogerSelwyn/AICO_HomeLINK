@@ -19,10 +19,7 @@ async def test_add_property(
 ):
     """Test addition of new property."""
     coordinator = insight_config_entry.runtime_data.coordinator
-    devices = device_registry.devices.get_devices_for_config_entry_id(
-        insight_config_entry.entry_id
-    )
-    assert len(devices) == 11
+    assert len(device_registry.devices) == 11
 
     entities = er.async_entries_for_config_entry(
         entity_registry, insight_config_entry.entry_id
@@ -34,10 +31,7 @@ async def test_add_property(
 
     await coordinator.async_refresh()
     await hass.async_block_till_done()
-    devices = device_registry.devices.get_devices_for_config_entry_id(
-        insight_config_entry.entry_id
-    )
-    assert len(devices) == 17
+    assert len(device_registry.devices) == 17
 
     entities = er.async_entries_for_config_entry(
         entity_registry, insight_config_entry.entry_id
@@ -55,10 +49,7 @@ async def test_add_device(
 ):
     """Test addition of new device."""
     coordinator = base_config_entry.runtime_data.coordinator
-    devices = device_registry.devices.get_devices_for_config_entry_id(
-        base_config_entry.entry_id
-    )
-    assert len(devices) == 11
+    assert len(device_registry.devices) == 11
 
     entities = er.async_entries_for_config_entry(
         entity_registry, base_config_entry.entry_id
@@ -70,10 +61,7 @@ async def test_add_device(
 
     await coordinator.async_refresh()
     await hass.async_block_till_done()
-    devices = device_registry.devices.get_devices_for_config_entry_id(
-        base_config_entry.entry_id
-    )
-    assert len(devices) == 12
+    assert len(device_registry.devices) == 12
 
     entities = er.async_entries_for_config_entry(
         entity_registry, base_config_entry.entry_id
@@ -96,10 +84,7 @@ async def test_delete_device(
     add_device_mocks(aioclient_mock)
     await coordinator.async_refresh()
     await hass.async_block_till_done()
-    devices = device_registry.devices.get_devices_for_config_entry_id(
-        base_config_entry.entry_id
-    )
-    assert len(devices) == 12
+    assert len(device_registry.devices) == 12
 
     entities = er.async_entries_for_config_entry(
         entity_registry, base_config_entry.entry_id
@@ -110,10 +95,7 @@ async def test_delete_device(
     standard_mocks(aioclient_mock)
     await coordinator.async_refresh()
     await hass.async_block_till_done()
-    devices = device_registry.devices.get_devices_for_config_entry_id(
-        base_config_entry.entry_id
-    )
-    assert len(devices) == 11
+    assert len(device_registry.devices) == 11
 
     entities = er.async_entries_for_config_entry(
         entity_registry, base_config_entry.entry_id
@@ -136,10 +118,7 @@ async def test_delete_property(
     add_property_mocks(aioclient_mock)
     await coordinator.async_refresh()
     await hass.async_block_till_done()
-    devices = device_registry.devices.get_devices_for_config_entry_id(
-        insight_config_entry.entry_id
-    )
-    assert len(devices) == 17
+    assert len(device_registry.devices) == 17
 
     entities = er.async_entries_for_config_entry(
         entity_registry, insight_config_entry.entry_id
@@ -150,10 +129,7 @@ async def test_delete_property(
     standard_mocks(aioclient_mock)
     await coordinator.async_refresh()
     await hass.async_block_till_done()
-    devices = device_registry.devices.get_devices_for_config_entry_id(
-        insight_config_entry.entry_id
-    )
-    assert len(devices) == 11
+    assert len(device_registry.devices) == 11
 
     entities = er.async_entries_for_config_entry(
         entity_registry, insight_config_entry.entry_id

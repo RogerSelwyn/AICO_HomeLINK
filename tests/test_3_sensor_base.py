@@ -25,11 +25,7 @@ async def test_device_count(
     device_registry: dr.DeviceRegistry,
 ):
     """Test HomeLINK devices."""
-    devices = device_registry.devices.get_devices_for_config_entry_id(
-        base_config_entry.entry_id
-    )
-
-    assert len(devices) == 11
+    assert len(device_registry.devices) == 11
 
 
 async def test_core_entities(

@@ -242,10 +242,7 @@ async def test_ignore_property(
     add_property_mocks(aioclient_mock)
     await coordinator.async_refresh()
     await hass.async_block_till_done()
-    devices = device_registry.devices.get_devices_for_config_entry_id(
-        insight_config_entry.entry_id
-    )
-    assert len(devices) == 6
+    assert len(device_registry.devices) == 6
 
     entities = er.async_entries_for_config_entry(
         entity_registry, insight_config_entry.entry_id
