@@ -164,9 +164,7 @@ async def async_setup_entry(
 
             async_add_entities(
                 [
-                    HomeLINKSensor(
-                        entry, hl_coordinator, hl_property, device_key, description
-                    )
+                    HomeLINKSensor(hl_coordinator, hl_property, device_key, description)
                     for description in sensor_types
                 ]
             )
@@ -196,7 +194,7 @@ async def async_setup_entry(
         async_add_entities(
             [
                 HomeLINKReadingSensor(
-                    entry, hl_coordinator, hl_property, device_key, reading_type
+                    hl_coordinator, hl_property, device_key, reading_type
                 )
             ]
         )
@@ -207,7 +205,7 @@ async def async_setup_entry(
         async_add_entities(
             [
                 HomeLINKEnergyReadingSensor(
-                    entry, hl_coordinator, hl_property, device_key, reading_type
+                    hl_coordinator, hl_property, device_key, reading_type
                 )
             ]
         )
@@ -217,15 +215,11 @@ async def async_setup_entry(
         # otherwise create a property insight sensor
         if insight.appliesto == APPLIESTO_ROOM:
             async_add_entities(
-                [HomeLINKRoomInsightSensor(entry, hl_coordinator, hl_property, insight)]
+                [HomeLINKRoomInsightSensor(hl_coordinator, hl_property, insight)]
             )
         else:
             async_add_entities(
-                [
-                    HomeLINKPropertyInsightSensor(
-                        entry, hl_coordinator, hl_property, insight
-                    )
-                ]
+                [HomeLINKPropertyInsightSensor(hl_coordinator, hl_property, insight)]
             )
 
     for property_ref in hl_coordinator.data[COORD_PROPERTIES]:
@@ -250,14 +244,13 @@ class HomeLINKSensor(HomeLINKDeviceEntity, SensorEntity):
 
     def __init__(
         self,
-        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
         hl_property_key: str,
         device_key: str,
         description: HomeLINKEntityDescription,
     ) -> None:
         """Device entity object for HomeLINK sensor."""
-        super().__init__(entry, coordinator, hl_property_key, device_key)
+        super().__init__(coordinator, hl_property_key, device_key)
         self._attr_unique_id = f"{self._parent_key}_{self._key} {description.key}"
         self.entity_description = description
 
@@ -290,7 +283,6 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
 
     def __init__(
         self,
-        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
         hl_property_key: str,
         device_key: str,
@@ -300,7 +292,7 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         self._readingtype = readingtype
         self._state = None
         self._readingdate: datetime | None = None
-        super().__init__(entry, coordinator, hl_property_key, device_key)
+        super().__init__(coordinator, hl_property_key, device_key)
 
         self._attr_unique_id = f"{self._parent_key}_{self._key} {readingtype}"
         # Setup the HA attributes based on type of sensor.
@@ -344,7 +336,11 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
     def device_info(self) -> DeviceInfo:
         """Entity device information."""
         return device_device_info(
-            self.hass, self._entry, self._identifiers, self._parent_key, self._device
+            self.hass,
+            self.coordinator.config_entry,
+            self._identifiers,
+            self._parent_key,
+            self._device,
         )
 
     def _update_attributes(self) -> None:
@@ -392,9 +388,9 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         """Register message handler."""
         # If MQTT or webhooks is enabled then we need the handler for message processing
         await super().async_added_to_hass()
-        if self._entry.options.get(CONF_MQTT_ENABLE) or self._entry.options.get(
-            CONF_WEBHOOK_ENABLE
-        ):
+        if self.coordinator.config_entry.options.get(
+            CONF_MQTT_ENABLE
+        ) or self.coordinator.config_entry.options.get(CONF_WEBHOOK_ENABLE):
             key = build_mqtt_device_key(
                 self._device, f"{self._key}-{self._readingtype}", self._gateway_key
             )
@@ -440,14 +436,13 @@ class HomeLINKPropertyInsightSensor(HomeLINKAlarmEntity, SensorEntity):
 
     def __init__(
         self,
-        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
         hl_property_key: str,
         insight: Insight,
     ) -> None:
         """Insight entity object for HomeLINK sensor."""
         self._insight = insight
-        super().__init__(entry, coordinator, hl_property_key, ALARMTYPE_ENVIRONMENT)
+        super().__init__(coordinator, hl_property_key, ALARMTYPE_ENVIRONMENT)
         self._attr_unique_id = f"{self._key}_{ALARMTYPE_ENVIRONMENT} {insight.hl_type}"
 
     @property
@@ -501,7 +496,6 @@ class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
 
     def __init__(
         self,
-        entry: HLConfigEntry,
         coordinator: HomeLINKDataCoordinator,
         hl_property_key: str,
         insight: Insight,
@@ -511,7 +505,7 @@ class HomeLINKRoomInsightSensor(HomeLINKDeviceEntity, SensorEntity):
         device_key = self._get_device_key(
             coordinator, hl_property_key, insight.location
         )
-        super().__init__(entry, coordinator, hl_property_key, device_key)
+        super().__init__(coordinator, hl_property_key, device_key)
         self._attr_unique_id = f"{self._parent_key}_{self._key} {insight.hl_type}"
 
     def _get_device_key(

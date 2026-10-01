@@ -157,7 +157,11 @@ class HomeLINKDeviceEvent(HomeLINKEventEntity):
     def device_info(self) -> DeviceInfo:
         """Entity device information."""
         return device_device_info(
-            self.hass, self._entry, self._identifiers, self._parent_key, self._device
+            self.hass,
+            self._entry,
+            self._identifiers,
+            self._parent_key,
+            self._device,
         )
 
 

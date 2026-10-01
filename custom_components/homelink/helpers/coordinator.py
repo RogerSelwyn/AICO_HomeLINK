@@ -7,13 +7,6 @@ import logging
 import traceback
 from typing import Any
 
-from pyhomelink import HomeLINKApi
-from pyhomelink.device import Device
-from pyhomelink.exceptions import ApiException, AuthException
-from pyhomelink.lookup import Lookup, LookupEventType
-from pyhomelink.property import Property
-from pyhomelink.reading import PropertyReading
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
@@ -21,6 +14,12 @@ from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
+from pyhomelink import HomeLINKApi
+from pyhomelink.device import Device
+from pyhomelink.exceptions import ApiException, AuthException
+from pyhomelink.lookup import Lookup, LookupEventType
+from pyhomelink.property import Property
+from pyhomelink.reading import PropertyReading
 
 from ..const import (
     ATTR_ALARM,
@@ -71,7 +70,6 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         )
         self._hass = hass
         self._hl_api = hl_api
-        self._entry = entry
         self._known_properties: dict = {}
         self._device_registry = dr.async_get(hass)
         self._first_refresh = True
@@ -127,7 +125,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 },
             ) from timeout_err
         await self._async_check_for_changes(coord_properties)
-        config_entry = self._entry.options
+        config_entry = self.config_entry.options
 
         self._error = False
         return {
@@ -150,12 +148,12 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         devices = await self._hl_api.async_get_devices()
         insights = (
             await self._hl_api.async_get_insights()
-            if self._entry.options.get(CONF_INSIGHTS_ENABLE)
+            if self.config_entry.options.get(CONF_INSIGHTS_ENABLE)
             else []
         )
         coord_properties = {}
         for hl_property in properties:
-            if not include_property(self._entry.options, hl_property.reference):
+            if not include_property(self.config_entry.options, hl_property.reference):
                 continue
             property_devices = {
                 device.serialnumber: device
@@ -225,7 +223,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
     def _build_known_properties(self) -> None:
         # Build list of known properties as a one time activity (which is maintained)
         devices = dr.async_entries_for_config_entry(
-            self._device_registry, self._entry.entry_id
+            self._device_registry, self.config_entry.entry_id
         )
 
         for device in devices:
@@ -327,7 +325,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
 
     def _create_property_device(self, property_key):
         self._device_registry.async_get_or_create(
-            config_entry_id=self._entry.entry_id,
+            config_entry_id=self.config_entry.entry_id,
             identifiers={(DOMAIN, property_key)},
             manufacturer=ATTR_HOMELINK,
             name=property_key,
