@@ -8,7 +8,7 @@ import time
 from typing import Any, Self
 
 from aiohttp.client_exceptions import ClientConnectorError, ClientResponseError
-import voluptuous as vol
+import probatio
 
 from homeassistant import config_entries
 from homeassistant.components import webhook
@@ -238,25 +238,25 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Required(
+                    probatio.Required(
                         CONF_PROPERTIES,
                         default=display_properties,
                     ): cv.multi_select(self._property_list),
-                    vol.Optional(
+                    probatio.Optional(
                         CONF_INSIGHTS_ENABLE,
                         default=self._insights_enable,
                     ): BOOLEAN_SELECTOR,
-                    vol.Optional(
+                    probatio.Optional(
                         CONF_MQTT_ENABLE,
                         default=self._mqtt_enable,
                     ): BOOLEAN_SELECTOR,
-                    vol.Optional(
+                    probatio.Optional(
                         CONF_MQTT_HOMELINK,
                         default=self._mqtt_homelink,
                     ): BOOLEAN_SELECTOR,
-                    vol.Optional(
+                    probatio.Optional(
                         CONF_WEBHOOK_ENABLE,
                         default=self._webhook_enable,
                     ): BOOLEAN_SELECTOR,
@@ -328,15 +328,15 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         last_step = not self._webhook_enable
         return self.async_show_form(
             step_id="ha_mqtt",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Required(
+                    probatio.Required(
                         CONF_MQTT_TOPIC,
                         description={
                             "suggested_value": _add_suffixes(self._mqtt_topic)
                         },
                     ): TEXT_SELECTOR,
-                    vol.Optional(
+                    probatio.Optional(
                         CONF_EVENT_ENABLE,
                         default=self._event_enable,
                     ): BOOLEAN_SELECTOR,
@@ -369,27 +369,27 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
         last_step = not self._webhook_enable
         return self.async_show_form(
             step_id="homelink_mqtt",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Required(
+                    probatio.Required(
                         CONF_MQTT_CLIENT_ID,
                         description={"suggested_value": self._mqtt_client_id},
                     ): TEXT_SELECTOR,
-                    vol.Required(
+                    probatio.Required(
                         CONF_USERNAME,
                         description={"suggested_value": self._mqtt_username},
                     ): TEXT_SELECTOR,
-                    vol.Required(
+                    probatio.Required(
                         CONF_PASSWORD,
                         description={"suggested_value": self._mqtt_password},
                     ): str,
-                    vol.Required(
+                    probatio.Required(
                         CONF_MQTT_TOPIC,
                         description={
                             "suggested_value": _add_suffixes(self._mqtt_topic)
                         },
                     ): TEXT_SELECTOR,
-                    vol.Optional(
+                    probatio.Optional(
                         CONF_EVENT_ENABLE,
                         default=self._event_enable,
                     ): BOOLEAN_SELECTOR,
