@@ -19,6 +19,7 @@ from homeassistant.components.application_credentials import ClientCredential, a
 from homeassistant.components.webhook import async_generate_url
 from homeassistant.core import Event, HomeAssistant
 from homeassistant.core_config import async_process_ha_core_config
+from homeassistant.helpers import config_entry_oauth2_flow
 from homeassistant.setup import async_setup_component
 from homeassistant.util import dt as dt_util
 
@@ -30,6 +31,7 @@ from .helpers.const import (  # MQTT_HA_OPTIONS,; MQTT_HL_OPTIONS,
     INSIGHT_OPTIONS,
     REFRESH_CONFIG_ENTRY,
     TITLE,
+    TOKEN_URL,
     WEBHOOK_OPTIONS,
 )
 from .helpers.utils import create_mock
@@ -440,3 +442,12 @@ async def webhook_setup(
     hass.bus.async_listen("homelink_unknown", event_listener)
 
     return WebhookSetupData(hass, client, webhook_url, event_listener, events)
+
+
+@pytest.fixture
+async def local_oauth_impl(hass: HomeAssistant) -> config_entry_oauth2_flow.LocalOAuth2Implementation:
+    """Local implementation."""
+    assert await async_setup_component(hass, "auth", {})
+    return config_entry_oauth2_flow.LocalOAuth2Implementation(
+        hass, DOMAIN, "client_id", "client_secret", "authorize_url", TOKEN_URL
+    )

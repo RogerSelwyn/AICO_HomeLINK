@@ -20,15 +20,10 @@ from homeassistant.exceptions import (
     OAuth2TokenRequestTransientError,
 )
 from homeassistant.helpers import config_entry_oauth2_flow, device_registry as dr, entity_registry as er
-
-# from homeassistant.helpers.config_entry_oauth2_flow import (
-#     ImplementationUnavailableError,
-# )
-from homeassistant.setup import async_setup_component
 from pyhomelink.exceptions import AuthException
 
 from .conftest import HomelinkMockConfigEntry, standard_mocks
-from .helpers.const import DOMAIN, EXTERNAL_URL, REFRESH_CONFIG_ENTRY, TITLE, TOKEN_URL
+from .helpers.const import DOMAIN, EXTERNAL_URL, REFRESH_CONFIG_ENTRY, TITLE
 from .helpers.utils import add_property_mocks, check_entity_state, mock_token_call
 
 # async def test_setup_implementation_error(
@@ -169,19 +164,10 @@ async def test_refresh_token(
     assert async_token_refresh.called
 
 
-@pytest.fixture
-async def local_oauth_impl(hass: HomeAssistant):
-    """Local implementation."""
-    assert await async_setup_component(hass, "auth", {})
-    return config_entry_oauth2_flow.LocalOAuth2Implementation(
-        hass, DOMAIN, "client_id", "client_secret", "authorize_url", TOKEN_URL
-    )
-
-
 async def test_invalid_token(
     hass: HomeAssistant,
     aioclient_mock: AiohttpClientMocker,
-    local_oauth_impl: ClientSession,
+    local_oauth_impl: config_entry_oauth2_flow.LocalOAuth2Implementation,
     aiohttp_client_session: ClientSession,
 ):
     """Check invalid token."""
