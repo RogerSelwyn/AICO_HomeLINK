@@ -121,7 +121,7 @@ def raise_device_event(
         {
             ATTR_SUB_TYPE: ATTR_DEVICE,
             ATTR_TOPIC: topic.split("/"),
-            ATTR_DEVICE_INFO: device_info,
+            ATTR_DEVICE_INFO: dict(device_info),
             ATTR_PAYLOAD: payload,
         },
     )
