@@ -1,13 +1,13 @@
 """Test odds and sods."""
-from asyncio import TimeoutError
+
 from unittest.mock import patch
 
-from pyhomelink.exceptions import ApiException, AuthException
 import pytest
 
 from custom_components.homelink.const import DOMAIN
 from custom_components.homelink.diagnostics import async_get_config_entry_diagnostics
 from homeassistant.core import HomeAssistant
+from pyhomelink.exceptions import ApiException, AuthException
 
 from .conftest import HomelinkMockConfigEntry
 

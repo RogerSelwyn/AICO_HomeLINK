@@ -21,9 +21,7 @@ async def test_environment_entity_alert_states(
 ):
     """Test HomeLINK alerts."""
 
-    check_entity_state(
-        hass, "binary_sensor.dummy_user_my_house_environment", "on", ENVIRONMENT_BAD
-    )
+    check_entity_state(hass, "binary_sensor.dummy_user_my_house_environment", "on", ENVIRONMENT_BAD)
 
     await async_check_sensor(
         hass,

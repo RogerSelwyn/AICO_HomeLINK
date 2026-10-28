@@ -1,29 +1,26 @@
 # pylint: disable=protected-access,redefined-outer-name
 """Global fixtures for integration."""
 
-import sys
 from dataclasses import dataclass
 from datetime import datetime
+import sys
 from unittest.mock import Mock, PropertyMock, patch
 
-import pytest
 from aiohttp import ClientSession
 from aiohttp.test_utils import TestClient
-from homeassistant.components.application_credentials import (
-    ClientCredential,
-    async_import_client_credential,
-)
-from homeassistant.components.webhook import async_generate_url
-from homeassistant.core import Event, HomeAssistant
-from homeassistant.core_config import async_process_ha_core_config
-from homeassistant.setup import async_setup_component
-from homeassistant.util import dt as dt_util
+import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 from pytest_homeassistant_custom_component.typing import ClientSessionGenerator
 
 from custom_components.homelink import HLData
 from custom_components.homelink.const import DOMAIN
+from homeassistant.components.application_credentials import ClientCredential, async_import_client_credential
+from homeassistant.components.webhook import async_generate_url
+from homeassistant.core import Event, HomeAssistant
+from homeassistant.core_config import async_process_ha_core_config
+from homeassistant.setup import async_setup_component
+from homeassistant.util import dt as dt_util
 
 from .helpers.const import (  # MQTT_HA_OPTIONS,; MQTT_HL_OPTIONS,
     BASE_CONFIG_ENTRY,
@@ -75,8 +72,9 @@ async def request_setup(current_request_with_host: None) -> None:  # pylint: dis
 @pytest.fixture(name="skip_notifications", autouse=True)
 def skip_notifications_fixture():
     """Skip notification calls."""
-    with patch("homeassistant.components.persistent_notification.async_create"), patch(
-        "homeassistant.components.persistent_notification.async_dismiss"
+    with (
+        patch("homeassistant.components.persistent_notification.async_create"),
+        patch("homeassistant.components.persistent_notification.async_dismiss"),
     ):
         yield
 
@@ -126,9 +124,7 @@ def refresh_config_entry(
 def webhook_config_entry(hass: HomeAssistant) -> HomelinkMockConfigEntry:
     """Create HomeLINK entry in Home Assistant."""
     data = BASE_CONFIG_ENTRY
-    entry = HomelinkMockConfigEntry(
-        domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=WEBHOOK_OPTIONS
-    )
+    entry = HomelinkMockConfigEntry(domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=WEBHOOK_OPTIONS)
     entry.runtime_data = None
     return entry
 
@@ -139,9 +135,7 @@ def insight_config_entry(
 ) -> HomelinkMockConfigEntry:
     """Create HomeLINK entry in Home Assistant."""
     data = BASE_CONFIG_ENTRY
-    entry = HomelinkMockConfigEntry(
-        domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=INSIGHT_OPTIONS
-    )
+    entry = HomelinkMockConfigEntry(domain=DOMAIN, title=TITLE, unique_id=DOMAIN, data=data, options=INSIGHT_OPTIONS)
     entry.runtime_data = None
     return entry
 
@@ -291,9 +285,7 @@ def standard_mocks(
     create_mock(aioclient_mock, "/lookup/eventType", "base/lookup.json")
     create_mock(aioclient_mock, "/property", "base/property.json")
     create_mock(aioclient_mock, "/device", "base/device.json")
-    create_mock(
-        aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json"
-    )
+    create_mock(aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json")
     create_mock(
         aioclient_mock,
         f"/property/DUMMY_USER_My_House/readings?date={datetime.now(dt_util.UTC).date()}",

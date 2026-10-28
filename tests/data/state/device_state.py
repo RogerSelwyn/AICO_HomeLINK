@@ -1,24 +1,22 @@
 """Expected states."""
 
-import datetime
+import datetime as dt
 
 from dateutil.tz import tzutc
 
 LIVINGROOM_FIREALARM_GOOD = {
     "serialnumber": "D8EAF0D0",
-    "installationdate": datetime.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
+    "installationdate": dt.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
     "installedby": "Dummy User",
-    "replacedate": datetime.datetime(2034, 6, 26, 0, 0, tzinfo=tzutc()),
+    "replacedate": dt.datetime(2034, 6, 26, 0, 0, tzinfo=tzutc()),
     "metadata": {
         "signalstrength": -50,
-        "lastseendate": datetime.datetime(
-            2024, 8, 11, 9, 30, 24, 840000, tzinfo=tzutc()
-        ),
+        "lastseendate": dt.datetime(2024, 8, 11, 9, 30, 24, 840000, tzinfo=tzutc()),
         "connectivitytype": "EIRF868",
     },
     "status": {
         "operationalstatus": "GOOD",
-        "lasttesteddate": datetime.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
+        "lasttesteddate": dt.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
         "datacollectionstatus": "ACTIVE",
     },
     "attribution": "Data provided by AICO HomeLINK",
@@ -28,17 +26,17 @@ LIVINGROOM_FIREALARM_GOOD = {
 
 HALLWAY1_EIACCESSORY_GOOD = {
     "serialnumber": "D8F7C0E8",
-    "installationdate": datetime.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
+    "installationdate": dt.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
     "installedby": "Dummy User",
-    "replacedate": datetime.datetime(2034, 7, 3, 0, 0, tzinfo=tzutc()),
+    "replacedate": dt.datetime(2034, 7, 3, 0, 0, tzinfo=tzutc()),
     "metadata": {
         "signalstrength": -53,
-        "lastseendate": datetime.datetime(2024, 9, 6, 9, 9, 41, 473000, tzinfo=tzutc()),
+        "lastseendate": dt.datetime(2024, 9, 6, 9, 9, 41, 473000, tzinfo=tzutc()),
         "connectivitytype": "EIRF868",
     },
     "status": {
         "operationalstatus": "GOOD",
-        "lasttesteddate": datetime.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
+        "lasttesteddate": dt.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
         "datacollectionstatus": "ACTIVE",
     },
     "attribution": "Data provided by AICO HomeLINK",
@@ -48,14 +46,12 @@ HALLWAY1_EIACCESSORY_GOOD = {
 
 KITCHEN_GATEWAY_GOOD = {
     "serialnumber": "C3CEC7FB",
-    "installationdate": datetime.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
+    "installationdate": dt.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
     "installedby": "Dummy User",
-    "replacedate": datetime.datetime(2034, 4, 24, 0, 0, tzinfo=tzutc()),
+    "replacedate": dt.datetime(2034, 4, 24, 0, 0, tzinfo=tzutc()),
     "metadata": {
         "signalstrength": -79,
-        "lastseendate": datetime.datetime(
-            2024, 9, 7, 9, 24, 19, 466000, tzinfo=tzutc()
-        ),
+        "lastseendate": dt.datetime(2024, 9, 7, 9, 24, 19, 466000, tzinfo=tzutc()),
         "connectivitytype": "GSM",
     },
     "status": {
@@ -70,16 +66,12 @@ KITCHEN_GATEWAY_GOOD = {
 
 HALLWAY1_ENVCO2SENSOR_GOOD = {
     "serialnumber": "001FD75F",
-    "installationdate": datetime.datetime(
-        2023, 11, 16, 15, 48, 30, 627000, tzinfo=tzutc()
-    ),
+    "installationdate": dt.datetime(2023, 11, 16, 15, 48, 30, 627000, tzinfo=tzutc()),
     "installedby": "Dummy User",
-    "replacedate": datetime.datetime(2033, 8, 15, 0, 0, tzinfo=tzutc()),
+    "replacedate": dt.datetime(2033, 8, 15, 0, 0, tzinfo=tzutc()),
     "metadata": {
         "signalstrength": -54,
-        "lastseendate": datetime.datetime(
-            2024, 9, 7, 9, 24, 19, 471000, tzinfo=tzutc()
-        ),
+        "lastseendate": dt.datetime(2024, 9, 7, 9, 24, 19, 471000, tzinfo=tzutc()),
         "connectivitytype": "EIRF868",
     },
     "status": {
@@ -94,19 +86,17 @@ HALLWAY1_ENVCO2SENSOR_GOOD = {
 
 KITCHEN_FIREALARM_GOOD = {
     "serialnumber": "D6F7C1DC",
-    "installationdate": datetime.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
+    "installationdate": dt.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
     "installedby": "Dummy User",
-    "replacedate": datetime.datetime(2034, 5, 8, 0, 0, tzinfo=tzutc()),
+    "replacedate": dt.datetime(2034, 5, 8, 0, 0, tzinfo=tzutc()),
     "metadata": {
         "signalstrength": -50,
-        "lastseendate": datetime.datetime(
-            2024, 8, 10, 18, 12, 11, 460000, tzinfo=tzutc()
-        ),
+        "lastseendate": dt.datetime(2024, 8, 10, 18, 12, 11, 460000, tzinfo=tzutc()),
         "connectivitytype": "EIRF868",
     },
     "status": {
         "operationalstatus": "GOOD",
-        "lasttesteddate": datetime.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
+        "lasttesteddate": dt.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
         "datacollectionstatus": "ACTIVE",
     },
     "attribution": "Data provided by AICO HomeLINK",
@@ -116,19 +106,17 @@ KITCHEN_FIREALARM_GOOD = {
 
 UTILITY_FIRECOALARM_GOOD = {
     "serialnumber": "D6FCD4F0",
-    "installationdate": datetime.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
+    "installationdate": dt.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
     "installedby": "Dummy User",
-    "replacedate": datetime.datetime(2034, 5, 29, 0, 0, tzinfo=tzutc()),
+    "replacedate": dt.datetime(2034, 5, 29, 0, 0, tzinfo=tzutc()),
     "metadata": {
         "signalstrength": -50,
-        "lastseendate": datetime.datetime(
-            2024, 8, 10, 12, 11, 7, 460000, tzinfo=tzutc()
-        ),
+        "lastseendate": dt.datetime(2024, 8, 10, 12, 11, 7, 460000, tzinfo=tzutc()),
         "connectivitytype": "EIRF868",
     },
     "status": {
         "operationalstatus": "GOOD",
-        "lasttesteddate": datetime.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
+        "lasttesteddate": dt.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
         "datacollectionstatus": "ACTIVE",
     },
     "attribution": "Data provided by AICO HomeLINK",
@@ -138,19 +126,17 @@ UTILITY_FIRECOALARM_GOOD = {
 
 UTILITY_COALARM_GOOD = {
     "serialnumber": "D6003018",
-    "installationdate": datetime.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
+    "installationdate": dt.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
     "installedby": "Dummy User",
-    "replacedate": datetime.datetime(2034, 5, 29, 0, 0, tzinfo=tzutc()),
+    "replacedate": dt.datetime(2034, 5, 29, 0, 0, tzinfo=tzutc()),
     "metadata": {
         "signalstrength": -50,
-        "lastseendate": datetime.datetime(
-            2024, 8, 10, 12, 11, 7, 460000, tzinfo=tzutc()
-        ),
+        "lastseendate": dt.datetime(2024, 8, 10, 12, 11, 7, 460000, tzinfo=tzutc()),
         "connectivitytype": "EIRF868",
     },
     "status": {
         "operationalstatus": "GOOD",
-        "lasttesteddate": datetime.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
+        "lasttesteddate": dt.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
         "datacollectionstatus": "ACTIVE",
     },
     "attribution": "Data provided by AICO HomeLINK",
@@ -161,16 +147,12 @@ UTILITY_COALARM_GOOD = {
 
 HALLWAY1_ENVCO2SENSOR_BAD = {
     "serialnumber": "001FD75F",
-    "installationdate": datetime.datetime(
-        2023, 11, 16, 15, 48, 30, 627000, tzinfo=tzutc()
-    ),
+    "installationdate": dt.datetime(2023, 11, 16, 15, 48, 30, 627000, tzinfo=tzutc()),
     "installedby": "Dummy User",
-    "replacedate": datetime.datetime(2033, 8, 15, 0, 0, tzinfo=tzutc()),
+    "replacedate": dt.datetime(2033, 8, 15, 0, 0, tzinfo=tzutc()),
     "metadata": {
         "signalstrength": -54,
-        "lastseendate": datetime.datetime(
-            2024, 9, 7, 9, 24, 19, 471000, tzinfo=tzutc()
-        ),
+        "lastseendate": dt.datetime(2024, 9, 7, 9, 24, 19, 471000, tzinfo=tzutc()),
         "connectivitytype": "EIRF868",
     },
     "status": {
@@ -184,7 +166,7 @@ HALLWAY1_ENVCO2SENSOR_BAD = {
             "status": "ACTIVE",
             "eventtype": "AIRQUALITY_MEDIUM",
             "severity": "MEDIUM",
-            "raiseddate": datetime.datetime(2024, 9, 1, 23, 0, tzinfo=tzutc()),
+            "raiseddate": dt.datetime(2024, 9, 1, 23, 0, tzinfo=tzutc()),
             "category": "INSIGHT",
             "type": "INSIGHT",
             "description": "Airquality calculated as medium",
@@ -194,7 +176,7 @@ HALLWAY1_ENVCO2SENSOR_BAD = {
             "status": "ACTIVE",
             "eventtype": "DAMPMOULD_RISK_HIGH",
             "severity": "HIGH",
-            "raiseddate": datetime.datetime(2024, 7, 12, 23, 0, tzinfo=tzutc()),
+            "raiseddate": dt.datetime(2024, 7, 12, 23, 0, tzinfo=tzutc()),
             "category": "INSIGHT",
             "type": "INSIGHT",
             "description": "Dampmould calculated as high",
@@ -207,19 +189,17 @@ HALLWAY1_ENVCO2SENSOR_BAD = {
 
 LIVINGROOM_FIREALARM_BAD = {
     "serialnumber": "D8EAF0D0",
-    "installationdate": datetime.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
+    "installationdate": dt.datetime(2023, 9, 5, 0, 0, tzinfo=tzutc()),
     "installedby": "Dummy User",
-    "replacedate": datetime.datetime(2034, 6, 26, 0, 0, tzinfo=tzutc()),
+    "replacedate": dt.datetime(2034, 6, 26, 0, 0, tzinfo=tzutc()),
     "metadata": {
         "signalstrength": -50,
-        "lastseendate": datetime.datetime(
-            2024, 8, 11, 9, 30, 24, 840000, tzinfo=tzutc()
-        ),
+        "lastseendate": dt.datetime(2024, 8, 11, 9, 30, 24, 840000, tzinfo=tzutc()),
         "connectivitytype": "EIRF868",
     },
     "status": {
         "operationalstatus": "GOOD",
-        "lasttesteddate": datetime.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
+        "lasttesteddate": dt.datetime(2024, 9, 6, 9, 5, 16, tzinfo=tzutc()),
         "datacollectionstatus": "ACTIVE",
     },
     "alerts": [
@@ -228,7 +208,7 @@ LIVINGROOM_FIREALARM_BAD = {
             "status": "ACTIVE",
             "eventtype": "HEAD_REMOVED",
             "severity": "MEDIUM",
-            "raiseddate": datetime.datetime(2023, 10, 13, 17, 8, 52, tzinfo=tzutc()),
+            "raiseddate": dt.datetime(2023, 10, 13, 17, 8, 52, tzinfo=tzutc()),
             "category": "PRIORITY_MAINTENANCE",
             "type": "DEVICE",
             "description": "D8EAF0D0 in location Living Room: Head Removed",
@@ -240,7 +220,7 @@ LIVINGROOM_FIREALARM_BAD = {
 }
 CARBONDIOXIDE = {
     "state_class": "measurement",
-    "readingdate": datetime.datetime(2024, 9, 7, 9, 22, 3, tzinfo=tzutc()),
+    "readingdate": dt.datetime(2024, 9, 7, 9, 22, 3, tzinfo=tzutc()),
     "type": "reading",
     "unit_of_measurement": "ppm",
     "attribution": "Data provided by AICO HomeLINK",
@@ -249,7 +229,7 @@ CARBONDIOXIDE = {
 }
 HUMIDITY = {
     "state_class": "measurement",
-    "readingdate": datetime.datetime(2024, 9, 7, 9, 22, 3, tzinfo=tzutc()),
+    "readingdate": dt.datetime(2024, 9, 7, 9, 22, 3, tzinfo=tzutc()),
     "type": "reading",
     "unit_of_measurement": "%",
     "attribution": "Data provided by AICO HomeLINK",
@@ -258,7 +238,7 @@ HUMIDITY = {
 }
 TEMPERATURE = {
     "state_class": "measurement",
-    "readingdate": datetime.datetime(2024, 9, 7, 9, 22, 3, tzinfo=tzutc()),
+    "readingdate": dt.datetime(2024, 9, 7, 9, 22, 3, tzinfo=tzutc()),
     "type": "reading",
     "unit_of_measurement": "°C",
     "attribution": "Data provided by AICO HomeLINK",
@@ -267,7 +247,7 @@ TEMPERATURE = {
 }
 ELECTRICITY = {
     "state_class": "total",
-    "readingdate": datetime.datetime(2024, 10, 29, 5, 0, tzinfo=tzutc()),
+    "readingdate": dt.datetime(2024, 10, 29, 5, 0, tzinfo=tzutc()),
     "type": "reading",
     "unit_of_measurement": "kWh",
     "attribution": "Data provided by AICO HomeLINK",
@@ -275,7 +255,7 @@ ELECTRICITY = {
     "friendly_name": "DUMMY_USER_My_House ELEC SMARTMETERGASELEC Electricity",
 }
 ELECTRICITY_TARIFF = {
-    "readingdate": datetime.datetime(2024, 10, 29, 0, 0, tzinfo=tzutc()),
+    "readingdate": dt.datetime(2024, 10, 29, 0, 0, tzinfo=tzutc()),
     "type": "reading",
     "unit_of_measurement": "GBp/kWh",
     "attribution": "Data provided by AICO HomeLINK",
@@ -284,7 +264,7 @@ ELECTRICITY_TARIFF = {
 }
 GAS = {
     "state_class": "total",
-    "readingdate": datetime.datetime(2024, 10, 29, 4, 30, tzinfo=tzutc()),
+    "readingdate": dt.datetime(2024, 10, 29, 4, 30, tzinfo=tzutc()),
     "type": "reading",
     "unit_of_measurement": "kWh",
     "attribution": "Data provided by AICO HomeLINK",
@@ -292,7 +272,7 @@ GAS = {
     "friendly_name": "DUMMY_USER_My_House ELEC SMARTMETERGASELEC Gas",
 }
 GAS_TARIFF = {
-    "readingdate": datetime.datetime(2024, 10, 29, 0, 0, tzinfo=tzutc()),
+    "readingdate": dt.datetime(2024, 10, 29, 0, 0, tzinfo=tzutc()),
     "type": "reading",
     "unit_of_measurement": "GBp/kWh",
     "attribution": "Data provided by AICO HomeLINK",

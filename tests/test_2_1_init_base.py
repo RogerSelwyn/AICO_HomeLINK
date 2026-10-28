@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 from aiohttp import ClientSession
 import pytest
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
-from pyhomelink.exceptions import AuthException
+
 from custom_components.homelink import async_setup_entry
 from custom_components.homelink.const import CONF_PROPERTIES
 from custom_components.homelink.helpers import api
@@ -15,24 +15,21 @@ from homeassistant.core_config import async_process_ha_core_config
 from homeassistant.exceptions import (
     ConfigEntryAuthFailed,
     ConfigEntryNotReady,
+    OAuth2TokenRequestError,
     OAuth2TokenRequestReauthError,
     OAuth2TokenRequestTransientError,
-    OAuth2TokenRequestError,
 )
-from homeassistant.helpers import (
-    config_entry_oauth2_flow,
-    device_registry as dr,
-    entity_registry as er,
-)
+from homeassistant.helpers import config_entry_oauth2_flow, device_registry as dr, entity_registry as er
+
 # from homeassistant.helpers.config_entry_oauth2_flow import (
 #     ImplementationUnavailableError,
 # )
 from homeassistant.setup import async_setup_component
+from pyhomelink.exceptions import AuthException
 
 from .conftest import HomelinkMockConfigEntry, standard_mocks
 from .helpers.const import DOMAIN, EXTERNAL_URL, REFRESH_CONFIG_ENTRY, TITLE, TOKEN_URL
 from .helpers.utils import add_property_mocks, check_entity_state, mock_token_call
-
 
 # async def test_setup_implementation_error(
 #     hass: HomeAssistant,
@@ -142,20 +139,13 @@ async def test_full_init(
     check_entity_state(hass, "binary_sensor.dummy_user_my_house", "off")
     check_entity_state(hass, "binary_sensor.dummy_user_my_house_alarm", "off")
     check_entity_state(hass, "binary_sensor.dummy_user_my_house_environment", "off")
-    assert (
-        hass.states.get("sensor.dummy_user_my_house_hallway1_envco2sensor_abandonment")
-        is None
-    )
+    assert hass.states.get("sensor.dummy_user_my_house_hallway1_envco2sensor_abandonment") is None
 
-    entities = er.async_entries_for_config_entry(
-        entity_registry, base_config_entry.entry_id
-    )
+    entities = er.async_entries_for_config_entry(entity_registry, base_config_entry.entry_id)
     assert len(entities) == 30
 
 
-@pytest.mark.filterwarnings(
-    "ignore:coroutine 'AsyncMockMixin._execute_mock_call' was never awaited"
-)
+@pytest.mark.filterwarnings("ignore:coroutine 'AsyncMockMixin._execute_mock_call' was never awaited")
 async def test_refresh_token(
     hass: HomeAssistant,
     aioclient_mock: AiohttpClientMocker,
@@ -208,9 +198,7 @@ async def test_invalid_token(
     new_token = "ACCESS_TOKEN_1"
 
     mock_token_call(aioclient_mock, new_token, post=True)
-    oauth2_session = config_entry_oauth2_flow.OAuth2Session(
-        hass, config_entry, local_oauth_impl
-    )
+    oauth2_session = config_entry_oauth2_flow.OAuth2Session(hass, config_entry, local_oauth_impl)
 
     hl = api.AsyncConfigEntryAuth(aiohttp_client_session, oauth2_session)
 
@@ -244,7 +232,5 @@ async def test_ignore_property(
     await hass.async_block_till_done()
     assert len(device_registry.devices) == 6
 
-    entities = er.async_entries_for_config_entry(
-        entity_registry, insight_config_entry.entry_id
-    )
+    entities = er.async_entries_for_config_entry(entity_registry, insight_config_entry.entry_id)
     assert len(entities) == 14

@@ -3,14 +3,7 @@
 from homeassistant.core import HomeAssistant
 
 from .conftest import HomelinkMockConfigEntry
-from .data.state.insight_state import (
-    ABANDONMENT,
-    AIRQUALITY,
-    COLDHOMES,
-    EXCESSHEAT,
-    HEATLOSS,
-    VENTILATION,
-)
+from .data.state.insight_state import ABANDONMENT, AIRQUALITY, COLDHOMES, EXCESSHEAT, HEATLOSS, VENTILATION
 from .helpers.utils import check_entity_state
 
 

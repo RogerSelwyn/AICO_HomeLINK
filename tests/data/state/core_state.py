@@ -1,6 +1,6 @@
 """Expected states."""
 
-import datetime
+import datetime as dt
 
 from dateutil.tz import tzutc
 
@@ -47,7 +47,7 @@ ENVIRONMENT_BAD = {
             "status": "ACTIVE",
             "eventtype": "AIRQUALITY_MEDIUM",
             "severity": "MEDIUM",
-            "raiseddate": datetime.datetime(2024, 9, 1, 23, 0, tzinfo=tzutc()),
+            "raiseddate": dt.datetime(2024, 9, 1, 23, 0, tzinfo=tzutc()),
             "category": "INSIGHT",
             "type": "INSIGHT",
             "description": "Airquality calculated as medium",
@@ -57,7 +57,7 @@ ENVIRONMENT_BAD = {
             "status": "ACTIVE",
             "eventtype": "DAMPMOULD_RISK_HIGH",
             "severity": "HIGH",
-            "raiseddate": datetime.datetime(2024, 7, 12, 23, 0, tzinfo=tzutc()),
+            "raiseddate": dt.datetime(2024, 7, 12, 23, 0, tzinfo=tzutc()),
             "category": "INSIGHT",
             "type": "INSIGHT",
             "description": "Dampmould calculated as high",

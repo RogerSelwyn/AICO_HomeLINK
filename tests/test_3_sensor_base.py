@@ -37,24 +37,14 @@ async def test_core_entities(
     """Test HomeLINK core entities."""
 
     check_entity_state(hass, "binary_sensor.dummy_user_my_house", "off", HOME_GOOD)
-    check_entity_state(
-        hass, "binary_sensor.dummy_user_my_house_alarm", "off", ALARM_GOOD
-    )
-    check_entity_state(
-        hass, "binary_sensor.dummy_user_my_house_environment", "off", ENVIRONMENT_GOOD
-    )
-    entities = er.async_entries_for_config_entry(
-        entity_registry, base_config_entry.entry_id
-    )
+    check_entity_state(hass, "binary_sensor.dummy_user_my_house_alarm", "off", ALARM_GOOD)
+    check_entity_state(hass, "binary_sensor.dummy_user_my_house_environment", "off", ENVIRONMENT_GOOD)
+    entities = er.async_entries_for_config_entry(entity_registry, base_config_entry.entry_id)
     assert len(entities) == 30
-    entry = entity_registry.async_get(
-        "sensor.dummy_user_my_house_livingroom_firealarm_last_tested_date"
-    )
+    entry = entity_registry.async_get("sensor.dummy_user_my_house_livingroom_firealarm_last_tested_date")
     assert entry.disabled_by == "integration"
     assert entry.entity_category == "diagnostic"
-    entry = entity_registry.async_get(
-        "sensor.dummy_user_my_house_livingroom_firealarm_replace_by_date"
-    )
+    entry = entity_registry.async_get("sensor.dummy_user_my_house_livingroom_firealarm_replace_by_date")
     assert entry.disabled_by == "integration"
     assert entry.entity_category == "diagnostic"
 

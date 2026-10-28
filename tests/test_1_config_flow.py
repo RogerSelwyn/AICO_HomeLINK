@@ -1,7 +1,7 @@
 """Test the HomeLINK config flow."""
 
 # Note that MQTT config setup is not tested as yet
-from asyncio import TimeoutError
+
 from unittest.mock import Mock, patch
 
 from aiohttp import ClientConnectorError, ClientResponseError
@@ -17,10 +17,7 @@ from custom_components.homelink.const import (
     DOMAIN,
 )
 from homeassistant import config_entries
-from homeassistant.components.application_credentials import (
-    ClientCredential,
-    async_import_client_credential,
-)
+from homeassistant.components.application_credentials import ClientCredential, async_import_client_credential
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
@@ -31,9 +28,7 @@ from .helpers.utils import create_mock, mock_token_call
 
 async def test_config_flow_no_credentials(hass: HomeAssistant) -> None:
     """Test config flow base case with no credentials registered."""
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
-    )
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     assert result.get("type") is FlowResultType.ABORT
     assert result.get("reason") == "missing_credentials"
 
@@ -53,9 +48,7 @@ async def test_config_flow_api_errors(
             side_effect=ClientResponseError(None, None, status=401),
         ),
     ):
-        result = await hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": config_entries.SOURCE_USER}
-        )
+        result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     assert result.get("type") is FlowResultType.ABORT
     assert result.get("reason") == "oauth_error"
 
@@ -66,17 +59,13 @@ async def test_config_flow_api_errors(
         ),
         pytest.raises(ClientResponseError),
     ):
-        result = await hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": config_entries.SOURCE_USER}
-        )
+        result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
 
     with patch(
         "custom_components.homelink.helpers.oauth2.HomeLINKOAuth2Implementation.async_resolve_external_data",
         side_effect=ClientConnectorError(Mock(), OSError()),
     ):
-        result = await hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": config_entries.SOURCE_USER}
-        )
+        result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     assert result.get("type") is FlowResultType.ABORT
     assert result.get("reason") == "cannot_connect"
 
@@ -84,9 +73,7 @@ async def test_config_flow_api_errors(
         "custom_components.homelink.helpers.oauth2.HomeLINKOAuth2Implementation.async_resolve_external_data",
         side_effect=TimeoutError(OSError()),
     ):
-        result = await hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": config_entries.SOURCE_USER}
-        )
+        result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     assert result.get("type") is FlowResultType.ABORT
     assert result.get("reason") == "timeout_connect"
 
@@ -94,9 +81,7 @@ async def test_config_flow_api_errors(
         "custom_components.homelink.helpers.oauth2.HomeLINKOAuth2Implementation.async_resolve_external_data",
         return_value=None,
     ):
-        result = await hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": config_entries.SOURCE_USER}
-        )
+        result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     assert result.get("type") is FlowResultType.ABORT
     assert result.get("reason") == "oauth_error"
 
@@ -104,9 +89,7 @@ async def test_config_flow_api_errors(
         "custom_components.homelink.helpers.oauth2.HomeLINKOAuth2Implementation.async_resolve_external_data",
         return_value={"expires_in": "1.2"},
     ):
-        result = await hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": config_entries.SOURCE_USER}
-        )
+        result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
 
     assert result.get("type") is FlowResultType.ABORT
     assert result.get("reason") == "oauth_error"
@@ -122,13 +105,9 @@ async def test_full_flow(
 
     mock_token_call(aioclient_mock, TOKEN)
 
-    await async_import_client_credential(
-        hass, DOMAIN, ClientCredential(CLIENT_ID, CLIENT_SECRET)
-    )
+    await async_import_client_credential(hass, DOMAIN, ClientCredential(CLIENT_ID, CLIENT_SECRET))
 
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
-    )
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     assert result.get("type") is FlowResultType.CREATE_ENTRY
     assert "result" in result
     assert result["result"].unique_id == DOMAIN
@@ -146,12 +125,8 @@ async def test_config_flow_second_instance(
 
     mock_token_call(aioclient_mock, TOKEN)
 
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
-    )
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
-    )
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     assert result.get("type") is FlowResultType.ABORT
     assert result.get("reason") == "single_instance_allowed"
 
@@ -178,9 +153,7 @@ async def test_reauth(
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "reauth_confirm"
 
-    result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], user_input={"confirm": True}
-    )
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], user_input={"confirm": True})
     assert result["type"] is FlowResultType.ABORT
     assert result["reason"] == "oauth_error"
 
@@ -355,9 +328,7 @@ async def test_options_flow_auth_error(
             ),
         ),
     ):
-        result = await hass.config_entries.options.async_init(
-            base_config_entry.entry_id
-        )
+        result = await hass.config_entries.options.async_init(base_config_entry.entry_id)
     assert result["type"] is FlowResultType.ABORT
     assert result.get("reason") == "invalid_application_credentials"
 
@@ -371,9 +342,7 @@ async def test_options_flow_auth_error(
             ),
         ),
     ):
-        result = await hass.config_entries.options.async_init(
-            base_config_entry.entry_id
-        )
+        result = await hass.config_entries.options.async_init(base_config_entry.entry_id)
     assert result["type"] is FlowResultType.ABORT
     assert result.get("reason") == "error_authenticating"
 
@@ -383,9 +352,7 @@ async def test_options_flow_auth_error(
             side_effect=ClientConnectorError(Mock(), OSError()),
         ),
     ):
-        result = await hass.config_entries.options.async_init(
-            base_config_entry.entry_id
-        )
+        result = await hass.config_entries.options.async_init(base_config_entry.entry_id)
     assert result["type"] is FlowResultType.ABORT
     assert result.get("reason") == "error_authenticating"
 
