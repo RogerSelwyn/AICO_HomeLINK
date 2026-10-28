@@ -1,5 +1,61 @@
 # Changelog
 
+## v2.1.3 (2026/10/28)
+### 🐛 Fixes
+- [Fix throttle not allowing reading updates](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b30e8c4a98b55c8653f17bb9e497926a0915044a) - @RogerSelwyn
+- [Retry core data retrieval to handle daily timeout](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d474baabe17a909dc277ca6a23cc350773c582f8) - @RogerSelwyn
+- [Reset coordinator](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/098d4652fe0774cc3a0973ac9332c862345c47d9) - @RogerSelwyn
+- [Reset coordinator](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/059793e032ccc9b9c54c16ec50a1860f160ee0ce) - @RogerSelwyn
+- [Ensure device_info is output as a dict in event](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/61e7f5d1a244df3210bf2e5ee2af79e71ce6d11a) - @RogerSelwyn
+- [Remove categories until HA 2026.11](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/aa51b9db408d0be68210523895f1ed4829254016) - @RogerSelwyn
+
+### 🧰 Maintenance
+- [Retry on timeout and remove ruff errors](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3a348973070915564788d0f693b996189463d148) - @RogerSelwyn
+- [Implement ruff recommendations](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2ef0ccccd741cd162186cc4a9cf358a794473039) - @RogerSelwyn
+- [Implement another ruff recommendation](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7f4348caa7297e0e58eed8fe0a6d0225e57b812c) - @RogerSelwyn
+- [Add required field](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4b749f7cb72913f59f1fbf871a5f916daba46689) - @RogerSelwyn
+- [Correct the name](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a8032ce6768fa81eb7913c8dfd8383236aeaf49c) - @RogerSelwyn
+- [Remove [project] section](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4c47fa79878d775b98bb7c2851615a42dec74baf) - @RogerSelwyn
+- [Correct the ruff version](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8944e53631d6e2a09a6e67c2188d0d42b83a8ddc) - @RogerSelwyn
+- [Ruff recommendation](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/2c0420b9aca79e5302209c11cb57016b9ab60ca1) - @RogerSelwyn
+- [Update to HA Ruff standards](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/341d85322340cc1c861c0cc0bbbcf62dee8f4da8) - @RogerSelwyn
+- [Remove ruff error](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/995476d47da1b5b3ca77e811871e8f6a0212d20c) - @RogerSelwyn
+- [Remove unrequired entry passing](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8035b048c5c0371f8bde61b3c06e9076d6f8797a) - @RogerSelwyn
+- [Convert from voluptuous to probatio](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/075cdb3b457d51f778e3eaa5b47bf083b3e506f1) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [bump ruff from 0.15.4 to 0.16.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/cd06a5ab78fb381a50230d64e283514b63064d1b) - @dependabot[bot]
+- [bump astral-sh/setup-uv from 9.0.0 to 10.0.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/00bef94b0f7b2ff491a60fde1de9a3e7f41bc32f) - @dependabot[bot]
+- [update pytest-homeassistant-custom-component requirement](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7e4eafb2741588f2d4dd4af097c779e627fc0070) - @dependabot[bot]
+- [bump astral-sh/setup-uv from 10.0.1 to 10.2.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3bdc788b25659ef917346a9c91df8dc2517db0ce) - @dependabot[bot]
+- [bump ruff from 0.16.3 to 0.16.9](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e835a79e30cada6f8eb4a06c9d9b5fb095e2cf7a) - @dependabot[bot]
+- [update pytest-homeassistant-custom-component requirement](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ba8dd4c0fec6aa9a33cb64e9d31c56cd8e2bbeb3) - @dependabot[bot]
+- [update pygithub requirement from >=2.9.1 to >=2.10.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b6bb9e59939e13f34ad669e09786d7cfd08c79c9) - @dependabot[bot]
+- [update pytest-homeassistant-custom-component requirement](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ac1fcb17be6973c5288d0bf4aea8a33aeb1086d3) - @dependabot[bot]
+- [bump astral-sh/setup-uv from 10.2.0 to 10.3.2](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4cf2d3df6ec33e02703ea5367c038058f2072b78) - @dependabot[bot]
+- [bump ruff from 0.16.9 to 0.17.2](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3ce0b27250c624fa4e602a6c1fb9ae2d906b49b6) - @dependabot[bot]
+
+### 📚 Documentation
+- [Update changelog with release notes](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/60e8c542ca834e5919c5c54aabe48485aaec92dd) - @actions-user
+
+### ✅ Test
+- [Update pyproject.toml inline with HA](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/5f622bce2d54865b6a45810f94fffc3b3a7a4b3a) - @RogerSelwyn
+- [Reset pyptoject.toml](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0ed96e7fe02789c587c717c26691d4c80be037c5) - @RogerSelwyn
+- [Really reset it](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/13af1194146a2a38d8281c1cd891ba847b501e23) - @RogerSelwyn
+- [Tweak ruff settings](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0eb1b2f5c43b9ece2d4e58497a5ee6a78c822ada) - @RogerSelwyn
+- [Ruff fixes](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3359f8ca2ffdbdfbe411228daab0809a5ff1cac6) - @RogerSelwyn
+- [Fix test for deprecated method](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/7cc34d51c0011f61f26b01cb79c3d67f61857ae6) - @RogerSelwyn
+- [Ruff recommended changes](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8e1021dd6625383336c1eae8d123ac123e2667f8) - @RogerSelwyn
+- [Move fixture to conftest](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/db9f1b97234119273fca4de5950e402ddbb393a2) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v2.1.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/fa7f203facb954653ed37a312b5b1b0f0ab9924c) - @RogerSelwyn
+- [Release v2.1.2](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/bc26dbed2712262a8cf4fb040ab05f0799edc671) - @RogerSelwyn
+- [Release v2.1.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ced62243475dc139254f9241c82a51051ef01cf2) - @RogerSelwyn
+
+
+
+
 ## v2.1.1 (2026/08/08)
 ### 🐛 Fixes
 - [Fix throttle not allowing reading updates](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b30e8c4a98b55c8653f17bb9e497926a0915044a) - @RogerSelwyn
