@@ -1,6 +1,7 @@
 {
   "domain": "homelink",
   "name": "AICO HomeLINK",
+  "categories": ["security_safety.smoke_co_alarms", "sensors.air_quality"],
   "codeowners": ["@rogerselwyn"],
   "config_flow": true,
   "dependencies": ["application_credentials", "mqtt", "webhook"],
