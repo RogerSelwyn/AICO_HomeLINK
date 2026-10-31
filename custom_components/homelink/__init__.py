@@ -6,7 +6,6 @@ from homeassistant.const import CONF_WEBHOOK_ID, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import (
     ConfigEntryAuthFailed,
-    ConfigEntryError,
     ConfigEntryNotReady,
     OAuth2TokenRequestError,
     OAuth2TokenRequestReauthError,
@@ -37,7 +36,7 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.BINARY_SENSOR, Platform.EVENT, Platform.SENSOR]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> None:
+async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:
     """Set up HomeLINK from a config entry."""
 
     try:
@@ -85,21 +84,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> None:
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
 
+    return True
 
-async def async_unload_entry(hass: HomeAssistant, entry: HLConfigEntry) -> None:
+
+async def async_unload_entry(hass: HomeAssistant, entry: HLConfigEntry) -> bool:
     """Unload a config entry."""
 
-    await hass.config_entries.async_unload_platforms_or_raise(entry, PLATFORMS)
+    if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+        # Unregister webhooks if one was set up
+        if entry.runtime_data.webhook:
+            hl_webhook = entry.runtime_data.webhook
+            hl_webhook.unregister_webhooks(hass, entry.options.get(CONF_WEBHOOK_ID))
 
-    # Unregister webhooks if one was set up
-    if entry.runtime_data.webhook:
-        hl_webhook = entry.runtime_data.webhook
-        hl_webhook.unregister_webhooks(hass, entry.options.get(CONF_WEBHOOK_ID))
-
-    # Disconnect MQTT if one was setup
-    if entry.runtime_data.mqtt:
-        hl_mqtt = entry.runtime_data.mqtt
-        await hl_mqtt.async_stop()
+        # Disconenct MQTT if one was setup
+        if entry.runtime_data.mqtt:
+            hl_mqtt = entry.runtime_data.mqtt
+            await hl_mqtt.async_stop()
+    return unload_ok
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: HLConfigEntry) -> None:
@@ -144,7 +145,7 @@ async def _async_start_mqtt(
         return hl_mqtt
 
 
-async def async_migrate_entry(hass: HomeAssistant, config_entry: HLConfigEntry) -> None:
+async def async_migrate_entry(hass: HomeAssistant, config_entry: HLConfigEntry) -> bool:
     """Migrate old entry."""
     _LOGGER.debug(
         "Migrating configuration from version %s.%s",
@@ -154,7 +155,7 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: HLConfigEntry) 
 
     if config_entry.version > 2:
         # This shouldn't happen since we are at v2
-        raise ConfigEntryError
+        return False
 
     if config_entry.version == 1:
         # Modify the incorrectly created device identifiers from v1
@@ -171,6 +172,8 @@ async def async_migrate_entry(hass: HomeAssistant, config_entry: HLConfigEntry) 
         config_entry.version,
         config_entry.minor_version,
     )
+
+    return True
 
 
 async def _migrate_devices_identifiers(
