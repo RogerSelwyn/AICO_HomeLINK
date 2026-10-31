@@ -514,3 +514,33 @@ split-on-trailing-comma = false
 
 [tool.ruff.lint.mccabe]
 max-complexity = 25
+
+[tool.pytest]
+testpaths = ["tests"]
+norecursedirs = [".git"]
+addopts = ["--strict-markers", "--cov=custom_components", "-p no:respx"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.coverage.report]
+exclude_also = [
+    'entry.options.get\(CONF_MQTT_ENABLE\)',
+    'entry.runtime_data.mqtt',
+    '_async_start_mqtt',
+    'if config_entry.version > 2',
+    'except ImplementationUnavailableError as err',
+    'ATTR_INTEGRATIONS_URL: INTEGRATIONS_URL',
+    'def _get_mqtt_topic\(entry: HLConfigEntry\)',
+    'if existing_entry',
+    'def is_matching',
+    'if self._mqtt_enable',
+    'async def async_step_ha_mqtt',
+    'async def async_step_homelink_mqtt',
+    'async def _async_test_connection',
+    'def _remove_suffixes',
+    'def _add_suffixes',
+    'class HomeLINKEventEntity'
+]
+
+[tool.coverage.run]
+omit = ["mqtt.py", "event.py"]

@@ -4,8 +4,9 @@ from datetime import datetime
 import json
 import pathlib
 
+from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
+
 from homeassistant.util import dt as dt_util
-from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
 from .const import BASE_API_URL, TOKEN_URL
 
@@ -38,11 +39,7 @@ def create_mock(aioclient_mock, url, filename):
 
 def load_json(filename):
     """Load a json file as string."""
-    return (
-        pathlib.Path(__file__)
-        .parent.joinpath("../data/", filename)
-        .read_text(encoding="utf8")
-    )
+    return pathlib.Path(__file__).parent.joinpath("../data/", filename).read_text(encoding="utf8")
 
 
 def load_webhook_json(filename):
@@ -120,12 +117,8 @@ def add_property_mocks(
     create_mock(aioclient_mock, "/lookup/eventType", "base/lookup.json")
     create_mock(aioclient_mock, "/property", "base/propertyx2.json")
     create_mock(aioclient_mock, "/device", "base/devicex2.json")
-    create_mock(
-        aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json"
-    )
-    create_mock(
-        aioclient_mock, "/property/DUMMY_USER_My_New_House/alerts", "base/alerts.json"
-    )
+    create_mock(aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json")
+    create_mock(aioclient_mock, "/property/DUMMY_USER_My_New_House/alerts", "base/alerts.json")
     create_mock(
         aioclient_mock,
         f"/property/DUMMY_USER_My_House/readings?date={datetime.now(dt_util.UTC).date()}",
@@ -146,9 +139,7 @@ def add_device_mocks(
     create_mock(aioclient_mock, "/lookup/eventType", "base/lookup.json")
     create_mock(aioclient_mock, "/property", "base/property.json")
     create_mock(aioclient_mock, "/device", "base/devicex3.json")
-    create_mock(
-        aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json"
-    )
+    create_mock(aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json")
     create_mock(
         aioclient_mock,
         f"/property/DUMMY_USER_My_House/readings?date={datetime.now(dt_util.UTC).date()}",
@@ -164,9 +155,7 @@ def ignore_reading_mocks(
     create_mock(aioclient_mock, "/lookup/eventType", "base/lookup.json")
     create_mock(aioclient_mock, "/property", "base/property.json")
     create_mock(aioclient_mock, "/device", "base/device.json")
-    create_mock(
-        aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json"
-    )
+    create_mock(aioclient_mock, "/property/DUMMY_USER_My_House/alerts", "base/alerts.json")
     create_mock(
         aioclient_mock,
         f"/property/DUMMY_USER_My_House/readings?date={datetime.now(dt_util.UTC).date()}",

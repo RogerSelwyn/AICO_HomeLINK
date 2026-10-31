@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 
 from aiohttp import ClientConnectorError, ClientResponseError
 import pytest
-from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
+from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.homelink.const import (
     CONF_INSIGHTS_ENABLE,

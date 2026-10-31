@@ -9,9 +9,9 @@ from unittest.mock import Mock, PropertyMock, patch
 from aiohttp import ClientSession
 from aiohttp.test_utils import TestClient
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
-from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
-from pytest_homeassistant_custom_component.typing import ClientSessionGenerator
+from pytest_homeassistant.common import MockConfigEntry
+from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
+from pytest_homeassistant.typing import ClientSessionGenerator
 
 from custom_components.homelink import HLData
 from custom_components.homelink.const import DOMAIN
@@ -36,7 +36,6 @@ from .helpers.const import (  # MQTT_HA_OPTIONS,; MQTT_HL_OPTIONS,
 )
 from .helpers.utils import create_mock
 
-pytest_plugins = "pytest_homeassistant_custom_component"  # pylint: disable=invalid-name
 THIS_MODULE = sys.modules[__name__]
 
 
@@ -53,14 +52,6 @@ class HomelinkMockConfigEntry(MockConfigEntry):
 def aiohttp_client_session() -> None:
     """AIOHTTP client session."""
     return ClientSession
-
-
-# This fixture enables loading custom integrations in all tests.
-# Remove to enable selective use of this fixture
-@pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations):  # pylint: disable=unused-argument
-    """Automatically enable loading custom integrations in all tests."""
-    return
 
 
 @pytest.fixture(autouse=True)

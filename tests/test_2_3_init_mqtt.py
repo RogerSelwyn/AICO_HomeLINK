@@ -4,7 +4,7 @@
 # from unittest.mock import ANY, call
 
 # import pytest
-# from pytest_homeassistant_custom_component.typing import MqttMockHAClient
+# from pytest_homeassistant.typing import MqttMockHAClient
 
 # from .conftest import HomelinkMockConfigEntry, MQTTSetupData
 # from .helpers.utils import check_entity_state

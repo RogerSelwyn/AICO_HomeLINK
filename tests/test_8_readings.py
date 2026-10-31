@@ -4,7 +4,7 @@ from datetime import timedelta
 from unittest.mock import patch
 
 import pytest
-from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
+from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
