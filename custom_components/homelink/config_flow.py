@@ -274,7 +274,7 @@ class HomeLINKOptionsFlowHandler(config_entries.OptionsFlow):
                 self.hass, self.config_entry
             )
         except ImplementationUnavailableError as err:
-            raise AbortFlow("homelink_oauth__retry") from err
+            raise AbortFlow("homelink_oauth_retry") from err
 
         session = OAuth2Session(self.hass, self.config_entry, implementation)
         try:
