@@ -1,5 +1,29 @@
 # Changelog
 
+## v2.2.0 (2026/11/05)
+### 🧰 Maintenance
+- [Translation corrections](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f1165c0ecdba872106678902d3624184cb2d29b5) - @RogerSelwyn
+- [Translation corrections](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/84382ff361373f6f049e7308a875ce38eec1be71) - @RogerSelwyn
+- [Config entry functions now return None](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e9650537f9d6d24063648e0dec6c8323c2a3c262) - @RogerSelwyn
+- [Add categories for HA Marketplace](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0e021cf86ab193a3fcfcc6da893a28e1270e73cd) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [Bump HA Core to 2026.11.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/5c39e20ef48c17b6bf8b4dc86a873f50c8e6e97e) - @RogerSelwyn
+- [bump ruff from 0.17.2 to 0.17.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b656bd35df80b28ff94a800d193ca144bb1093bf) - @dependabot[bot]
+- [bump astral-sh/setup-uv from 10.3.2 to 10.3.3](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/a2b15c4d6b7704d194c942988260ff52b6783c29) - @dependabot[bot]
+
+### ✅ Test
+- [Migrate to pytest_homeassistant](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ba0d4e46b5e3c494872c34be7d4cfa2da57cbc97) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v2.2.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/ff8a4a361d04d2109ca23bae2619fbb838becea3) - @RogerSelwyn
+
+### Other
+- [Revert "maint: Translation corrections"](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/135744e9affbb30f026c9ce398f74dcb383e1400) - @RogerSelwyn
+
+
+
+
 ## v2.1.3 (2026/10/28)
 ### 🐛 Fixes
 - [Fix throttle not allowing reading updates](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/b30e8c4a98b55c8653f17bb9e497926a0915044a) - @RogerSelwyn
