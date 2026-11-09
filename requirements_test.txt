@@ -1,5 +1,5 @@
 -r requirements.txt
 pytest-cov==7.1.0
-homeassistant==2026.11.0 
+homeassistant==2026.11.1 
 pytest-homeassistant==2026.11.0
 
