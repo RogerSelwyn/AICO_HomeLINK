@@ -4,7 +4,7 @@ from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.const import CONF_ACCESS_TOKEN
 from homeassistant.core import HomeAssistant
 
-from .helpers.config_data import HLConfigEntry
+from .helpers.coordinator import HLConfigEntry
 
 TO_REDACT = {CONF_ACCESS_TOKEN}
 

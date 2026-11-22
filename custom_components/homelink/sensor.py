@@ -68,8 +68,9 @@ from .const import (
     READINGS_SENSOR_GAS_TARIFF,
     SENSOR_TRANSLATION_KEY,
 )
-from .helpers.config_data import HLConfigEntry
-from .helpers.coordinator import HomeLINKDataCoordinator
+
+# from .helpers.config_data import HLConfigEntry
+from .helpers.coordinator import HLConfigEntry, HomeLINKDataCoordinator
 from .helpers.entity import HomeLINKAlarmEntity, HomeLINKDeviceEntity
 from .helpers.utils import (
     build_mqtt_device_key,
@@ -388,9 +389,9 @@ class HomeLINKReadingSensor(HomeLINKDeviceEntity, SensorEntity):
         """Register message handler."""
         # If MQTT or webhooks is enabled then we need the handler for message processing
         await super().async_added_to_hass()
-        if self.coordinator.config_entry.options.get(
+        if self.coordinator.options.get(
             CONF_MQTT_ENABLE
-        ) or self.coordinator.config_entry.options.get(CONF_WEBHOOK_ENABLE):
+        ) or self.coordinator.options.get(CONF_WEBHOOK_ENABLE):
             key = build_mqtt_device_key(
                 self._device, f"{self._key}-{self._readingtype}", self._gateway_key
             )

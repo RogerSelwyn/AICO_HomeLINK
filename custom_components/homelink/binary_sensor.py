@@ -72,8 +72,7 @@ from .const import (
     WEBHOOK_READINGTYPEID,
     HomeLINKMessageType,
 )
-from .helpers.config_data import HLConfigEntry
-from .helpers.coordinator import HomeLINKDataCoordinator
+from .helpers.coordinator import HLConfigEntry, HomeLINKDataCoordinator
 from .helpers.entity import HomeLINKAlarmEntity, HomeLINKDeviceEntity
 from .helpers.utils import (
     build_device_identifiers,
@@ -174,8 +173,8 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
         self._gateway_key = self._property[COORD_GATEWAY_KEY]
         self._update_attributes()
         self._attr_unique_id = f"{self._key}"
-        if self.coordinator.config_entry.options.get(CONF_MQTT_ENABLE):
-            self._root_topic = _get_mqtt_topic(self.coordinator.config_entry)
+        if self.coordinator.options.get(CONF_MQTT_ENABLE):
+            self._root_topic = _get_mqtt_topic(self.coordinator.options)
 
     @property
     def name(self) -> None:
@@ -270,8 +269,8 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         self._attr_unique_id = f"{self._key}_{alarm_type}"
         self._lastdate = dt_util.utcnow()
         self._unregister_message_handler: Callable[[], None] | None = None
-        if self.coordinator.config_entry.options.get(CONF_MQTT_ENABLE):
-            self._root_topic = _get_mqtt_topic(self.coordinator.config_entry)
+        if self.coordinator.options.get(CONF_MQTT_ENABLE):
+            self._root_topic = _get_mqtt_topic(self.coordinator.options)
 
     @property
     def name(self) -> None:
@@ -304,9 +303,9 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
         """Register MQTT handler."""
         # If MQTT or webhooks is enabled then we need the handler for message processing
         await super().async_added_to_hass()
-        if self.coordinator.config_entry.options.get(
+        if self.coordinator.options.get(
             CONF_MQTT_ENABLE
-        ) or self.coordinator.config_entry.options.get(CONF_WEBHOOK_ENABLE):
+        ) or self.coordinator.options.get(CONF_WEBHOOK_ENABLE):
             # Build the unique key for the event
             event = HOMELINK_MESSAGE_MQTT.format(
                 domain=DOMAIN, key=f"{self._key}_{self._alarm_type}"
@@ -500,9 +499,9 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         """Register message handler."""
         # If MQTT or webhooks is enabled then we need the handler for message processing
         await super().async_added_to_hass()
-        if self.coordinator.config_entry.options.get(
+        if self.coordinator.options.get(
             CONF_MQTT_ENABLE
-        ) or self.coordinator.config_entry.options.get(CONF_WEBHOOK_ENABLE):
+        ) or self.coordinator.options.get(CONF_WEBHOOK_ENABLE):
             # Build the unique key for the event
             key = build_mqtt_device_key(self._device, self._key, self._gateway_key)
             event = HOMELINK_MESSAGE_MQTT.format(domain=DOMAIN, key=key).lower()
@@ -630,6 +629,6 @@ class HomeLINKDevice(HomeLINKDeviceEntity, BinarySensorEntity):
         dispatcher_send(self.hass, event, payload, topic, messagetype, readingtype)
 
 
-def _get_mqtt_topic(entry: HLConfigEntry) -> str:
-    mqtt_topic: Any = entry.options.get(CONF_MQTT_TOPIC)
+def _get_mqtt_topic(options) -> str:
+    mqtt_topic: Any = options.get(CONF_MQTT_TOPIC)
     return mqtt_topic.removesuffix("#")

@@ -1,19 +1,20 @@
 """Webhook management for HomeLINK."""
 
 import logging
+from types import MappingProxyType
 from typing import Any
 
 import aiohttp
 from aiohttp.hdrs import METH_POST
 
 from homeassistant.components import webhook
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.dispatcher import dispatcher_send
 
 from ..const import (
     ALARMTYPE_ALARM,
     ALARMTYPE_ENVIRONMENT,
+    CONF_PROPERTIES,
     DOMAIN,
     HOMELINK_MESSAGE_MQTT,
     MQTT_INSIGHTID,
@@ -28,7 +29,6 @@ from ..const import (
     WEBHOOK_STATUSID,
     HomeLINKMessageType,
 )
-from .utils import include_property
 
 _LOGGER = logging.getLogger(__name__)
 ALLOWED_METHODS = [METH_POST]
@@ -37,9 +37,9 @@ ALLOWED_METHODS = [METH_POST]
 class HomeLINKWebhook:
     """HomeLINK Webhooks."""
 
-    def __init__(self, entry: ConfigEntry) -> None:
+    def __init__(self, options: MappingProxyType[str, Any]) -> None:
         """Initialise the webhooks."""
-        self._entry = entry
+        self._options = options
 
     def register_webhooks(self, hass: HomeAssistant, webhook_id: Any) -> None:
         """Register the required webhooks with Home Assistant."""
@@ -80,7 +80,7 @@ class HomeLINKWebhook:
         _LOGGER.debug("Webhook message: %s - %s - %s", actiontype, messagetype, message)
 
         key = message[WEBHOOK_PROPERTY_REFERENCE]
-        if not include_property(self._entry.options, key):
+        if not self._options.get(CONF_PROPERTIES, {}).get(key, True):
             return
 
         # Property/Device added or deleted, so route to property binary sensor to trigger refresh

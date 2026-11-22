@@ -1,7 +1,6 @@
 """Support for HomeLINK events."""
 
 from homeassistant.components.event import DOMAIN as EVENT_DOMAIN
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -22,8 +21,7 @@ from .const import (
     MODELLIST_ENERGY,
     MODELLIST_ENVIRONMENT,
 )
-from .helpers.config_data import HLConfigEntry
-from .helpers.coordinator import HomeLINKDataCoordinator
+from .helpers.coordinator import HLConfigEntry, HomeLINKDataCoordinator
 from .helpers.entity import HomeLINKEventEntity
 from .helpers.utils import (
     build_device_identifiers,
@@ -45,7 +43,7 @@ async def async_setup_entry(
 
 
 async def _async_create_entities(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: HLConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     hl_coordinator: HomeLINKDataCoordinator = entry.runtime_data.coordinator
 

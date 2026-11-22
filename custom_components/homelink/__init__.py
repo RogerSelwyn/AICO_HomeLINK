@@ -28,8 +28,7 @@ from .const import (
     DOMAIN,
 )
 from .helpers.api import AsyncConfigEntryAuth
-from .helpers.config_data import HLConfigEntry, HLData
-from .helpers.coordinator import HomeLINKDataCoordinator
+from .helpers.coordinator import HLConfigEntry, HLData, HomeLINKDataCoordinator
 from .helpers.mqtt import HAMQTT, HomeLINKMQTT
 from .helpers.webhook import HomeLINKWebhook
 
@@ -77,7 +76,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: HLConfigEntry) -> None:
 
     #  Setup webhooks if required
     if entry.options.get(CONF_WEBHOOK_ENABLE):
-        hl_webhook = HomeLINKWebhook(entry)
+        hl_webhook = HomeLINKWebhook(entry.options)
         hl_webhook.register_webhooks(hass, entry.options.get(CONF_WEBHOOK_ID))
         entry.runtime_data.webhook = hl_webhook
 

@@ -46,7 +46,7 @@ These are the presented as the following entity types within Home Assistant:
 You can either use HACS or install the component manually:
 - **HACS** - [Home Assistant Community Store (HACS)](https://hacs.xyz/) - search for and install AICO HomelINK
 
-- **Manual** - Put the files from `/custom_components/homelink/` in your folder `<config directory>/custom_components/homelin/`
+- **Manual** - Put the files from `/custom_components/homelink/` in your folder `<config directory>/custom_components/homelink/`
 
 ## Configuration
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=homelink)

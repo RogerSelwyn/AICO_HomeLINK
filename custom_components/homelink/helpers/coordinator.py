@@ -2,9 +2,11 @@
 
 import asyncio
 from copy import deepcopy
+from dataclasses import dataclass
 from datetime import timedelta
 import logging
 import traceback
+from types import MappingProxyType
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -27,6 +29,7 @@ from ..const import (
     ATTR_PROPERTY,
     ATTR_READINGS,
     CONF_INSIGHTS_ENABLE,
+    CONF_PROPERTIES,
     COORD_ALERTS,
     COORD_CONFIG_ENTRY_OPTIONS,
     COORD_DEVICES,
@@ -48,16 +51,29 @@ from ..const import (
     MODELTYPE_GATEWAY,
     RETRIEVAL_INTERVAL_READINGS,
 )
-from .utils import include_property
+from .mqtt import HAMQTT, HomeLINKMQTT
+from .webhook import HomeLINKWebhook
 
 _LOGGER = logging.getLogger(__name__)
+
+type HLConfigEntry = ConfigEntry[HLData]
+
+
+@dataclass
+class HLData:
+    """Data previously stored in hass.data."""
+
+    coordinator: HomeLINKDataCoordinator
+    options: MappingProxyType[str, Any]
+    mqtt: HAMQTT | HomeLINKMQTT | None
+    webhook: HomeLINKWebhook | None
 
 
 class HomeLINKDataCoordinator(DataUpdateCoordinator):
     """HomeLINK Data object."""
 
     def __init__(
-        self, hass: HomeAssistant, hl_api: HomeLINKApi, entry: ConfigEntry
+        self, hass: HomeAssistant, hl_api: HomeLINKApi, entry: HLConfigEntry
     ) -> None:
         """Initialize HomeLINKDataCoordinator."""
         super().__init__(
@@ -76,6 +92,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         self._eventtypes: list[Lookup] | list[LookupEventType] = []
         self._error = False
         self._throttle = dt_util.utcnow() - RETRIEVAL_INTERVAL_READINGS
+        self.options = self.config_entry.options  # type: ignore[union-attr]
 
     async def _async_setup(self) -> None:
         # As a one off activity retrieve the eventtypes lookup
@@ -125,13 +142,12 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
                 },
             ) from timeout_err
         await self._async_check_for_changes(coord_properties)
-        config_entry = self.config_entry.options
 
         self._error = False
         return {
             COORD_PROPERTIES: coord_properties,
             COORD_LOOKUP_EVENTTYPE: self._eventtypes,
-            COORD_CONFIG_ENTRY_OPTIONS: config_entry,
+            COORD_CONFIG_ENTRY_OPTIONS: self.options,
         }
 
     async def _async_get_core_data(self) -> Any:
@@ -148,12 +164,14 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
         devices = await self._hl_api.async_get_devices()
         insights = (
             await self._hl_api.async_get_insights()
-            if self.config_entry.options.get(CONF_INSIGHTS_ENABLE)
+            if self.options.get(CONF_INSIGHTS_ENABLE)
             else []
         )
         coord_properties = {}
         for hl_property in properties:
-            if not include_property(self.config_entry.options, hl_property.reference):
+            if not self.options.get(CONF_PROPERTIES, {}).get(
+                hl_property.reference, True
+            ):
                 continue
             property_devices = {
                 device.serialnumber: device
@@ -223,7 +241,8 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
     def _build_known_properties(self) -> None:
         # Build list of known properties as a one time activity (which is maintained)
         devices = dr.async_entries_for_config_entry(
-            self._device_registry, self.config_entry.entry_id
+            self._device_registry,
+            self.config_entry.entry_id,  # type: ignore[union-attr]
         )
 
         for device in devices:
@@ -282,7 +301,7 @@ class HomeLINKDataCoordinator(DataUpdateCoordinator):
 
     def _check_for_adds(
         self, known_properties: dict, coord_properties: dict[str, Any]
-    ) -> None:
+    ) -> list[str]:
         # Don't do this for first refresh, because that will be done by platform setup
         # If a new property is found, create property device
         #   and dispatch out to all platforms to create sensors

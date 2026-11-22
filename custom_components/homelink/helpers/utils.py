@@ -2,15 +2,12 @@
 
 from datetime import datetime
 import logging
-from types import MappingProxyType
-from typing import Any
 
 from dateutil import parser
 
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.device_registry import DeviceEntry, DeviceInfo
 from pyhomelink.device import Device
 
 from ..const import (
@@ -23,11 +20,11 @@ from ..const import (
     ATTR_READING,
     ATTR_SUB_TYPE,
     ATTR_TOPIC,
-    CONF_PROPERTIES,
     DOMAIN,
     MODELTYPE_GATEWAY,
     MQTT_ACTIONTIMESTAMP,
 )
+from .coordinator import HLConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -55,7 +52,7 @@ def property_device_info(key: str) -> DeviceInfo:
 
 
 def alarm_device_info(
-    hass: HomeAssistant, entry: ConfigEntry, key: str, alarm_type: str
+    hass: HomeAssistant, entry: HLConfigEntry | None, key: str, alarm_type: str
 ) -> DeviceInfo:
     """Property device information."""
 
@@ -70,7 +67,7 @@ def alarm_device_info(
 
 def device_device_info(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: HLConfigEntry | None,
     identifiers: set[tuple[str, str]],
     parent_key: str,
     device: Device,
@@ -84,13 +81,6 @@ def device_device_info(
         model=device.modeltype,
         model_id=device.model,
     )
-
-
-def include_property(options: MappingProxyType[str, Any], hl_property: str) -> bool:
-    """Check if property is to be included."""
-    properties = options.get(CONF_PROPERTIES, {})
-
-    return properties.get(hl_property, True)
 
 
 def raise_property_alarm_event(
@@ -158,7 +148,7 @@ def raise_reading_event(
 
 
 def _get_via_device_id(
-    hass: HomeAssistant, entry: ConfigEntry, identifiers
-) -> DeviceInfo:
+    hass: HomeAssistant, entry: HLConfigEntry | None, identifiers
+) -> DeviceEntry:
     dev_reg = dr.async_get(hass)
-    return dev_reg.async_get_device_by_identifier(identifiers, entry.entry_id)
+    return dev_reg.async_get_device_by_identifier(identifiers, entry.entry_id)  # type: ignore[union-attr, return-value]

@@ -33,8 +33,7 @@ from ..const import (
     MQTT_SOURCEMODELTYPE,
     MQTT_STATUSID,
 )
-from .config_data import HLConfigEntry
-from .coordinator import HomeLINKDataCoordinator
+from .coordinator import HLConfigEntry, HomeLINKDataCoordinator
 from .utils import (
     alarm_device_info,
     build_device_identifiers,
