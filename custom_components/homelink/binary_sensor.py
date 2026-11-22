@@ -235,8 +235,9 @@ class HomeLINKProperty(CoordinatorEntity[HomeLINKDataCoordinator], BinarySensorE
                 alert.rel, ATTR_DEVICE
             ):
                 status = STATUS_NOT_GOOD
-                if devicereg := self._dev_reg.async_get_device(
-                    build_device_identifiers(alert.serialnumber)
+                if devicereg := self._dev_reg.async_get_device_by_identifier(
+                    build_device_identifiers(alert.serialnumber),
+                    self.coordinator.config_entry.entry_id,
                 ):
                     alarms.append(devicereg.name_by_user or devicereg.name)
 
@@ -345,8 +346,9 @@ class HomeLINKAlarm(HomeLINKAlarmEntity, BinarySensorEntity):
             if not alert.serialnumber and not alert.location:
                 continue
             if alert.serialnumber:
-                if devicereg := self._dev_reg.async_get_device(
-                    build_device_identifiers(alert.serialnumber)
+                if devicereg := self._dev_reg.async_get_device_by_identifier(
+                    build_device_identifiers(alert.serialnumber),
+                    self.coordinator.config_entry.entry_id,
                 ):
                     device = devicereg.name_by_user or devicereg.name
                     if device not in alarms_devices:

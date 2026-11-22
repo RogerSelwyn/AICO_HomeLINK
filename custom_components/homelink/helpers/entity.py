@@ -111,7 +111,7 @@ class HomeLINKDeviceEntity(CoordinatorEntity[HomeLINKDataCoordinator]):
         self._gateway_key = self.coordinator.data[COORD_PROPERTIES][self._parent_key][
             COORD_GATEWAY_KEY
         ]
-        self._identifiers = build_device_identifiers(device_key)
+        self._identifiers = {build_device_identifiers(device_key)}
         self._update_attributes()
 
     @property

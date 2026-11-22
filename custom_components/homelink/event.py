@@ -149,7 +149,7 @@ class HomeLINKDeviceEvent(HomeLINKEventEntity):
         super().__init__(entry, device_key, eventtypes, mqtt_key)
         self._parent_key = hl_property_key
         self._device = device
-        self._identifiers = build_device_identifiers(device_key)
+        self._identifiers = {build_device_identifiers(device_key)}
 
     @property
     def device_info(self) -> DeviceInfo:

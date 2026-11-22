@@ -31,7 +31,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def build_device_identifiers(device_id: str) -> set[tuple[str, str]]:
     """Build device identifiers."""
-    return {(DOMAIN, device_id.upper())}
+    return (DOMAIN, device_id.upper())
 
 
 def build_mqtt_device_key(device: Device, key: str, gateway_key: str) -> str:
