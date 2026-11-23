@@ -1,5 +1,38 @@
 # Changelog
 
+## v2.2.1 (2026/11/23)
+### 🧰 Maintenance
+- [Configure Renovate and remove Dependabot](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/59805cbdad9a633c8334001ed6d1391b12f1f8e9) - @RogerSelwyn
+- [Remove unrequired requirement](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d5f538647fb57aafd1537fb949906c82c331da19) - @RogerSelwyn
+- [Update workflows](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/23b32d53f5df04cb264a159d2b0532045adaff68) - @RogerSelwyn
+- [Use central renovate config](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/986aae3dfb302b4b66e498aa0e770285580d4bad) - @RogerSelwyn
+- [Code improvements for clarity](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c07466948f90aed3843b351e274b4ecc7ac15082) - @RogerSelwyn
+- [Remove deprecated method](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d6f2184cea5af204d605011ca6e002bb3f976f34) - @RogerSelwyn
+
+### ⬆️ Dependencies
+- [update dependency homeassistant to v2026.11.0](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/71504caf2babfac74c10261737cebdb75f7cb5c8) - @renovate[bot]
+- [update dependency ruff to v0.17.4](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/cd2d79e29258b277693acd84480f8b234689acae) - @renovate[bot]
+- [update dependency python to 3.15](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/1cd99a86b29d500ff33fd8af7436b77afe350f46) - @renovate[bot]
+- [update dependency ruff to v0.17.5 (#146)](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/8861e4b9375286390bd7c5bac9393a02d1c50523) - @renovate[bot]
+- [update dependency ruff to v0.17.6 (#147)](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/9b15e54c26a9821848dddbe18d9ee2a46eb5ce7b) - @renovate[bot]
+- [update astral-sh/setup-uv action to v10.4.0 (#148)](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/5ca3baab4a616c564a5a12bfd16f0335c7e92022) - @renovate[bot]
+- [update dependency pytest-homeassistant to v2026.11.2 (#144)](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/d60f4aeb7e987a7fe04f7a3a426238db8241b92f) - @renovate[bot]
+
+### ✅ Test
+- [Update test requirements](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/6b6c91a01423a531b79dd13ab53288acfa56867a) - @RogerSelwyn
+- [Update test HA to 2026.11.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/e177d6d9f61a4d33721e45fded01aa58ff28325d) - @RogerSelwyn
+- [Update testing requirements](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/3fada021b91fea5676ffeb53dfa009336c6b6f15) - @RogerSelwyn
+
+### 🔖 Release
+- [Release v2.2.1](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/0324a4a66ccbd1c41b56d2e3aa8993d31a4216ae) - @RogerSelwyn
+
+### Other
+- [Update README with Home Assistant Marketplace badge](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/4253a1ea063d97cb6d98b212361a1c1dc3a7962d) - @RogerSelwyn
+- [Add renovate.json](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/c6ae4be0479f00e17fac3d62e03732bc81441868) - @renovate[bot]
+
+
+
+
 ## v2.2.0 (2026/11/05)
 ### 🧰 Maintenance
 - [Translation corrections](https://github.com/RogerSelwyn/AICO_HomeLINK/commit/f1165c0ecdba872106678902d3624184cb2d29b5) - @RogerSelwyn
